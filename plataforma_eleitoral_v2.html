@@ -55,6 +55,10 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 }
 .login-btn:hover{background:var(--azul3);transform:translateY(-1px);}
 .login-err{font-size:12px;color:var(--vermelho2);margin-top:10px;display:none;}
+.crm-label{font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;}
+.crm-input{width:100%;background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--branco);font-family:var(--fonte);outline:none;transition:border-color 0.2s;}
+.crm-input:focus{border-color:var(--azul2);}
+.crm-input::placeholder{color:var(--cinza2);}
 .pass-wrap{position:relative;margin-bottom:12px;}
 .pass-wrap .login-input{margin-bottom:0;padding-right:44px;}
 .pass-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--cinza2);cursor:pointer;font-size:16px;line-height:1;padding:0;transition:color 0.2s;}
@@ -744,19 +748,125 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
       <!-- ══ CRM ══ -->
       <div class="page" id="page-crm">
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
-          <div><div class="page-title">Lideranças</div><div class="page-sub">CRM de apoiadores e articuladores por município</div></div>
-          <button class="btn btn-primary" onclick="abrirModalLideranca()">+ Nova liderança</button>
+          <div><div class="page-title">Lideranças</div><div class="page-sub">CRM de lideranças por município e bairro — votos comprometidos em tempo real</div></div>
+          <button class="btn btn-primary" onclick="abrirFormLideranca()">+ Nova liderança</button>
         </div>
-        <div class="panel">
-          <div class="panel-body" style="padding:0 20px;">
-            <table class="crm-table">
-              <thead><tr><th>Nome</th><th>Município</th><th>Segmento</th><th>Votos Est.</th><th>Status</th><th>Contato</th></tr></thead>
-              <tbody id="crm-tbody">
-                <tr><td><span class="crm-avatar">J</span>João Mototaxista</td><td>Salvador</td><td>Transporte</td><td>~200</td><td><span class="badge verde">Confirmado</span></td><td>71 99999-9999</td></tr>
-                <tr><td><span class="crm-avatar">M</span>Maria Liderança</td><td>Feira de Santana</td><td>Saúde</td><td>~150</td><td><span class="badge azul">Negociando</span></td><td>75 98888-8888</td></tr>
-                <tr><td><span class="crm-avatar">C</span>Carlos Vereador</td><td>Lauro de Freitas</td><td>Político</td><td>~500</td><td><span class="badge amarelo">Prospecto</span></td><td>71 97777-7777</td></tr>
-              </tbody>
-            </table>
+
+        <!-- Stats rápidos -->
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+          <div class="stat-card azul"><span class="stat-icon">👥</span><div class="stat-num" id="crm-total-lid">0</div><div class="stat-label">Total de Lideranças</div></div>
+          <div class="stat-card verde"><span class="stat-icon">🗳️</span><div class="stat-num" id="crm-total-votos">0</div><div class="stat-label">Votos Comprometidos</div></div>
+          <div class="stat-card amarelo"><span class="stat-icon">🏙️</span><div class="stat-num" id="crm-top-mun">—</div><div class="stat-label">Município mais forte</div></div>
+          <div class="stat-card roxo"><span class="stat-icon">✅</span><div class="stat-num" id="crm-confirmados">0</div><div class="stat-label">Confirmados</div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start;">
+
+          <!-- Tabela -->
+          <div class="panel">
+            <div class="panel-header" style="gap:10px;flex-wrap:wrap;">
+              <div class="panel-title">👥 Lideranças cadastradas</div>
+              <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;">
+                <select id="crm-filtro-mun" onchange="filtrarLiderancas()"
+                  style="background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--cinza);font-family:var(--fonte);outline:none;">
+                  <option value="">Todos os municípios</option>
+                </select>
+                <select id="crm-filtro-status" onchange="filtrarLiderancas()"
+                  style="background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--cinza);font-family:var(--fonte);outline:none;">
+                  <option value="">Todos os status</option>
+                  <option value="Confirmado">Confirmado</option>
+                  <option value="Negociando">Negociando</option>
+                  <option value="Prospecto">Prospecto</option>
+                </select>
+              </div>
+            </div>
+            <div class="panel-body" style="padding:0;">
+              <table class="crm-table" style="width:100%">
+                <thead><tr>
+                  <th>Nome</th><th>Município / Bairro</th><th>Segmento</th>
+                  <th>Votos</th><th>Status</th><th>Contato</th><th></th>
+                </tr></thead>
+                <tbody id="crm-tbody">
+                  <tr><td colspan="7" style="text-align:center;color:var(--cinza2);padding:24px;font-size:13px;">Nenhuma liderança cadastrada ainda.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Formulário lateral -->
+          <div class="panel" id="crm-form-panel">
+            <div class="panel-header">
+              <div class="panel-title" id="crm-form-title">➕ Nova Liderança</div>
+            </div>
+            <div class="panel-body" style="display:flex;flex-direction:column;gap:12px;">
+              <input type="hidden" id="crm-edit-id">
+
+              <div>
+                <label class="crm-label">Nome completo</label>
+                <input type="text" id="crm-nome" placeholder="Nome da liderança"
+                  class="crm-input" list="municipios-list">
+              </div>
+              <div>
+                <label class="crm-label">Telefone / WhatsApp</label>
+                <input type="text" id="crm-telefone" placeholder="Ex: 71 99999-9999" class="crm-input">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div>
+                  <label class="crm-label">Município</label>
+                  <input type="text" id="crm-municipio" placeholder="Município" class="crm-input" list="municipios-list" oninput="atualizarRegiaoLid()">
+                </div>
+                <div>
+                  <label class="crm-label">Bairro / Localidade</label>
+                  <input type="text" id="crm-bairro" placeholder="Bairro ou localidade" class="crm-input">
+                </div>
+              </div>
+              <div>
+                <label class="crm-label">Região (automático)</label>
+                <input type="text" id="crm-regiao" placeholder="Detectada pelo município" class="crm-input" readonly
+                  style="opacity:0.6;cursor:default;">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                <div>
+                  <label class="crm-label">Segmento</label>
+                  <select id="crm-segmento" class="crm-input">
+                    <option value="">Selecione...</option>
+                    <option>Político</option><option>Religioso</option><option>Comunitário</option>
+                    <option>Transporte</option><option>Saúde</option><option>Educação</option>
+                    <option>Empresarial</option><option>Sindical</option><option>Digital</option><option>Outro</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="crm-label">Status</label>
+                  <select id="crm-status" class="crm-input">
+                    <option value="Prospecto">Prospecto</option>
+                    <option value="Negociando">Negociando</option>
+                    <option value="Confirmado">Confirmado</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label class="crm-label">Votos comprometidos</label>
+                <input type="number" id="crm-votos" placeholder="Ex: 300" min="0" class="crm-input">
+              </div>
+              <div>
+                <label class="crm-label">Observação</label>
+                <input type="text" id="crm-obs" placeholder="Notas, demandas, contexto..." class="crm-input">
+              </div>
+              <button onclick="salvarLideranca()" id="crm-btn-salvar"
+                style="background:var(--azul2);color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fonte);transition:background 0.2s;"
+                onmouseover="this.style.background='var(--azul3)'" onmouseout="this.style.background='var(--azul2)'">
+                ➕ Cadastrar Liderança
+              </button>
+              <div id="crm-feedback" style="display:none;font-size:12px;text-align:center;padding:8px;border-radius:8px;font-weight:600;"></div>
+
+              <!-- Ranking -->
+              <div style="border-top:1px solid var(--borda);padding-top:14px;margin-top:4px;">
+                <div style="font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🏆 Ranking por Votos</div>
+                <div id="crm-ranking" style="display:flex;flex-direction:column;gap:6px;">
+                  <div style="font-size:12px;color:var(--cinza2);">Sem dados ainda.</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1260,7 +1370,7 @@ document.addEventListener('keydown', e => {
   if(e.key==='Enter' && document.getElementById('login-screen').style.display !== 'none') entrar();
 });
 
-// ── PAGE TITLES (votos) ──
+// ── PAGE TITLES ──
 PAGE_TITLES['votos'] = 'Registrar Votos';
 </script>
 
@@ -1472,6 +1582,212 @@ async function apagarVoto(docId, nome) {
   } catch(err) {
     mostrarFeedback('❌ Erro ao apagar: ' + err.message, false);
   }
+}
+
+// ── CRM LIDERANÇAS ────────────────────────────────────────────────────────────
+const REGIOES_MAP = {
+  "Salvador":"LESTE","Lauro de Freitas":"LESTE","Camaçari":"LESTE","Dias d'Ávila":"LESTE",
+  "Simões Filho":"LESTE","Candeias":"LESTE","Vera Cruz":"LESTE","Madre de Deus":"LESTE",
+  "Itaparica":"LESTE","São Francisco do Conde":"LESTE","Pojuca":"LESTE","Mata de São João":"LESTE",
+  "Feira de Santana":"CENTRO-LESTE","Santo Antônio de Jesus":"CENTRO-LESTE","Jacobina":"CENTRO-LESTE",
+  "Vitória da Conquista":"SUDOESTE","Jequié":"SUDOESTE","Brumado":"SUDOESTE","Itapetinga":"SUDOESTE","Poções":"SUDOESTE",
+  "Ilhéus":"SUL","Itabuna":"SUL","Porto Seguro":"SUL","Eunápolis":"SUL","Uruçuca":"SUL",
+  "Teixeira de Freitas":"EXTREMO-SUL","Alcobaça":"EXTREMO-SUL","Mucuri":"EXTREMO-SUL","Itamaraju":"EXTREMO-SUL",
+  "Juazeiro":"NORTE","Paulo Afonso":"NORTE","Euclides da Cunha":"NORTE","Senhor do Bonfim":"NORTE",
+  "Barreiras":"OESTE","Luís Eduardo Magalhães":"OESTE","Correntina":"OESTE","São Desidério":"OESTE",
+  "Alagoinhas":"NORDESTE","Ribeira do Pombal":"NORDESTE","Entre Rios":"NORDESTE",
+  "Irecê":"CENTRO-NORTE","Guanambi":"CENTRO-NORTE","Caetité":"CENTRO-NORTE","Seabra":"CENTRO-NORTE"
+};
+
+let _liderancasData = [];
+let _liderancasFiltradas = [];
+
+_db.collection('liderancas').orderBy('updated_at','desc').onSnapshot(snapshot => {
+  _liderancasData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+  _liderancasFiltradas = [..._liderancasData];
+  renderCRM();
+  atualizarStatsCRM();
+  atualizarFiltroMun();
+}, err => console.error('CRM Firestore error:', err));
+
+function atualizarStatsCRM() {
+  const total = _liderancasData.length;
+  const totalVotos = _liderancasData.reduce((s,l) => s+(l.votos_comprometidos||0), 0);
+  const confirmados = _liderancasData.filter(l => l.status==='Confirmado').length;
+
+  const munCount = {};
+  _liderancasData.forEach(l => { if(l.municipio) munCount[l.municipio] = (munCount[l.municipio]||0) + (l.votos_comprometidos||0); });
+  const topMun = Object.entries(munCount).sort((a,b)=>b[1]-a[1])[0];
+
+  const el = id => document.getElementById(id);
+  if(el('crm-total-lid'))   el('crm-total-lid').textContent   = total;
+  if(el('crm-total-votos')) el('crm-total-votos').textContent = totalVotos.toLocaleString('pt-BR');
+  if(el('crm-confirmados')) el('crm-confirmados').textContent = confirmados;
+  if(el('crm-top-mun'))     el('crm-top-mun').textContent     = topMun ? topMun[0].split(' ')[0] : '—';
+
+  // Ranking
+  const ranking = el('crm-ranking');
+  if(ranking) {
+    const top = [..._liderancasData].sort((a,b)=>(b.votos_comprometidos||0)-(a.votos_comprometidos||0)).slice(0,6);
+    if(top.length===0){ ranking.innerHTML='<div style="font-size:12px;color:var(--cinza2);">Sem dados ainda.</div>'; return; }
+    ranking.innerHTML = top.map((l,i) => `
+      <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--borda);">
+        <span style="font-size:11px;color:var(--cinza2);width:16px;">${i+1}</span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:12px;font-weight:700;color:var(--branco);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.nome||'—'}</div>
+          <div style="font-size:10px;color:var(--cinza2);">${l.municipio||''}${l.bairro?' · '+l.bairro:''}</div>
+        </div>
+        <span style="font-size:12px;font-weight:800;color:var(--verde2);font-family:var(--mono);">${(l.votos_comprometidos||0).toLocaleString('pt-BR')}</span>
+      </div>`).join('');
+  }
+}
+
+function atualizarFiltroMun() {
+  const sel = document.getElementById('crm-filtro-mun');
+  if(!sel) return;
+  const atual = sel.value;
+  const municipios = [...new Set(_liderancasData.map(l=>l.municipio).filter(Boolean))].sort();
+  sel.innerHTML = '<option value="">Todos os municípios</option>' + municipios.map(m=>`<option value="${m}"${m===atual?' selected':''}>${m}</option>`).join('');
+}
+
+function filtrarLiderancas() {
+  const mun    = document.getElementById('crm-filtro-mun')?.value    || '';
+  const status = document.getElementById('crm-filtro-status')?.value || '';
+  _liderancasFiltradas = _liderancasData.filter(l =>
+    (!mun    || l.municipio===mun) &&
+    (!status || l.status===status)
+  );
+  renderCRM();
+}
+
+function renderCRM() {
+  const tbody = document.getElementById('crm-tbody');
+  if(!tbody) return;
+  if(_liderancasFiltradas.length===0){
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--cinza2);padding:24px;font-size:13px;">Nenhuma liderança encontrada.</td></tr>';
+    return;
+  }
+  const statusColor = { 'Confirmado':'verde','Negociando':'azul','Prospecto':'amarelo' };
+  tbody.innerHTML = _liderancasFiltradas.map(l => `
+    <tr>
+      <td><span class="crm-avatar">${(l.nome||'?')[0].toUpperCase()}</span>${l.nome||'—'}</td>
+      <td>
+        <div style="font-weight:600;color:var(--branco);font-size:12px;">${l.municipio||'—'}</div>
+        ${l.bairro?`<div style="font-size:11px;color:var(--cinza2);">${l.bairro}</div>`:''}
+      </td>
+      <td>${l.segmento||'—'}</td>
+      <td style="font-weight:800;color:var(--verde2);font-family:var(--mono);">${(l.votos_comprometidos||0).toLocaleString('pt-BR')}</td>
+      <td><span class="badge ${statusColor[l.status]||'azul'}">${l.status||'—'}</span></td>
+      <td style="font-size:12px;color:var(--cinza);">${l.telefone||'—'}</td>
+      <td style="white-space:nowrap;">
+        <button onclick="editarLideranca('${l.id}')"
+          style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">✏️</button>
+        <button onclick="apagarLideranca('${l.id}','${(l.nome||'').replace(/'/g,"\\'")}')"
+          style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+
+function abrirFormLideranca() {
+  limparFormLideranca();
+  document.getElementById('crm-form-title').textContent = '➕ Nova Liderança';
+  document.getElementById('crm-btn-salvar').textContent = '➕ Cadastrar Liderança';
+  document.getElementById('crm-form-panel').scrollIntoView({behavior:'smooth'});
+}
+
+function limparFormLideranca() {
+  ['crm-edit-id','crm-nome','crm-telefone','crm-municipio','crm-bairro','crm-regiao','crm-obs'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('crm-segmento').value='';
+  document.getElementById('crm-status').value='Prospecto';
+  document.getElementById('crm-votos').value='';
+}
+
+function editarLideranca(id) {
+  const l = _liderancasData.find(x=>x.id===id);
+  if(!l) return;
+  document.getElementById('crm-edit-id').value   = id;
+  document.getElementById('crm-nome').value       = l.nome||'';
+  document.getElementById('crm-telefone').value   = l.telefone||'';
+  document.getElementById('crm-municipio').value  = l.municipio||'';
+  document.getElementById('crm-bairro').value     = l.bairro||'';
+  document.getElementById('crm-regiao').value     = l.regiao||'';
+  document.getElementById('crm-segmento').value   = l.segmento||'';
+  document.getElementById('crm-status').value     = l.status||'Prospecto';
+  document.getElementById('crm-votos').value      = l.votos_comprometidos||0;
+  document.getElementById('crm-obs').value        = l.obs||'';
+  document.getElementById('crm-form-title').textContent   = '✏️ Editar Liderança';
+  document.getElementById('crm-btn-salvar').textContent   = '💾 Salvar Alterações';
+  document.getElementById('crm-form-panel').scrollIntoView({behavior:'smooth'});
+}
+
+async function apagarLideranca(id, nome) {
+  if(!confirm(`Apagar a liderança "${nome}"? Esta ação não pode ser desfeita.`)) return;
+  try {
+    await _db.collection('liderancas').doc(id).delete();
+    mostrarFeedbackCRM(`🗑️ ${nome} removido.`, true);
+  } catch(e) { mostrarFeedbackCRM('❌ Erro: '+e.message, false); }
+}
+
+async function salvarLideranca() {
+  const nome    = document.getElementById('crm-nome').value.trim();
+  const mun     = document.getElementById('crm-municipio').value.trim();
+  const votos   = parseInt(document.getElementById('crm-votos').value)||0;
+  if(!nome){ mostrarFeedbackCRM('Informe o nome da liderança.', false); return; }
+  if(!mun){  mostrarFeedbackCRM('Informe o município.', false); return; }
+
+  const btn = document.getElementById('crm-btn-salvar');
+  btn.disabled = true; btn.textContent = '⏳ Salvando...';
+
+  const editId = document.getElementById('crm-edit-id').value;
+  const regiao = REGIOES_MAP[mun] || document.getElementById('crm-regiao').value || '';
+  const payload = {
+    nome,
+    telefone:            document.getElementById('crm-telefone').value.trim(),
+    municipio:           mun,
+    bairro:              document.getElementById('crm-bairro').value.trim(),
+    regiao,
+    segmento:            document.getElementById('crm-segmento').value,
+    status:              document.getElementById('crm-status').value,
+    votos_comprometidos: votos,
+    obs:                 document.getElementById('crm-obs').value.trim(),
+    updated_at:          firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try {
+    if(editId) {
+      await _db.collection('liderancas').doc(editId).update(payload);
+      mostrarFeedbackCRM(`✅ ${nome} atualizado!`, true);
+    } else {
+      payload.created_at = firebase.firestore.FieldValue.serverTimestamp();
+      await _db.collection('liderancas').add(payload);
+      mostrarFeedbackCRM(`✅ ${nome} cadastrado!`, true);
+    }
+    limparFormLideranca();
+    document.getElementById('crm-form-title').textContent = '➕ Nova Liderança';
+  } catch(e) { mostrarFeedbackCRM('❌ Erro: '+e.message, false); }
+
+  btn.disabled = false;
+  btn.textContent = editId ? '💾 Salvar Alterações' : '➕ Cadastrar Liderança';
+  document.getElementById('crm-edit-id').value = '';
+  btn.textContent = '➕ Cadastrar Liderança';
+}
+
+function atualizarRegiaoLid() {
+  const mun = document.getElementById('crm-municipio').value.trim();
+  const reg = REGIOES_MAP[mun] || '';
+  document.getElementById('crm-regiao').value = reg;
+}
+
+function mostrarFeedbackCRM(msg, ok) {
+  const el = document.getElementById('crm-feedback');
+  if(!el) return;
+  el.textContent=msg; el.style.display='block';
+  el.style.background = ok?'rgba(16,185,129,0.15)':'rgba(239,68,68,0.15)';
+  el.style.color       = ok?'#10B981':'#EF4444';
+  el.style.border      = `1px solid ${ok?'rgba(16,185,129,0.3)':'rgba(239,68,68,0.3)'}`;
+  setTimeout(()=>{ el.style.display='none'; }, 4000);
 }
 
 function mostrarFeedback(msg, ok) {
