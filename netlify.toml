@@ -1,0 +1,7 @@
+[build]
+  publish = "."
+
+[[redirects]]
+  from = "/"
+  to = "/plataforma_eleitoral_v2.html"
+  status = 200
