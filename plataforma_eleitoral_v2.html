@@ -1328,16 +1328,23 @@ _db.collection('municipios').onSnapshot(snapshot => {
     } else {
       hist.innerHTML = docs.map(d => {
         const data = d.data();
+        const docId = d.id;
         const ts = data.updated_at?.toDate?.();
         const timeStr = ts ? ts.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
-        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--bg3);border-radius:8px;font-size:12px;">
-          <div>
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--bg3);border-radius:8px;font-size:12px;gap:8px;">
+          <div style="flex:1;min-width:0;">
             <span style="font-weight:700;color:var(--branco)">${data.nome}</span>
-            ${data.obs ? `<span style="color:var(--cinza2);margin-left:6px;font-size:11px;">${data.obs}</span>` : ''}
+            ${data.obs ? `<div style="color:var(--cinza2);font-size:11px;margin-top:2px;">${data.obs}</div>` : ''}
+            <div style="font-size:10px;color:var(--cinza2);margin-top:2px;">${timeStr}</div>
           </div>
-          <div style="text-align:right">
-            <div style="font-weight:800;color:var(--verde2);font-family:var(--mono)">${(data.votos_atual||0).toLocaleString('pt-BR')}</div>
-            <div style="font-size:10px;color:var(--cinza2)">${timeStr}</div>
+          <div style="font-weight:800;color:var(--verde2);font-family:var(--mono);white-space:nowrap;">${(data.votos_atual||0).toLocaleString('pt-BR')}</div>
+          <div style="display:flex;gap:4px;flex-shrink:0;">
+            <button onclick="editarVoto('${docId}','${data.nome.replace(/'/g,"\\'")}',${data.votos_atual||0},'${(data.obs||'').replace(/'/g,"\\'")}')"
+              style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;font-family:var(--fonte);font-weight:600;"
+              title="Editar">✏️</button>
+            <button onclick="apagarVoto('${docId}','${data.nome.replace(/'/g,"\\'")}')"
+              style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;font-family:var(--fonte);font-weight:600;"
+              title="Apagar">🗑️</button>
           </div>
         </div>`;
       }).join('');
@@ -1362,7 +1369,8 @@ async function registrarVotos() {
   btn.textContent = '⏳ Salvando...';
 
   try {
-    const docId = nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'-');
+    const editDocId = btn._editDocId;
+    const docId = editDocId || nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'-');
     await _db.collection('municipios').doc(docId).set({
       nome:       nome,
       votos_atual: qtd,
@@ -1370,16 +1378,40 @@ async function registrarVotos() {
       updated_at: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
 
-    mostrarFeedback(`✅ ${nome}: ${qtd.toLocaleString('pt-BR')} votos registrados!`, true);
+    const wasEdit = !!btn._editDocId;
+    mostrarFeedback(`✅ ${nome}: ${qtd.toLocaleString('pt-BR')} votos ${wasEdit?'atualizados':'registrados'}!`, true);
     document.getElementById('votos-municipio').value = '';
     document.getElementById('votos-quantidade').value = '';
     document.getElementById('votos-obs').value = '';
+    delete btn._editDocId;
+    btn.textContent = '📍 Registrar no Mapa';
   } catch(err) {
     mostrarFeedback('❌ Erro ao salvar: ' + err.message, false);
   }
 
   btn.disabled = false;
   btn.textContent = '📍 Registrar no Mapa';
+}
+
+function editarVoto(docId, nome, votos, obs) {
+  document.getElementById('votos-municipio').value = nome;
+  document.getElementById('votos-quantidade').value = votos;
+  document.getElementById('votos-obs').value = obs;
+  // Guarda o docId para sobrescrever no save
+  document.getElementById('btn-registrar')._editDocId = docId;
+  document.getElementById('btn-registrar').textContent = '✏️ Atualizar Registro';
+  document.getElementById('votos-municipio').focus();
+  mostrarFeedback(`Editando: ${nome}. Ajuste e clique em Atualizar.`, true);
+}
+
+async function apagarVoto(docId, nome) {
+  if(!confirm(`Apagar os votos de "${nome}"? Esta ação não pode ser desfeita.`)) return;
+  try {
+    await _db.collection('municipios').doc(docId).delete();
+    mostrarFeedback(`🗑️ ${nome} removido com sucesso.`, true);
+  } catch(err) {
+    mostrarFeedback('❌ Erro ao apagar: ' + err.message, false);
+  }
 }
 
 function mostrarFeedback(msg, ok) {
