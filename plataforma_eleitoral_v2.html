@@ -340,6 +340,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
         <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="ni-icon">📊</span>Dashboard</div>
         <div class="nav-item" onclick="showPage('mapa',this)"><span class="ni-icon">🗺️</span>Mapa Eleitoral</div>
         <div class="nav-item" onclick="showPage('metas',this)"><span class="ni-icon">🎯</span>Metas 2026</div>
+        <div class="nav-item" onclick="showPage('votos',this)"><span class="ni-icon">📍</span>Registrar Votos</div>
       </div>
 
       <div class="sidebar-section">
@@ -475,6 +476,94 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
         <div class="panel">
           <div class="panel-body" style="padding:0;">
             <iframe class="mapa-frame" src="/mapa.html" title="Mapa Eleitoral"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ REGISTRAR VOTOS ══ -->
+      <div class="page" id="page-votos">
+        <div class="page-header">
+          <div class="page-title">Registrar Votos por Município</div>
+          <div class="page-sub">Atualize os votos conquistados — o mapa reflete em tempo real</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
+
+          <!-- Formulário -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">📍 Lançar Votos</div>
+            </div>
+            <div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
+              <div>
+                <label style="font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Município</label>
+                <input type="text" id="votos-municipio" placeholder="Digite o nome do município..." list="municipios-list"
+                  style="width:100%;background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:11px 14px;font-size:13px;color:var(--branco);font-family:var(--fonte);outline:none;transition:border-color 0.2s;"
+                  onfocus="this.style.borderColor='var(--azul2)'" onblur="this.style.borderColor='var(--borda)'">
+                <datalist id="municipios-list"></datalist>
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Votos Conquistados</label>
+                <input type="number" id="votos-quantidade" placeholder="Ex: 1500" min="0"
+                  style="width:100%;background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:11px 14px;font-size:13px;color:var(--branco);font-family:var(--fonte);outline:none;transition:border-color 0.2s;"
+                  onfocus="this.style.borderColor='var(--azul2)'" onblur="this.style.borderColor='var(--borda)'">
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Observação (opcional)</label>
+                <input type="text" id="votos-obs" placeholder="Ex: Pesquisa porta a porta, evento..."
+                  style="width:100%;background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:11px 14px;font-size:13px;color:var(--branco);font-family:var(--fonte);outline:none;transition:border-color 0.2s;"
+                  onfocus="this.style.borderColor='var(--azul2)'" onblur="this.style.borderColor='var(--borda)'">
+              </div>
+              <button onclick="registrarVotos()"
+                style="background:var(--azul2);color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fonte);transition:all 0.2s;"
+                onmouseover="this.style.background='var(--azul3)'" onmouseout="this.style.background='var(--azul2)'"
+                id="btn-registrar">
+                📍 Registrar no Mapa
+              </button>
+              <div id="votos-feedback" style="display:none;font-size:13px;text-align:center;padding:10px;border-radius:8px;font-weight:600;"></div>
+            </div>
+          </div>
+
+          <!-- Painel de status Firebase -->
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">⚡ Status do Banco de Dados</div>
+              </div>
+              <div class="panel-body" style="display:flex;flex-direction:column;gap:12px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:13px;color:var(--cinza);">Conexão Firebase</span>
+                  <span id="fb-status-badge" style="font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:rgba(100,116,139,0.2);color:var(--cinza2);">Conectando...</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:13px;color:var(--cinza);">Municípios registrados</span>
+                  <span id="fb-count" style="font-size:16px;font-weight:800;color:var(--azul3);font-family:var(--mono);">0</span>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                  <span style="font-size:13px;color:var(--cinza);">Total de votos atuais</span>
+                  <span id="fb-total" style="font-size:16px;font-weight:800;color:var(--verde2);font-family:var(--mono);">0</span>
+                </div>
+                <div style="background:var(--bg3);border-radius:8px;padding:10px 12px;">
+                  <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--cinza2);margin-bottom:6px;">
+                    <span>Progresso da Meta 2026</span>
+                    <span id="fb-pct" style="color:var(--verde2);font-weight:700;">0%</span>
+                  </div>
+                  <div style="background:var(--bg4);border-radius:4px;height:8px;overflow:hidden;">
+                    <div id="fb-progress-bar" style="height:8px;border-radius:4px;background:linear-gradient(to right,#059669,#10B981);width:0%;transition:width 0.8s ease;"></div>
+                  </div>
+                  <div style="font-size:10px;color:var(--cinza2);margin-top:5px;">Meta: 120.000 votos</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Últimos registros -->
+            <div class="panel">
+              <div class="panel-header">
+                <div class="panel-title">🕐 Últimos Registros</div>
+              </div>
+              <div class="panel-body" id="votos-historico" style="display:flex;flex-direction:column;gap:8px;">
+                <div style="font-size:12px;color:var(--cinza2);">Nenhum registro ainda.</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1110,6 +1199,198 @@ function toggleSenha() {
 document.addEventListener('keydown', e => {
   if(e.key==='Enter' && document.getElementById('login-screen').style.display !== 'none') entrar();
 });
+
+// ── PAGE TITLES (votos) ──
+PAGE_TITLES['votos'] = 'Registrar Votos';
+</script>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+const _fbConfig = {
+  apiKey: "AIzaSyDmJFXVO3BQFU8NmbYPEkOTvhJrrgcrPVU",
+  authDomain: "pie--campanha.firebaseapp.com",
+  projectId: "pie--campanha",
+  storageBucket: "pie--campanha.firebasestorage.app",
+  messagingSenderId: "385341562231",
+  appId: "1:385341562231:web:64c50e760acc1fa6179572"
+};
+const _fbApp = firebase.initializeApp(_fbConfig, 'plataforma');
+const _db = firebase.firestore(_fbApp);
+
+// Lista de municípios para autocomplete
+const MUNICIPIOS_BA = [
+  "Salvador","Feira de Santana","Vitória da Conquista","Ilhéus","Jequié","Juazeiro",
+  "Camaçari","Luís Eduardo Magalhães","Lauro de Freitas","Porto Seguro","Itabuna",
+  "Teixeira de Freitas","Alagoinhas","Poções","Santo Antônio de Jesus","Eunápolis",
+  "Itapetinga","Ubaitaba","Paulo Afonso","Barreiras","Simões Filho","Jaguaquara",
+  "Guanambi","Ibicaraí","Itororó","Caetité","Ituberá","Mata de São João","Brumado",
+  "Iguaí","Ipiaú","Santana","Euclides da Cunha","Vera Cruz","Santo Amaro","Valença",
+  "Aurelino Leal","Conceição do Jacuípe","Sento Sé","Jacobina","Uruçuca","Camacan",
+  "Casa Nova","Itaberaba","Senhor do Bonfim","Cícero Dantas","Capim Grosso","Canavieiras",
+  "Barra","Bom Jesus da Lapa","Barra do Choça","Wagner","Gandu","Dias d'Ávila","Ipirá",
+  "Planalto","Nova Canaã","Itamaraju","Itacaré","Ibirataia","Catu","Itarantim",
+  "São Gonçalo dos Campos","Riacho de Santana","Cotegipe","Livramento de Nossa Senhora",
+  "Jeremoabo","Licínio de Almeida","Pindaí","Riachão do Jacuípe","Aratuípe","Itambé",
+  "Itiruçu","Ibirapitanga","Itajuípe","Santa Cruz Cabrália","Ibicuí","Paratinga",
+  "Mucuri","Santa Luzia","Barra da Estiva","Belo Campo","Tanhaçu","Itabela","Piatã",
+  "Umburanas","Mutuípe","Manoel Vitorino","Carinhanha","Conceição do Coité","Irecê",
+  "Pojuca","Sobradinho","Candeias","Presidente Jânio Quadros","Itagibá","Tucano",
+  "Cairu","Condeúba","Itapé","Candiba","Jitaúna","Nova Fátima","Ribeira do Pombal",
+  "Seabra","Formosa do Rio Preto","Laje","Nova Viçosa","Una","Santa Maria da Vitória",
+  "Jacaraci","Maragogipe","Santo Estêvão","Cristópolis","Caculé","Correntina",
+  "Medeiros Neto","Prado","Ubaíra","Anagé","Campo Formoso","Rio Real","Ruy Barbosa",
+  "Serrinha","Boninal","Itanhém","Itapicuru","Entre Rios","Pintadas","Xique-Xique",
+  "Guaratinga","Remanso","Crisópolis","Cachoeira","Castro Alves","Curaçá","Caravelas",
+  "Ipupiara","Itatim","Pilão Arcado","Cruz das Almas","Ubatã","Miguel Calmon",
+  "Sátiro Dias","Tremedal","Cipó","Ituaçu","Camamu","Macarani","Malhada",
+  "São Desidério","Ibicoara","Maracás","Potiraguá","Rio do Antônio","Buerarema",
+  "Coaraci","Itapitanga","Santaluz","Belmonte","Amargosa","Maiquinique","Maraú",
+  "Nordestina","Palmas de Monte Alto","Presidente Tancredo Neves","Aracatu",
+  "Cândido Sales","Irará","Nazaré","Serra Dourada","Milagres","Morro do Chapéu",
+  "Oliveira dos Brejinhos","Antas","Barra do Rocha","Boa Nova","Palmeiras","Paramirim",
+  "São Sebastião do Passé","Alcobaça","Cocos","Serra do Ramalho","Wanderley",
+  "Cabaceiras do Paraguaçu","Mairi","Rafael Jambeiro","Uauá","Valente",
+  "Amélia Rodrigues","Floresta Azul","Sapeaçu","São Felipe","Taperoá","Boa Vista do Tupim",
+  "Conceição da Feira","Conde","Coronel João Sá","Esplanada","Ibotirama","Inhambupe",
+  "Lençóis","Olindina","Saubara","Coração de Maria","Coribe","Iramaia","Macaúbas",
+  "Rio de Contas","Cafarnaum","Dário Meira","Encruzilhada","Jaguaripe",
+  "São Francisco do Conde","Itiúba","João Dourado","Paripiranga","Salinas da Margarida",
+  "Angical","Brejões","Firmino Alves","Glória","Lapão","Mortugaba","Novo Horizonte",
+  "Monte Santo","Nilo Peçanha","Andorinha","Governador Mangabeira","Maetinga",
+  "Muniz Ferreira","Nova Redenção","Sítio do Mato","Tapiramutá","Feira da Mata",
+  "Gentio do Ouro","Madre de Deus","Malhada de Pedras","Mirante","Pau Brasil",
+  "América Dourada","Araci","Caatiba","Cansanção","Contendas do Sincorá","Filadélfia",
+  "Itaparica","Iuiu","Jussari","Mucugê","Quijingue","Varzedo","Baianópolis","Fátima",
+  "Jaguarari","Jiquiriçá","Uibaí","Caém","Cordeiros","Igaporã","Mascote","Morpará",
+  "Piritiba","Santa Cruz da Vitória","São José da Vitória","Souto Soares","Jucuruçu",
+  "Jussiape","Lagoa Real","Mundo Novo","Nova Ibiá","Nova Soure","Santa Bárbara",
+  "Serra Preta","Baixa Grande","Gavião","Ipecaetá","Pindobaçu","Riachão das Neves",
+  "São Miguel das Matas","Teolândia","Utinga","Andaraí","Barro Alto","Elísio Medrado",
+  "Iaçu","Muritiba","Pedro Alexandre","Terra Nova","Buritirama","Campo Alegre de Lourdes",
+  "Itapebi","Nova Itarana","Presidente Dutra","Santa Rita de Cássia","Aporá","Apuarema",
+  "Barrocas","Bonito","Canarana","Caturama","Central","Igrapiúna","Irajuba","Itagi",
+  "Mirangaba","Ourolândia","Planaltino","Tabocas do Brejo Velho","Barra do Mendes",
+  "Heliópolis","Ibititá","Iraquara","Itagimirim","Queimadas","Ribeira do Amparo",
+  "Wenceslau Guimarães","Adustina","Almadina","Anguera","Dom Basílio","Dom Macedo Costa",
+  "Jussara","Várzea Nova","Aiquara","Aramari","Gongogi","Ibipeba","Itaquara",
+  "Lafaiete Coutinho","Santa Brígida","São Félix","São Gabriel","São José do Jacuípe",
+  "Sítio do Quinto","Abaíra","Banzaê","Boquira","Caetanos","Lajedinho","Matina",
+  "Quixabeira","Rio do Pires","Santa Inês","Saúde","Tanque Novo","Urandi","Vereda",
+  "Érico Cardoso","Antônio Cardoso","Botuporã","Cardeal da Silva","Itaju do Colônia",
+  "Itamari","Jaborandi","Lajedão","Ponto Novo","Ribeirão do Largo","Abaré","Araçás",
+  "Canápolis","Canudos","Itaguaçu da Bahia","Itanagra","Mulungu do Morro","Piripá",
+  "Retirolândia","Serrolândia","Água Fria","Candeal","Ichu","Santa Terezinha",
+  "Teodoro Sampaio","Teofilândia","Barro Preto","Jandaíra","Novo Triunfo","Ouriçangas",
+  "Pedrão","Piraí do Norte","Santanópolis","Sebastião Laranjeiras","Chorrochó",
+  "Cravolândia","Macajuba","Macururé","Várzea do Poço","Brejolândia","Ibiquera",
+  "Rodelas","São Domingos","Tanquinho","Biritinga","Guajeru","Caldeirão Grande"
+];
+
+// Preenche datalist de autocomplete
+(function(){
+  const dl = document.getElementById('municipios-list');
+  if(dl) MUNICIPIOS_BA.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m;
+    dl.appendChild(opt);
+  });
+})();
+
+// Listener em tempo real para status do painel
+_db.collection('municipios').onSnapshot(snapshot => {
+  const count = snapshot.size;
+  const total = snapshot.docs.reduce((s,d) => s + (d.data().votos_atual||0), 0);
+  const pct = Math.min(100,(total/120000)*100).toFixed(1);
+
+  const el = id => document.getElementById(id);
+  if(el('fb-count'))   el('fb-count').textContent   = count.toLocaleString('pt-BR');
+  if(el('fb-total'))   el('fb-total').textContent   = total.toLocaleString('pt-BR');
+  if(el('fb-pct'))     el('fb-pct').textContent     = pct + '%';
+  if(el('fb-progress-bar')) el('fb-progress-bar').style.width = pct + '%';
+
+  const badge = el('fb-status-badge');
+  if(badge){
+    badge.textContent = 'Conectado';
+    badge.style.background = 'rgba(16,185,129,0.15)';
+    badge.style.color = '#10B981';
+  }
+
+  // Histórico (últimos 8 documentos por updated_at)
+  const hist = el('votos-historico');
+  if(hist){
+    const docs = snapshot.docs
+      .filter(d => d.data().updated_at)
+      .sort((a,b) => (b.data().updated_at?.seconds||0) - (a.data().updated_at?.seconds||0))
+      .slice(0,8);
+    if(docs.length === 0){
+      hist.innerHTML = '<div style="font-size:12px;color:var(--cinza2);">Nenhum registro ainda.</div>';
+    } else {
+      hist.innerHTML = docs.map(d => {
+        const data = d.data();
+        const ts = data.updated_at?.toDate?.();
+        const timeStr = ts ? ts.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--bg3);border-radius:8px;font-size:12px;">
+          <div>
+            <span style="font-weight:700;color:var(--branco)">${data.nome}</span>
+            ${data.obs ? `<span style="color:var(--cinza2);margin-left:6px;font-size:11px;">${data.obs}</span>` : ''}
+          </div>
+          <div style="text-align:right">
+            <div style="font-weight:800;color:var(--verde2);font-family:var(--mono)">${(data.votos_atual||0).toLocaleString('pt-BR')}</div>
+            <div style="font-size:10px;color:var(--cinza2)">${timeStr}</div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+}, err => {
+  const badge = document.getElementById('fb-status-badge');
+  if(badge){ badge.textContent='Erro de conexão'; badge.style.color='var(--vermelho2)'; }
+});
+
+async function registrarVotos() {
+  const nome   = document.getElementById('votos-municipio').value.trim();
+  const qtd    = parseInt(document.getElementById('votos-quantidade').value);
+  const obs    = document.getElementById('votos-obs').value.trim();
+  const btn    = document.getElementById('btn-registrar');
+  const fb     = document.getElementById('votos-feedback');
+
+  if(!nome){ mostrarFeedback('Informe o nome do município.', false); return; }
+  if(isNaN(qtd)||qtd<0){ mostrarFeedback('Informe uma quantidade válida de votos.', false); return; }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Salvando...';
+
+  try {
+    const docId = nome.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'-');
+    await _db.collection('municipios').doc(docId).set({
+      nome:       nome,
+      votos_atual: qtd,
+      obs:        obs || '',
+      updated_at: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    mostrarFeedback(`✅ ${nome}: ${qtd.toLocaleString('pt-BR')} votos registrados!`, true);
+    document.getElementById('votos-municipio').value = '';
+    document.getElementById('votos-quantidade').value = '';
+    document.getElementById('votos-obs').value = '';
+  } catch(err) {
+    mostrarFeedback('❌ Erro ao salvar: ' + err.message, false);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '📍 Registrar no Mapa';
+}
+
+function mostrarFeedback(msg, ok) {
+  const el = document.getElementById('votos-feedback');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = ok ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)';
+  el.style.color = ok ? '#10B981' : '#EF4444';
+  el.style.border = `1px solid ${ok ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`;
+  setTimeout(() => { el.style.display='none'; }, 4000);
+}
 </script>
 </body>
 </html>
