@@ -8,7 +8,7 @@
   :root {
     --bg:#080C14;--bg2:#0E1420;--bg3:#141B2D;--bg4:#1A2236;
     --azul:#2563EB;--azul2:#3B82F6;--azul-glow:rgba(37,99,235,0.15);
-    --verde:#10B981;--vermelho:#EF4444;
+    --verde:#10B981;--vermelho:#EF4444;--amarelo:#F59E0B;--roxo:#7C3AED;
     --branco:#F8FAFC;--cinza:#94A3B8;--cinza2:#64748B;
     --borda:rgba(255,255,255,0.07);
     --fonte:'Segoe UI',Arial,sans-serif;
@@ -19,19 +19,43 @@
   #header {
     background:var(--bg2);
     border-bottom:2px solid var(--azul);
-    padding:14px 28px;
+    padding:12px 24px;
     display:flex; align-items:center; justify-content:space-between;
     position:sticky; top:0; z-index:100;
     box-shadow:0 2px 20px rgba(0,0,0,0.4);
+    gap:20px; flex-wrap:wrap;
   }
-  #header h1 { font-size:18px; font-weight:800; color:var(--branco); }
-  #header p { font-size:12px; color:var(--cinza); margin-top:2px; }
-  .header-stats { display:flex; gap:28px; }
+  #header h1 { font-size:17px; font-weight:800; color:var(--branco); }
+  #header p { font-size:11px; color:var(--cinza); margin-top:2px; }
+  .header-stats { display:flex; gap:22px; align-items:center; }
   .hstat { text-align:center; }
-  .hstat-val { font-size:20px; font-weight:800; color:var(--azul2); font-family:monospace; }
-  .hstat-lbl { font-size:10px; color:var(--cinza2); text-transform:uppercase; letter-spacing:0.5px; }
+  .hstat-val { font-size:18px; font-weight:800; color:var(--azul2); font-family:monospace; }
+  .hstat-val.green { color:var(--verde); }
+  .hstat-lbl { font-size:10px; color:var(--cinza2); text-transform:uppercase; letter-spacing:0.5px; margin-top:1px; }
 
-  #layout { display:flex; height:calc(100vh - 66px); overflow:hidden; }
+  .header-progress { display:flex; flex-direction:column; gap:3px; min-width:180px; }
+  .hp-row { display:flex; justify-content:space-between; font-size:10px; color:var(--cinza2); }
+  .hp-row strong { color:var(--verde); font-family:monospace; }
+  .hp-bar-bg { height:6px; background:var(--bg3); border-radius:3px; overflow:hidden; border:1px solid var(--borda); }
+  .hp-bar-fill { height:6px; background:linear-gradient(to right,#059669,#10B981); border-radius:3px; width:0%; transition:width 0.8s ease; }
+
+  .live-badge {
+    display:flex; align-items:center; gap:6px;
+    background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25);
+    border-radius:20px; padding:5px 12px; font-size:11px; color:#10B981; font-weight:600;
+  }
+  .live-badge.off { color:var(--cinza2); background:rgba(100,116,139,0.08); border-color:rgba(100,116,139,0.25); }
+  .live-dot {
+    width:7px; height:7px; border-radius:50%; background:#10B981;
+    animation:pulse-dot 1.5s ease-in-out infinite;
+  }
+  .live-dot.off { background:var(--cinza2); animation:none; }
+  @keyframes pulse-dot {
+    0%,100% { box-shadow:0 0 0 0 rgba(16,185,129,0.6); }
+    50% { box-shadow:0 0 0 5px rgba(16,185,129,0); }
+  }
+
+  #layout { display:flex; height:calc(100vh - 68px); overflow:hidden; }
 
   #map-area {
     flex:1; padding:8px 12px;
@@ -47,16 +71,12 @@
   #map-container svg { width:100%; height:100%; }
 
   #sidebar {
-    width:290px;
-    border-left:1px solid var(--borda);
-    padding:16px;
-    background:var(--bg2);
-    overflow-y:auto;
+    width:290px; border-left:1px solid var(--borda);
+    padding:16px; background:var(--bg2); overflow-y:auto;
   }
   #sidebar::-webkit-scrollbar { width:4px; }
   #sidebar::-webkit-scrollbar-track { background:var(--bg3); }
   #sidebar::-webkit-scrollbar-thumb { background:var(--bg4); border-radius:2px; }
-
   #sidebar h3 {
     font-size:10px; text-transform:uppercase; letter-spacing:1.5px;
     color:var(--cinza2); margin-bottom:10px; margin-top:18px; font-weight:700;
@@ -65,20 +85,17 @@
 
   .top-item {
     display:flex; align-items:center; gap:8px;
-    padding:6px 0; border-bottom:1px solid var(--borda); font-size:12px;
+    padding:5px 0; border-bottom:1px solid var(--borda); font-size:12px;
   }
   .top-rank { color:var(--cinza2); width:16px; font-size:11px; }
   .top-name { flex:1; color:var(--branco); }
   .top-votes { font-weight:700; color:var(--azul2); font-family:monospace; }
 
   path.mun {
-    stroke:rgba(255,255,255,0.1);
-    stroke-width:0.4;
-    cursor:pointer;
-    transition:filter 0.15s;
+    stroke:rgba(255,255,255,0.1); stroke-width:0.4;
+    cursor:pointer; transition:filter 0.15s;
   }
   path.mun:hover { filter:brightness(1.3); stroke-width:1.2; stroke:#fff; }
-
   .mun-name { font-size:7px; font-weight:600; fill:rgba(255,255,255,0.7); }
   .mun-votes { font-size:6.5px; font-weight:700; fill:#93C5FD; }
 
@@ -86,10 +103,8 @@
     position:fixed; background:var(--bg2);
     border:1.5px solid var(--azul);
     border-radius:10px; padding:10px 14px;
-    pointer-events:none; opacity:0;
-    transition:opacity 0.12s; z-index:1000;
-    box-shadow:0 4px 24px rgba(0,0,0,0.5);
-    min-width:180px;
+    pointer-events:none; opacity:0; transition:opacity 0.12s;
+    z-index:1000; box-shadow:0 4px 24px rgba(0,0,0,0.5); min-width:190px;
   }
   #tooltip.show { opacity:1; }
   .tt-region { font-size:10px; text-transform:uppercase; letter-spacing:0.8px; color:var(--cinza2); margin-bottom:4px; }
@@ -103,18 +118,15 @@
   }
   .spinner {
     width:40px; height:40px;
-    border:3px solid rgba(37,99,235,0.2);
-    border-top-color:var(--azul);
+    border:3px solid rgba(37,99,235,0.2); border-top-color:var(--azul);
     border-radius:50%; animation:spin 0.8s linear infinite;
   }
   @keyframes spin { to { transform:rotate(360deg); } }
 
   #search-input {
-    width:100%; background:var(--bg3);
-    border:1px solid var(--borda); border-radius:8px;
-    padding:8px 10px; font-size:13px; color:var(--branco);
-    font-family:var(--fonte); outline:none; margin-bottom:10px;
-    transition:border-color 0.2s;
+    width:100%; background:var(--bg3); border:1px solid var(--borda);
+    border-radius:8px; padding:8px 10px; font-size:13px; color:var(--branco);
+    font-family:var(--fonte); outline:none; margin-bottom:10px; transition:border-color 0.2s;
   }
   #search-input:focus { border-color:var(--azul); }
   #search-input::placeholder { color:var(--cinza2); }
@@ -129,11 +141,13 @@
   .meta-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
   .meta-dot { width:12px; height:12px; border-radius:3px; flex-shrink:0; border:1px solid rgba(255,255,255,0.1); }
   .meta-name { font-size:12px; font-weight:600; color:var(--branco); flex:1; }
-  .meta-pct { font-size:11px; color:var(--azul2); font-weight:700; }
+  .meta-pct { font-size:11px; color:var(--verde); font-weight:700; }
   .meta-bar-bg { background:var(--bg4); border-radius:4px; height:5px; margin-bottom:5px; }
-  .meta-bar-fill { height:5px; border-radius:4px; background:var(--azul); }
+  .meta-bar-fill { height:5px; border-radius:4px; background:var(--verde); transition:width 0.5s ease; }
+  .meta-bar-fill.baseline { background:var(--azul); }
   .meta-numbers { display:flex; justify-content:space-between; font-size:10px; color:var(--cinza2); }
   .meta-numbers span { color:var(--cinza); font-weight:600; }
+  .meta-falta { font-size:10px; color:#EF4444; margin-top:3px; font-weight:600; }
 
   .meta-summary {
     background:var(--bg3); border-radius:8px;
@@ -145,17 +159,18 @@
   .ms-val { font-size:16px; font-weight:800; color:var(--azul2); font-family:monospace; }
   .ms-val.green { color:var(--verde); }
 
-  .layer-switcher { display:flex; gap:6px; margin-bottom:6px; flex-wrap:wrap; }
+  .layer-switcher { display:flex; gap:5px; margin-bottom:6px; flex-wrap:wrap; }
   .layer-btn {
     background:var(--bg3); border:1.5px solid var(--borda);
-    border-radius:20px; padding:5px 12px;
-    font-size:11px; font-weight:700; cursor:pointer;
-    color:var(--cinza); transition:all 0.15s; font-family:var(--fonte);
+    border-radius:20px; padding:5px 11px; font-size:11px; font-weight:700;
+    cursor:pointer; color:var(--cinza); transition:all 0.15s; font-family:var(--fonte);
   }
   .layer-btn:hover { border-color:var(--azul); color:var(--azul2); }
-  .layer-btn.active { background:var(--azul); border-color:var(--azul); color:#fff; }
-  .layer-btn.active.green { background:#059669; border-color:#059669; }
-  .layer-btn.active.red { background:#DC2626; border-color:#DC2626; }
+  .layer-btn.active       { background:var(--azul);   border-color:var(--azul);   color:#fff; }
+  .layer-btn.active.green { background:#059669;        border-color:#059669;       color:#fff; }
+  .layer-btn.active.red   { background:#DC2626;        border-color:#DC2626;       color:#fff; }
+  .layer-btn.active.yellow{ background:#B45309;        border-color:#B45309;       color:#fff; }
+  .layer-btn.active.purple{ background:#6D28D9;        border-color:#6D28D9;       color:#fff; }
 
   .color-scale {
     display:flex; align-items:center; gap:6px;
@@ -165,28 +180,21 @@
 
   .zoom-btn {
     background:var(--bg3); border:1px solid var(--borda);
-    border-radius:6px; padding:5px 10px;
-    font-size:13px; cursor:pointer; color:var(--cinza);
-    transition:all 0.15s; font-family:var(--fonte);
+    border-radius:6px; padding:5px 10px; font-size:13px;
+    cursor:pointer; color:var(--cinza); transition:all 0.15s; font-family:var(--fonte);
   }
   .zoom-btn:hover { border-color:var(--azul); color:var(--azul2); }
 
-  /* Filtro de votos */
   .filter-wrap { margin-bottom:4px; }
   .filter-label { display:flex; justify-content:space-between; margin-bottom:6px; font-size:12px; }
   .filter-label span:first-child { color:var(--cinza); }
   .filter-label span:last-child { color:var(--azul2); font-weight:700; font-family:monospace; }
-  input[type=range] {
-    width:100%; accent-color:var(--azul); cursor:pointer;
-    background:transparent;
-  }
+  input[type=range] { width:100%; accent-color:var(--azul); cursor:pointer; background:transparent; }
 
-  /* Painel de detalhes ao clicar */
   #detail-panel {
-    display:none; position:fixed;
-    bottom:20px; left:20px;
+    display:none; position:fixed; bottom:20px; left:20px;
     background:var(--bg2); border:1px solid rgba(37,99,235,0.5);
-    border-radius:16px; padding:20px; width:300px;
+    border-radius:16px; padding:20px; width:320px;
     z-index:500; box-shadow:0 12px 48px rgba(0,0,0,0.6);
     animation:slideUp 0.2s ease;
   }
@@ -199,28 +207,48 @@
   }
   #detail-close:hover { color:var(--vermelho); }
   .detail-stat {
-    background:var(--bg3); border-radius:8px; padding:10px 12px;
-    border:1px solid var(--borda);
+    background:var(--bg3); border-radius:8px; padding:10px 12px; border:1px solid var(--borda);
   }
   .detail-stat-lbl { font-size:10px; color:var(--cinza2); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
   .detail-stat-val { font-size:22px; font-weight:800; font-family:monospace; line-height:1; }
   .detail-stat-sub { font-size:10px; color:var(--cinza2); margin-top:3px; }
   .detail-prog-bg { background:var(--bg4); border-radius:3px; height:4px; margin-top:8px; }
-  .detail-prog-fill { height:4px; border-radius:3px; background:var(--azul); transition:width 0.6s ease; }
+  .detail-prog-fill { height:4px; border-radius:3px; background:var(--verde); transition:width 0.6s ease; }
+
+  .activity-item {
+    display:flex; gap:8px; padding:5px 0;
+    border-bottom:1px solid var(--borda); font-size:11px; align-items:flex-start;
+  }
+  .activity-dot { width:6px; height:6px; border-radius:50%; background:var(--verde); margin-top:3px; flex-shrink:0; }
+  .activity-text { color:var(--cinza); flex:1; line-height:1.4; }
+  .activity-time { color:var(--cinza2); white-space:nowrap; margin-top:1px; }
 </style>
 </head>
 <body>
 
 <div id="header">
   <div>
-    <h1>Mapa Eleitoral — Talita Oliveira</h1>
-    <p>Eleições 2022 · Deputada Federal · Bahia · Republicanos #1022</p>
+    <h1>Mapa Eleitoral — Talita Oliveira 2026</h1>
+    <p>Deputada Federal · Bahia · Republicanos #1022</p>
   </div>
   <div class="header-stats">
-    <div class="hstat"><div class="hstat-val">33.455</div><div class="hstat-lbl">Total de Votos</div></div>
-    <div class="hstat"><div class="hstat-val">414</div><div class="hstat-lbl">Municípios</div></div>
-    <div class="hstat"><div class="hstat-val">5.720</div><div class="hstat-lbl">Salvador</div></div>
-    <div class="hstat"><div class="hstat-val">2ª</div><div class="hstat-lbl">Suplente Federal</div></div>
+    <div class="hstat">
+      <div class="hstat-val">33.455</div>
+      <div class="hstat-lbl">Votos 2022</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-val green" id="hstat-atual">0</div>
+      <div class="hstat-lbl">Votos Atuais</div>
+    </div>
+    <div class="header-progress">
+      <div class="hp-row"><span>Progresso da Meta 2026</span><strong id="hstat-pct">0%</strong></div>
+      <div class="hp-bar-bg"><div class="hp-bar-fill" id="hp-bar"></div></div>
+      <div class="hp-row"><span>0 de 120.000 votos</span></div>
+    </div>
+    <div class="live-badge off" id="live-badge">
+      <div class="live-dot off" id="live-dot"></div>
+      <span id="live-txt">Conectando...</span>
+    </div>
   </div>
 </div>
 
@@ -228,9 +256,11 @@
   <div id="map-area">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
       <div class="layer-switcher">
-        <button class="layer-btn active" onclick="setLayer('votos2022')">📊 Votos 2022</button>
-        <button class="layer-btn green" onclick="setLayer('meta2026')">🎯 Meta 2026</button>
-        <button class="layer-btn red" onclick="setLayer('crescimento')">🔥 Crescimento</button>
+        <button class="layer-btn active"  onclick="setLayer('votos2022')">📊 Votos 2022</button>
+        <button class="layer-btn green"   onclick="setLayer('meta2026')">🎯 Meta 2026</button>
+        <button class="layer-btn red"     onclick="setLayer('crescimento')">🔥 Crescimento</button>
+        <button class="layer-btn yellow"  onclick="setLayer('votosatual')">📍 Votos Atuais</button>
+        <button class="layer-btn purple"  onclick="setLayer('falta')">⚡ Faltam</button>
       </div>
       <div style="display:flex;gap:6px;">
         <button class="zoom-btn" onclick="zoomIn()">＋ Zoom</button>
@@ -238,7 +268,7 @@
         <button class="zoom-btn" onclick="resetZoom()">↺ Resetar</button>
       </div>
     </div>
-    <div class="color-scale" id="color-scale">
+    <div class="color-scale">
       <span id="scale-min">0</span>
       <div class="scale-bar" id="scale-bar" style="background:linear-gradient(to right,#1E3A5F,#2563EB);"></div>
       <span id="scale-max">5.720</span>
@@ -256,22 +286,27 @@
     <h3>Filtrar por votos mínimos</h3>
     <div class="filter-wrap">
       <div class="filter-label">
-        <span>Passe o mouse sobre o mapa</span>
+        <span>Votos mínimos</span>
         <span id="vote-filter-val">0+</span>
       </div>
       <input type="range" id="vote-filter" min="0" max="500" value="0" step="10">
     </div>
 
-    <h3 style="margin-top:16px">Meta 2026 por região</h3>
+    <h3 style="margin-top:16px">Progresso por região</h3>
     <div class="meta-summary">
       <div><div class="ms-label">Total 2022</div><div class="ms-val">33.455</div></div>
-      <div style="text-align:center"><div class="ms-label">Crescimento</div><div class="ms-val green">+259%</div></div>
+      <div style="text-align:center"><div class="ms-label">Atual</div><div class="ms-val green" id="sidebar-atual">0</div></div>
       <div style="text-align:right"><div class="ms-label">Meta 2026</div><div class="ms-val green">120.000</div></div>
     </div>
     <div id="meta-list"></div>
 
-    <h3 style="margin-top:16px">Top 20 municípios</h3>
+    <h3 style="margin-top:16px">Top 20 municípios (2022)</h3>
     <div id="top-list"></div>
+
+    <h3 style="margin-top:16px">Atualizações em tempo real</h3>
+    <div id="activity-log">
+      <div style="font-size:11px;color:var(--cinza2);padding:6px 0">Aguardando atualizações...</div>
+    </div>
   </div>
 </div>
 
@@ -283,7 +318,6 @@
   <div id="tt-extra"></div>
 </div>
 
-<!-- PAINEL DE DETALHES AO CLICAR -->
 <div id="detail-panel">
   <button id="detail-close" onclick="fecharDetalhe()" title="Fechar">✕</button>
   <div id="detail-content"></div>
@@ -291,8 +325,27 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 
+// ── Firebase ──────────────────────────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyDmJFXVO3BQFU8NmbYPEkOTvhJrrgcrPVU",
+  authDomain: "pie--campanha.firebaseapp.com",
+  projectId: "pie--campanha",
+  storageBucket: "pie--campanha.firebasestorage.app",
+  messagingSenderId: "385341562231",
+  appId: "1:385341562231:web:64c50e760acc1fa6179572"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Dados do Firestore: { "Salvador": 6500, "Feira de Santana": 1800, ... }
+let VOTES_ATUAL = {};
+let activityLog = [];
+
+// ── Dados históricos 2022 ─────────────────────────────────────────────────────
 const VOTES = {
   "Salvador":5720,"Feira de Santana":1475,"Vitória da Conquista":1378,"Ilhéus":1186,
   "Jequié":1069,"Juazeiro":766,"Camaçari":673,"Luís Eduardo Magalhães":612,
@@ -374,7 +427,7 @@ const VOTES = {
   "Urandi":8,"Vereda":8,"Érico Cardoso":7,"Antônio Cardoso":7,"Botuporã":7,
   "Cardeal da Silva":7,"Itaju do Colônia":7,"Itamari":7,"Jaborandi":7,"Lajedão":7,
   "Ponto Novo":7,"Ribeirão do Largo":7,"Abaré":6,"Araçás":6,"Canápolis":6,"Canudos":6,
-  "Catolândia":6,"Itaguaçu da Bahia":6,"Itanagra":6,"Mulungu do Morro":6,"Piripá":6,
+  "Católândia":6,"Itaguaçu da Bahia":6,"Itanagra":6,"Mulungu do Morro":6,"Piripá":6,
   "Retirolândia":6,"Serrolândia":6,"Água Fria":5,"Candeal":5,"Ichu":5,
   "Santa Terezinha":5,"Teodoro Sampaio":5,"Teofilândia":5,"Barro Preto":4,"Jandaíra":4,
   "Novo Triunfo":4,"Ouriçangas":4,"Pedrão":4,"Piraí do Norte":4,"Santanópolis":4,
@@ -397,8 +450,8 @@ const REGIONS_DATA = {
   "CENTRO-LESTE":["Feira de Santana","Santo Amaro","Cachoeira","São Félix","Maragogipe","Muritiba","Governador Mangabeira","Cruz das Almas","Sapeaçu","Santo Antônio de Jesus","Conceição do Almeida","São Felipe","Amargosa","Ubaíra","Jiquiriçá","Milagres","Itaquara","Iaçu","Itiruçu","Jaguaquara","Maracás","Laje","Mutuípe","Varzedo","Dom Macedo Costa","São Miguel das Matas","Elísio Medrado","Nova Itarana","Irajuba","Planaltino","Itaberaba","Ruy Barbosa","Ipirá","Rafael Jambeiro","Baixa Grande","Mairi","Capim Grosso","Jacobina","Miguel Calmon","Morro do Chapéu","Várzea Nova","Tapiramutá","Piritiba","Caém","São José do Jacuípe","Quixabeira","Saúde","Caldeirão Grande","Ichu","Santa Bárbara","Conceição do Jacuípe","Conceição da Feira","Cabaceiras do Paraguaçu","Amélia Rodrigues","São Gonçalo dos Campos","Irará","Tanquinho","Coração de Maria","Santana","Ipecaetá","Anguera","Antônio Cardoso","Pedrão","Lajedinho","Utinga","Bonito","Ibiquera","Boa Vista do Tupim","Iramaia","Marcionílio Souza","Contendas do Sincorá","Jussiape","Ituaçu","Barra da Estiva","Ituberá","Camamu","Igrapiúna","Taperoá","Piraí do Norte","Barra do Rocha","Nilo Peçanha","Presidente Tancredo Neves","Wenceslau Guimarães","Teolândia","Apuarema","Jitaúna","Cravolândia","Itagibá","Lajedo do Tabocal","Mirangaba","Ourolândia","Ibipeba","São Gabriel","Várzea do Poço","Macajuba","Castro Alves","Itatim","Itaeté","Aiquara","Lafaiete Coutinho","Gongogi","Brejões","Arataca"],
   "LESTE":["Salvador","Lauro de Freitas","Camaçari","Dias d'Ávila","Simões Filho","Candeias","São Francisco do Conde","Madre de Deus","Vera Cruz","Itaparica","Salinas da Margarida","Jaguaripe","Aratuípe","Nazaré","Santo Estêvão","Pojuca","Mata de São João","São Sebastião do Passé","Saubara","Terra Nova","Muniz Ferreira","Nova Redenção","Água Fria","Aramari","Santanópolis","Teodoro Sampaio"],
   "SUDOESTE":["Vitória da Conquista","Jequié","Brumado","Itapetinga","Poções","Ipiaú","Ibirataia","Ubaitaba","Gandu","Iguaí","Cândido Sales","Anagé","Caetanos","Mirante","Ribeirão do Largo","Boa Nova","Dário Meira","Manoel Vitorino","Macarani","Itarantim","Potiraguá","Maiquinique","Itaju do Colônia","Aracatu","Presidente Jânio Quadros","Palmas de Monte Alto","Ibicuí","Nova Canaã","Itambé","Planalto","Barra do Choça","Encruzilhada","Gavião","Iuiu","Sebastião Laranjeiras","Caatiba","Barro Preto","Santa Inês","Itagi","Itajuípe","Itamari","Nova Ibiá","Mulungu do Morro","Cairu","Santa Cruz da Vitória"],
-  "OESTE":["Barreiras","Luís Eduardo Magalhães","São Desidério","Formosa do Rio Preto","Correntina","Cocos","Santa Maria da Vitória","Coribe","São Félix do Coribe","Wanderley","Angical","Tabocas do Brejo Velho","Cotegipe","Brejolândia","Riachão das Neves","Canápolis","Baianópolis","Cristópolis","Jaborandi","Feira da Mata","Santa Rita de Cássia","Barra do Mendes","Paratinga","Morpará","Sítio do Mato","Serra do Ramalho","Bom Jesus da Lapa","Malhada","Carinhanha","Muquém do São Francisco","Muquém de São Francisco","Buritirama","Campo Alegre de Lourdes","Catolândia","Canarana","Novo Horizonte","Novo Triunfo"],
-  "SUL":["Ilhéus","Itabuna","Uruçuca","Itacaré","Aurelino Leal","Almadina","Buerarema","Coaraci","Firmino Alves","Pau Brasil","Jussari","São José da Vitória","Mascote","Camacan","Itapé","Floresta Azul","Itagimirim","Itapebi","Belmonte","Una","Santa Cruz Cabrália","Porto Seguro","Eunápolis","Itabela","Guaratinga","Santa Luzia","Canavieiras","Itapitanga","Ubatã","Valença","Ibicaraí","Itororó","Nova Fátima","Ibirapitanga","Maraú","Nilo Peçanha","Presidente Tancredo Neves","Wenceslau Guimarães","Teolândia","Apuarema","Jitaúna","Cravolândia","Itagibá","Lajedo do Tabocal","Camamu","Igrapiúna","Taperoá","Piraí do Norte","Barra do Rocha"],
+  "OESTE":["Barreiras","Luís Eduardo Magalhães","São Desidério","Formosa do Rio Preto","Correntina","Cocos","Santa Maria da Vitória","Coribe","São Félix do Coribe","Wanderley","Angical","Tabocas do Brejo Velho","Cotegipe","Brejolândia","Riachão das Neves","Canápolis","Baianópolis","Cristópolis","Jaborandi","Feira da Mata","Santa Rita de Cássia","Barra do Mendes","Paratinga","Morpará","Sítio do Mato","Serra do Ramalho","Bom Jesus da Lapa","Malhada","Carinhanha","Muquém do São Francisco","Buritirama","Campo Alegre de Lourdes","Católândia","Canarana","Novo Horizonte","Novo Triunfo"],
+  "SUL":["Ilhéus","Itabuna","Uruçuca","Itacaré","Aurelino Leal","Almadina","Buerarema","Coaraci","Firmino Alves","Pau Brasil","Jussari","São José da Vitória","Mascote","Camacan","Itapé","Floresta Azul","Itagimirim","Itapebi","Belmonte","Una","Santa Cruz Cabrália","Porto Seguro","Eunápolis","Itabela","Guaratinga","Santa Luzia","Canavieiras","Itapitanga","Ubatã","Valença","Ibicaraí","Itororó","Nova Fátima","Ibirapitanga","Maraú"],
   "EXTREMO-SUL":["Teixeira de Freitas","Alcobaça","Mucuri","Nova Viçosa","Caravelas","Medeiros Neto","Itanhém","Vereda","Jucuruçu","Ibirapuã","Itamaraju","Prado"]
 };
 
@@ -415,44 +468,179 @@ function getVotes(name) {
   for (const [k,v] of Object.entries(VOTES)) { if (normalize(k).includes(n)||n.includes(normalize(k))) return v; }
   return 0;
 }
+function getVotesAtual(name) {
+  const n = normalize(name);
+  for (const [k,v] of Object.entries(VOTES_ATUAL)) { if (normalize(k)===n) return v; }
+  return 0;
+}
 function getRegion(name) { return REGION_MAP[normalize(name)] || null; }
 function getColor(name) { const r = getRegion(name); return r ? REGION_COLORS[r] : '#2a3a4a'; }
 
 const TOTAL = 33455;
+const META_TOTAL = 120000;
 const META_2026 = {
   "LESTE":{label:"Salvador + RMS",meta:45000},
-  "SUL":{label:"Sul / Extremo-Sul",meta:25000},
+  "SUL":{label:"Sul",meta:25000},
   "EXTREMO-SUL":{label:"Extremo-Sul",meta:10000},
-  "SUDOESTE":{label:"Sudoeste (V. Conquista)",meta:8000},
-  "CENTRO-LESTE":{label:"Centro-Leste (Feira)",meta:15000},
-  "OESTE":{label:"Oeste (Barreiras)",meta:5000},
+  "SUDOESTE":{label:"Sudoeste",meta:8000},
+  "CENTRO-LESTE":{label:"Centro-Leste",meta:15000},
+  "OESTE":{label:"Oeste",meta:5000},
   "CENTRO-NORTE":{label:"Centro-Norte",meta:4000},
   "NORTE":{label:"Norte",meta:5000},
   "NORDESTE":{label:"Nordeste",meta:3000}
 };
+const META_PER_REGION = {
+  "LESTE":45000,"SUL":25000,"EXTREMO-SUL":10000,
+  "SUDOESTE":8000,"CENTRO-LESTE":15000,"OESTE":5000,
+  "CENTRO-NORTE":4000,"NORTE":5000,"NORDESTE":3000
+};
 
-// Gerar cards de meta
-const metaEl = document.getElementById('meta-list');
-for (const [region, color] of Object.entries(REGION_COLORS)) {
-  const cities = REGIONS_DATA[region] || [];
-  const votos2022 = cities.reduce((s,c)=>s+(VOTES[c]||0),0);
-  const {label,meta} = META_2026[region]||{label:region,meta:0};
-  const pct2022 = Math.min(100,(votos2022/meta)*100);
-  const crescimento = meta>0?(((meta-votos2022)/votos2022)*100).toFixed(0):0;
-  metaEl.innerHTML += `
-    <div class="meta-card" onclick="filterRegion('${region}')" id="card-${region}">
-      <div class="meta-top">
-        <div class="meta-dot" style="background:${color}"></div>
-        <span class="meta-name">${label}</span>
-        <span class="meta-pct">+${crescimento}%</span>
-      </div>
-      <div class="meta-bar-bg"><div class="meta-bar-fill" style="width:${pct2022.toFixed(1)}%"></div></div>
-      <div class="meta-numbers">
-        <span>2022: <span>${votos2022.toLocaleString('pt-BR')}</span></span>
-        <span>Meta: <span style="color:#10B981">${meta.toLocaleString('pt-BR')}</span></span>
-      </div>
-    </div>`;
+function getRegionTotal2022(r) { return (REGIONS_DATA[r]||[]).reduce((s,c)=>s+(VOTES[c]||0),0); }
+function getRegionTotalAtual(r) { return (REGIONS_DATA[r]||[]).reduce((s,c)=>s+getVotesAtual(c),0); }
+function getMunMeta(name) {
+  const r=getRegion(name); if(!r) return 0;
+  const v=getVotes(name), rt=getRegionTotal2022(r), rm=META_PER_REGION[r]||0;
+  return rt===0?0:Math.round((v/rt)*rm);
 }
+function getMunGrowth(name) {
+  const v=getVotes(name), m=getMunMeta(name);
+  return v===0?m:Math.max(0,m-v);
+}
+function getMunFalta(name) {
+  return Math.max(0, getMunMeta(name) - getVotesAtual(name));
+}
+
+// Escalas de cor
+const colorVotos  = d3.scaleSequential(d3.interpolate('#1E3A5F','#2563EB')).domain([0,5720]);
+const colorMeta   = d3.scaleSequential(d3.interpolate('#064E3B','#10B981')).domain([0,40000]);
+const colorGrowth = d3.scaleSequential(d3.interpolate('#450A0A','#EF4444')).domain([0,35000]);
+const colorAtual  = d3.scaleSequential(d3.interpolate('#2D1B69','#7C3AED')).domain([0,10000]);
+const colorFalta  = d3.scaleSequential(d3.interpolate('#451A03','#F59E0B')).domain([0,35000]);
+let currentLayer = 'votos2022';
+
+function getFillForLayer(name, layer) {
+  const r = getRegion(name); if(!r) return '#1a2236';
+  if(layer==='votos2022'){ const v=getVotes(name); return v>0?colorVotos(v):'#1a2236'; }
+  if(layer==='meta2026'){ const m=getMunMeta(name); return m>0?colorMeta(m):'#1a2236'; }
+  if(layer==='crescimento'){ const g=getMunGrowth(name); return g>0?colorGrowth(g):'#1a2236'; }
+  if(layer==='votosatual'){ const a=getVotesAtual(name); return a>0?colorAtual(a):'#1a2236'; }
+  if(layer==='falta'){ const f=getMunFalta(name); return f>0?colorFalta(f):'#1a2236'; }
+  return '#1a2236';
+}
+
+function getTooltipExtra(name, layer) {
+  if(layer==='meta2026'){ const m=getMunMeta(name); return `<div style="font-size:12px;color:#10B981;margin-top:4px">Meta 2026: <strong>${m.toLocaleString('pt-BR')}</strong></div>`; }
+  if(layer==='crescimento'){ const v=getVotes(name),m=getMunMeta(name),g=getMunGrowth(name),mult=v>0?(m/v).toFixed(1):'—'; return `<div style="font-size:12px;color:#EF4444;margin-top:4px">Faltam (vs 2022): <strong>${g.toLocaleString('pt-BR')}</strong> (${mult}x)</div>`; }
+  if(layer==='votosatual'){ const a=getVotesAtual(name),m=getMunMeta(name),pct=m>0?((a/m)*100).toFixed(1):'0'; return `<div style="font-size:12px;color:#7C3AED;margin-top:4px">Atual: <strong>${a.toLocaleString('pt-BR')}</strong> · ${pct}% da meta</div>`; }
+  if(layer==='falta'){ const f=getMunFalta(name),a=getVotesAtual(name),m=getMunMeta(name),pct=m>0?((a/m)*100).toFixed(1):'0'; return `<div style="font-size:12px;color:#F59E0B;margin-top:4px">Faltam: <strong>${f.toLocaleString('pt-BR')}</strong> · ${pct}% atingido</div>`; }
+  return '';
+}
+
+function getLayerValue(name, layer) {
+  if(layer==='votos2022') return getVotes(name);
+  if(layer==='meta2026') return getMunMeta(name);
+  if(layer==='crescimento') return getMunGrowth(name);
+  if(layer==='votosatual') return getVotesAtual(name);
+  if(layer==='falta') return getMunFalta(name);
+  return 0;
+}
+
+function setLayer(layer) {
+  currentLayer = layer;
+  document.querySelectorAll('.layer-btn').forEach(b=>b.classList.remove('active'));
+  const idx = ['votos2022','meta2026','crescimento','votosatual','falta'].indexOf(layer);
+  document.querySelectorAll('.layer-btn')[idx].classList.add('active');
+  const sb=document.getElementById('scale-bar'), sl=document.getElementById('scale-label');
+  const sMin=document.getElementById('scale-min'), sMax=document.getElementById('scale-max');
+  const configs = {
+    votos2022:   ['linear-gradient(to right,#1E3A5F,#2563EB)','0','5.720','votos 2022'],
+    meta2026:    ['linear-gradient(to right,#064E3B,#10B981)','0','40.000','meta 2026'],
+    crescimento: ['linear-gradient(to right,#450A0A,#EF4444)','0','35.000','votos a conquistar'],
+    votosatual:  ['linear-gradient(to right,#2D1B69,#7C3AED)','0','10.000','votos atuais'],
+    falta:       ['linear-gradient(to right,#451A03,#F59E0B)','0','35.000','votos que faltam'],
+  };
+  const [grad,min,max,lbl] = configs[layer];
+  sb.style.background=grad; sMin.textContent=min; sMax.textContent=max; sl.textContent=lbl;
+  d3.selectAll('path.mun').attr('fill',d=>getFillForLayer(getPropName(d),layer));
+  d3.selectAll('.mun-votes').text(d=>{ if(!d)return ''; const n=getPropName(d),val=getLayerValue(n,layer); return val>0?val.toLocaleString('pt-BR'):''; });
+}
+
+// ── Painel de detalhes ────────────────────────────────────────────────────────
+function showDetailPanel(name) {
+  const votes=getVotes(name), region=getRegion(name);
+  const meta=getMunMeta(name), growth=getMunGrowth(name);
+  const atual=getVotesAtual(name), falta=getMunFalta(name);
+  const mult=votes>0?(meta/votes).toFixed(1):'—';
+  const pctTotal=votes>0?((votes/TOTAL)*100).toFixed(2):'0';
+  const pctMetaAtual=meta>0?Math.min(100,(atual/meta)*100).toFixed(1):'0';
+  const pctMeta2022=meta>0?Math.min(100,(votes/meta)*100).toFixed(1):'0';
+  const regionColor=region?REGION_COLORS[region]:'#2563EB';
+  document.getElementById('detail-content').innerHTML=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+      <div style="width:10px;height:10px;border-radius:2px;background:${regionColor};flex-shrink:0"></div>
+      <div style="font-size:10px;color:#64748B;text-transform:uppercase;letter-spacing:1px">${region||'—'}</div>
+    </div>
+    <div style="font-size:19px;font-weight:800;color:#F8FAFC;margin-bottom:14px;line-height:1.2">${name}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+      <div class="detail-stat">
+        <div class="detail-stat-lbl">Votos 2022</div>
+        <div class="detail-stat-val" style="color:#3B82F6">${votes.toLocaleString('pt-BR')}</div>
+        <div class="detail-stat-sub">${pctTotal}% do total · ${mult}x até meta</div>
+      </div>
+      <div class="detail-stat">
+        <div class="detail-stat-lbl">Meta 2026</div>
+        <div class="detail-stat-val" style="color:#10B981">${meta.toLocaleString('pt-BR')}</div>
+        <div class="detail-stat-sub">Base 2022: ${pctMeta2022}%</div>
+      </div>
+    </div>
+    <div class="detail-stat" style="margin-bottom:8px">
+      <div class="detail-stat-lbl">Votos Atuais (tempo real)</div>
+      <div class="detail-stat-val" style="color:#7C3AED">${atual>0?atual.toLocaleString('pt-BR'):'Não registrado'}</div>
+      <div class="detail-prog-bg"><div class="detail-prog-fill" style="width:${pctMetaAtual}%;background:#7C3AED"></div></div>
+      <div class="detail-stat-sub" style="margin-top:4px">${pctMetaAtual}% da meta atingida</div>
+    </div>
+    <div class="detail-stat">
+      <div class="detail-stat-lbl">Faltam para a Meta</div>
+      <div class="detail-stat-val" style="color:#F59E0B">${falta.toLocaleString('pt-BR')}</div>
+      <div class="detail-stat-sub">votos a conquistar neste município</div>
+    </div>`;
+  document.getElementById('detail-panel').classList.add('show');
+}
+function fecharDetalhe() { document.getElementById('detail-panel').classList.remove('show'); }
+
+// ── Meta cards ────────────────────────────────────────────────────────────────
+function renderMetaCards() {
+  const metaEl = document.getElementById('meta-list');
+  metaEl.innerHTML = '';
+  for (const [region, color] of Object.entries(REGION_COLORS)) {
+    const cities = REGIONS_DATA[region] || [];
+    const votos2022 = cities.reduce((s,c)=>s+(VOTES[c]||0),0);
+    const votosAtual = getRegionTotalAtual(region);
+    const {label,meta} = META_2026[region]||{label:region,meta:0};
+    const pctAtual = meta>0?Math.min(100,(votosAtual/meta)*100).toFixed(1):0;
+    const pctBase = meta>0?Math.min(100,(votos2022/meta)*100).toFixed(1):0;
+    const falta = Math.max(0, meta - votosAtual);
+    const temAtual = votosAtual > 0;
+    metaEl.innerHTML += `
+      <div class="meta-card" onclick="filterRegion('${region}')" id="card-${region}">
+        <div class="meta-top">
+          <div class="meta-dot" style="background:${color}"></div>
+          <span class="meta-name">${label}</span>
+          <span class="meta-pct">${temAtual ? pctAtual+'%' : pctBase+'%'}</span>
+        </div>
+        <div class="meta-bar-bg">
+          <div class="meta-bar-fill ${temAtual?'':'baseline'}" style="width:${temAtual?pctAtual:pctBase}%"></div>
+        </div>
+        <div class="meta-numbers">
+          <span>${temAtual?'Atual':'2022'}: <span>${(temAtual?votosAtual:votos2022).toLocaleString('pt-BR')}</span></span>
+          <span>Meta: <span style="color:#10B981">${meta.toLocaleString('pt-BR')}</span></span>
+        </div>
+        ${temAtual?`<div class="meta-falta">⚡ Faltam: ${falta.toLocaleString('pt-BR')} votos</div>`:''}
+      </div>`;
+  }
+}
+
+renderMetaCards();
 
 // Top 20
 const top20 = Object.entries(VOTES).sort((a,b)=>b[1]-a[1]).slice(0,20);
@@ -463,135 +651,107 @@ document.getElementById('top-list').innerHTML = top20.map(([name,votes],i)=>`
     <span class="top-votes">${votes.toLocaleString('pt-BR')}</span>
   </div>`).join('');
 
-// Tooltip
+// ── Tooltip ───────────────────────────────────────────────────────────────────
 const tooltip = document.getElementById('tooltip');
 function moveTT(e) {
   let x=e.clientX+14, y=e.clientY+14;
-  if(x+200>window.innerWidth) x=e.clientX-214;
-  if(y+120>window.innerHeight) y=e.clientY-124;
+  if(x+210>window.innerWidth) x=e.clientX-224;
+  if(y+130>window.innerHeight) y=e.clientY-134;
   tooltip.style.left=x+'px'; tooltip.style.top=y+'px';
 }
 document.addEventListener('mousemove', e=>{ if(tooltip.classList.contains('show')) moveTT(e); });
 
-// Meta por município
-const META_PER_REGION = {
-  "LESTE":45000,"SUL":25000,"EXTREMO-SUL":10000,
-  "SUDOESTE":8000,"CENTRO-LESTE":15000,"OESTE":5000,
-  "CENTRO-NORTE":4000,"NORTE":5000,"NORDESTE":3000
-};
-function getRegionTotal2022(r) { return (REGIONS_DATA[r]||[]).reduce((s,c)=>s+(VOTES[c]||0),0); }
-function getMunMeta(name) {
-  const r=getRegion(name); if(!r) return 0;
-  const v=getVotes(name), rt=getRegionTotal2022(r), rm=META_PER_REGION[r]||0;
-  return rt===0?0:Math.round((v/rt)*rm);
-}
-function getMunGrowth(name) {
-  const v=getVotes(name), m=getMunMeta(name);
-  return v===0?m:Math.max(0,m-v);
+// ── Stats header ──────────────────────────────────────────────────────────────
+function atualizarStats() {
+  const totalAtual = Object.values(VOTES_ATUAL).reduce((s,v)=>s+v, 0);
+  const pct = Math.min(100,(totalAtual/META_TOTAL)*100).toFixed(1);
+  document.getElementById('hstat-atual').textContent = totalAtual.toLocaleString('pt-BR');
+  document.getElementById('hstat-pct').textContent = pct+'%';
+  document.getElementById('hp-bar').style.width = pct+'%';
+  document.getElementById('sidebar-atual').textContent = totalAtual.toLocaleString('pt-BR');
+  renderMetaCards();
+  // Atualiza mapa se layer usa dados atuais
+  if(currentLayer==='votosatual'||currentLayer==='falta') {
+    d3.selectAll('path.mun').attr('fill',d=>getFillForLayer(getPropName(d),currentLayer));
+  }
 }
 
-const colorVotos = d3.scaleSequential(d3.interpolate('#1E3A5F','#2563EB')).domain([0,5720]);
-const colorMeta  = d3.scaleSequential(d3.interpolate('#064E3B','#10B981')).domain([0,40000]);
-const colorGrowth= d3.scaleSequential(d3.interpolate('#450A0A','#EF4444')).domain([0,35000]);
-let currentLayer='votos2022';
-
-function getFillForLayer(name,layer) {
-  const r=getRegion(name); if(!r) return '#1a2236';
-  if(layer==='votos2022'){const v=getVotes(name);return v>0?colorVotos(v):'#1a2236';}
-  if(layer==='meta2026'){const m=getMunMeta(name);return m>0?colorMeta(m):'#1a2236';}
-  if(layer==='crescimento'){const g=getMunGrowth(name);return g>0?colorGrowth(g):'#1a2236';}
-  return '#1a2236';
-}
-function getTooltipExtra(name,layer) {
-  if(layer==='meta2026'){const m=getMunMeta(name);return `<div style="font-size:12px;color:#10B981;margin-top:4px">Meta 2026: <strong>${m.toLocaleString('pt-BR')}</strong></div>`;}
-  if(layer==='crescimento'){const v=getVotes(name),m=getMunMeta(name),g=getMunGrowth(name),mult=v>0?(m/v).toFixed(1):'—';return `<div style="font-size:12px;color:#EF4444;margin-top:4px">Faltam: <strong>${g.toLocaleString('pt-BR')}</strong> votos (${mult}x)</div>`;}
-  return '';
-}
-function updateVoteLabel(name,layer) {
-  if(layer==='votos2022') return getVotes(name);
-  if(layer==='meta2026') return getMunMeta(name);
-  if(layer==='crescimento') return getMunGrowth(name);
-  return 0;
-}
-function setLayer(layer) {
-  currentLayer=layer;
-  document.querySelectorAll('.layer-btn').forEach(b=>b.classList.remove('active'));
-  const idx=['votos2022','meta2026','crescimento'].indexOf(layer);
-  document.querySelectorAll('.layer-btn')[idx].classList.add('active');
-  const sb=document.getElementById('scale-bar'),sl=document.getElementById('scale-label');
-  const sMin=document.getElementById('scale-min'),sMax=document.getElementById('scale-max');
-  if(layer==='votos2022'){sb.style.background='linear-gradient(to right,#1E3A5F,#2563EB)';sMin.textContent='0';sMax.textContent='5.720';sl.textContent='votos 2022';}
-  else if(layer==='meta2026'){sb.style.background='linear-gradient(to right,#064E3B,#10B981)';sMin.textContent='0';sMax.textContent='40.000';sl.textContent='meta 2026';}
-  else{sb.style.background='linear-gradient(to right,#450A0A,#EF4444)';sMin.textContent='0';sMax.textContent='35.000';sl.textContent='votos a conquistar';}
-  d3.selectAll('path.mun').attr('fill',d=>getFillForLayer(getPropName(d),layer));
-  d3.selectAll('.mun-votes').text(d=>{if(!d)return '';const n=getPropName(d),val=updateVoteLabel(n,layer);return val>0?val.toLocaleString('pt-BR'):''});
-}
-
-// Painel de detalhes ao clicar
-function showDetailPanel(name) {
-  const votes=getVotes(name), region=getRegion(name);
-  const meta=getMunMeta(name), growth=getMunGrowth(name);
-  const mult=votes>0?(meta/votes).toFixed(1):'—';
-  const pctTotal=votes>0?((votes/TOTAL)*100).toFixed(2):'0';
-  const pctMeta=meta>0?Math.min(100,(votes/meta)*100).toFixed(1):'0';
-  const regionColor=region?REGION_COLORS[region]:'#2563EB';
-  document.getElementById('detail-content').innerHTML=`
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-      <div style="width:10px;height:10px;border-radius:2px;background:${regionColor};flex-shrink:0"></div>
-      <div style="font-size:10px;color:#64748B;text-transform:uppercase;letter-spacing:1px">${region||'—'}</div>
-    </div>
-    <div style="font-size:19px;font-weight:800;color:#F8FAFC;margin-bottom:16px;line-height:1.2">${name}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-      <div class="detail-stat">
-        <div class="detail-stat-lbl">Votos 2022</div>
-        <div class="detail-stat-val" style="color:#3B82F6">${votes.toLocaleString('pt-BR')}</div>
-        <div class="detail-stat-sub">${pctTotal}% do total</div>
-      </div>
-      <div class="detail-stat">
-        <div class="detail-stat-lbl">Meta 2026</div>
-        <div class="detail-stat-val" style="color:#10B981">${meta.toLocaleString('pt-BR')}</div>
-        <div class="detail-stat-sub">${mult}x crescimento</div>
-      </div>
-    </div>
-    <div class="detail-stat">
-      <div class="detail-stat-lbl">Votos a conquistar</div>
-      <div class="detail-stat-val" style="color:#EF4444">${growth.toLocaleString('pt-BR')}</div>
-      <div class="detail-prog-bg">
-        <div class="detail-prog-fill" style="width:${pctMeta}%"></div>
-      </div>
-      <div class="detail-stat-sub" style="margin-top:4px">${pctMeta}% da meta atingida</div>
+// ── Activity log ──────────────────────────────────────────────────────────────
+function renderActivityLog() {
+  const el = document.getElementById('activity-log');
+  if(activityLog.length===0){
+    el.innerHTML='<div style="font-size:11px;color:var(--cinza2);padding:6px 0">Sem atualizações ainda</div>';
+    return;
+  }
+  el.innerHTML = activityLog.map(item=>{
+    const ago = Math.floor((Date.now()-item.ts)/60000);
+    const timeStr = ago<1?'agora':ago+'min atrás';
+    return `<div class="activity-item">
+      <div class="activity-dot"></div>
+      <div class="activity-text">${item.nome}: <strong style="color:#F8FAFC">${item.votos.toLocaleString('pt-BR')} votos</strong></div>
+      <div class="activity-time">${timeStr}</div>
     </div>`;
-  document.getElementById('detail-panel').classList.add('show');
+  }).join('');
 }
-function fecharDetalhe() { document.getElementById('detail-panel').classList.remove('show'); }
 
-// Mapa
-const GEOJSON_URL='https://cdn.jsdelivr.net/gh/tbrugz/geodata-br@master/geojson/geojs-29-mun.json';
+// ── Firebase onSnapshot ───────────────────────────────────────────────────────
+db.collection('municipios').onSnapshot(snapshot => {
+  snapshot.docChanges().forEach(change => {
+    const data = change.doc.data();
+    if(!data.nome) return;
+    if(change.type==='added'||change.type==='modified') {
+      VOTES_ATUAL[data.nome] = data.votos_atual || 0;
+      if(change.type==='modified') {
+        activityLog.unshift({ nome:data.nome, votos:data.votos_atual, ts:Date.now() });
+        if(activityLog.length>10) activityLog.pop();
+        renderActivityLog();
+      }
+    } else if(change.type==='removed') {
+      delete VOTES_ATUAL[data.nome];
+    }
+  });
+  atualizarStats();
+  setLiveStatus(true);
+}, err => {
+  console.error('Firestore error:', err);
+  setLiveStatus(false);
+});
+
+function setLiveStatus(ok) {
+  const dot=document.getElementById('live-dot');
+  const txt=document.getElementById('live-txt');
+  const badge=document.getElementById('live-badge');
+  if(ok){ dot.classList.remove('off'); txt.textContent='Tempo real'; badge.classList.remove('off'); }
+  else  { dot.classList.add('off');    txt.textContent='Desconectado'; badge.classList.add('off'); }
+}
+
+// ── Mapa D3 ───────────────────────────────────────────────────────────────────
+const GEOJSON_URL = 'https://cdn.jsdelivr.net/gh/tbrugz/geodata-br@master/geojson/geojs-29-mun.json';
 let svgEl, pathGen, currentVoteMin=0;
 
 async function loadMap() {
   try {
-    const res=await fetch(GEOJSON_URL);
+    const res = await fetch(GEOJSON_URL);
     if(!res.ok) throw new Error('HTTP '+res.status);
-    const geojson=await res.json();
+    const geojson = await res.json();
     document.getElementById('loading').remove();
 
-    const W=1100,H=1180;
-    svgEl=d3.select('#map-container').append('svg')
-      .attr('id','map-svg').attr('viewBox',`0 0 ${W} ${H}`)
-      .attr('width','100%').attr('height','100%').style('display','block')
-      .style('background','#080C14');
+    const W=1100, H=1180;
+    svgEl = d3.select('#map-container').append('svg')
+      .attr('viewBox',`0 0 ${W} ${H}`)
+      .attr('width','100%').attr('height','100%')
+      .style('display','block').style('background','#080C14');
 
-    const g=svgEl.append('g').attr('id','map-g');
-    const projection=d3.geoMercator().fitSize([W,H],geojson);
-    pathGen=d3.geoPath().projection(projection);
+    const g = svgEl.append('g').attr('id','map-g');
+    const projection = d3.geoMercator().fitSize([W,H],geojson);
+    pathGen = d3.geoPath().projection(projection);
 
     g.selectAll('path').data(geojson.features).join('path')
       .attr('class','mun').attr('d',pathGen)
       .attr('fill',d=>getColor(getPropName(d)))
       .attr('fill-opacity',d=>{const v=getVotes(getPropName(d));return v>0?0.8+Math.min(0.2,v/5720*0.2):0.25;});
 
-    const labelG=g.append('g').attr('id','labels');
+    const labelG = g.append('g').attr('id','labels');
     geojson.features.forEach(d=>{
       const name=getPropName(d), votes=getVotes(name);
       const centroid=pathGen.centroid(d);
@@ -605,7 +765,7 @@ async function loadMap() {
         .attr('text-anchor','middle').text(votes.toLocaleString('pt-BR'));
     });
 
-    const zoom=d3.zoom().scaleExtent([1,12]).on('zoom',e=>{
+    const zoom = d3.zoom().scaleExtent([1,12]).on('zoom',e=>{
       g.attr('transform',e.transform);
       const s=e.transform.k;
       g.selectAll('.mun-name').attr('font-size',Math.max(4,Math.min(12,7/s)));
@@ -614,30 +774,27 @@ async function loadMap() {
     });
     svgEl.call(zoom);
     window._zoom=zoom; window._svg=svgEl;
-
-    // Fechar detalhe clicando no fundo
     svgEl.on('click',()=>fecharDetalhe());
-
     patchMouseover();
   } catch(err) {
     document.getElementById('loading').innerHTML=`
       <div style="text-align:center;color:#64748B;padding:40px">
         <div style="font-size:28px;margin-bottom:12px">⚠️</div>
-        <div style="font-weight:700;margin-bottom:8px;color:#F8FAFC">Erro ao carregar o mapa</div>
+        <div style="font-weight:700;margin-bottom:8px;color:#F8FAFC">Erro ao carregar mapa</div>
         <div style="font-size:13px">${err.message}</div>
       </div>`;
   }
 }
 
-function getPropName(d){const p=d.properties;return p.name||p.NOME||p.NM_MUNICIP||p.nome||'';}
-function zoomIn(){if(window._svg&&window._zoom)window._svg.transition().call(window._zoom.scaleBy,1.5);}
-function zoomOut(){if(window._svg&&window._zoom)window._svg.transition().call(window._zoom.scaleBy,0.67);}
-function resetZoom(){if(window._svg&&window._zoom)window._svg.transition().call(window._zoom.transform,d3.zoomIdentity);}
+function getPropName(d){ const p=d.properties; return p.name||p.NOME||p.NM_MUNICIP||p.nome||''; }
+function zoomIn(){ if(window._svg&&window._zoom) window._svg.transition().call(window._zoom.scaleBy,1.5); }
+function zoomOut(){ if(window._svg&&window._zoom) window._svg.transition().call(window._zoom.scaleBy,0.67); }
+function resetZoom(){ if(window._svg&&window._zoom) window._svg.transition().call(window._zoom.transform,d3.zoomIdentity); }
 
 function patchMouseover() {
   d3.selectAll('path.mun')
     .on('mouseover',function(event,d){
-      const name=getPropName(d),votes=getVotes(name),region=getRegion(name);
+      const name=getPropName(d), votes=getVotes(name), region=getRegion(name);
       const extra=getTooltipExtra(name,currentLayer);
       document.getElementById('tt-region').textContent=region||'—';
       document.getElementById('tt-name').textContent=name;
@@ -660,19 +817,15 @@ function patchMouseover() {
 // Busca
 document.getElementById('search-input').addEventListener('input',function(){
   const q=normalize(this.value);
-  if(!q){d3.selectAll('path.mun').attr('opacity',1);return;}
+  if(!q){ d3.selectAll('path.mun').attr('opacity',1); return; }
   d3.selectAll('path.mun').attr('opacity',d=>normalize(getPropName(d)).includes(q)?1:0.08);
 });
 
 // Filtro por votos
 document.getElementById('vote-filter').addEventListener('input',function(){
   currentVoteMin=parseInt(this.value);
-  const label=currentVoteMin===0?'0+':currentVoteMin+'+';
-  document.getElementById('vote-filter-val').textContent=label;
-  d3.selectAll('path.mun').attr('opacity',d=>{
-    const v=getVotes(getPropName(d));
-    return v>=currentVoteMin?1:0.06;
-  });
+  document.getElementById('vote-filter-val').textContent=(currentVoteMin===0?'0+':currentVoteMin+'+');
+  d3.selectAll('path.mun').attr('opacity',d=>getVotes(getPropName(d))>=currentVoteMin?1:0.06);
 });
 
 // Filtro por região
