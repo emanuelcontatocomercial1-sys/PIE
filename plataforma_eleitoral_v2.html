@@ -734,44 +734,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
         </div>
 
         <div id="lista-projetos">
-          <div class="projeto-card" onclick="abrirProjeto('mototaxistas')">
-            <div class="proj-header">
-              <div><div class="proj-title">Mototaxistas de Salvador</div><div class="proj-local">📍 Salvador — Leste</div></div>
-              <span class="badge verde">Em andamento</span>
-            </div>
-            <div class="proj-desc">Articulação com a categoria dos mototaxistas de Salvador. Demandas principais: regularização da profissão, seguro de vida específico, e programa de capacitação. Reunião mensal com lideranças.</div>
-            <div class="proj-footer">
-              <div class="proj-prog-wrap"><div class="proj-prog" style="width:60%"></div></div>
-              <div class="proj-pct">60%</div>
-              <span class="badge azul" style="margin-left:8px">~800 votos potenciais</span>
-            </div>
-          </div>
-
-          <div class="projeto-card" onclick="abrirProjeto('bombom')">
-            <div class="proj-header">
-              <div><div class="proj-title">Saúde — Bom Bom</div><div class="proj-local">📍 Bom Bom — Interior</div></div>
-              <span class="badge amarelo">Planejamento</span>
-            </div>
-            <div class="proj-desc">Demanda levantada em reunião na última semana. Comunidade solicita melhoria no atendimento de saúde local — falta de médicos especialistas e medicamentos básicos no posto.</div>
-            <div class="proj-footer">
-              <div class="proj-prog-wrap"><div class="proj-prog" style="width:20%"></div></div>
-              <div class="proj-pct">20%</div>
-              <span class="badge amarelo" style="margin-left:8px">Novo</span>
-            </div>
-          </div>
-
-          <div class="projeto-card" onclick="abrirProjeto('aguias')">
-            <div class="proj-header">
-              <div><div class="proj-title">Águias do Brasil — Digital</div><div class="proj-local">📍 Digital — Bahia</div></div>
-              <span class="badge azul">Digital</span>
-            </div>
-            <div class="proj-desc">Frente digital da campanha. Gestão das redes sociais @aguiasdobrasil_bahia, produção de conteúdo conservador, mobilização de apoiadores e captação de leads.</div>
-            <div class="proj-footer">
-              <div class="proj-prog-wrap"><div class="proj-prog" style="width:80%"></div></div>
-              <div class="proj-pct">80%</div>
-              <span class="badge azul" style="margin-left:8px">Ativo</span>
-            </div>
-          </div>
+          <div style="font-size:13px;color:var(--cinza2);text-align:center;padding:32px;background:var(--bg3);border-radius:14px;">Carregando projetos...</div>
         </div>
       </div>
 
@@ -1381,10 +1344,10 @@ function initApp() {
 
   // Agenda datas
   const amanha = new Date(d); amanha.setDate(d.getDate()+1);
-  document.getElementById('ag-d1').textContent = d.getDate();
-  document.getElementById('ag-m1').textContent = meses[d.getMonth()].toUpperCase();
-  document.getElementById('ag-d2').textContent = amanha.getDate();
-  document.getElementById('ag-m2').textContent = meses[amanha.getMonth()].toUpperCase();
+  const agD1 = document.getElementById('ag-d1'); if(agD1) agD1.textContent = d.getDate();
+  const agM1 = document.getElementById('ag-m1'); if(agM1) agM1.textContent = meses[d.getMonth()].toUpperCase();
+  const agD2 = document.getElementById('ag-d2'); if(agD2) agD2.textContent = amanha.getDate();
+  const agM2 = document.getElementById('ag-m2'); if(agM2) agM2.textContent = meses[amanha.getMonth()].toUpperCase();
 }
 
 // ── NAVEGAÇÃO ──
