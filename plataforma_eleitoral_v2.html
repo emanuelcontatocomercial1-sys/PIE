@@ -936,53 +936,70 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
       <!-- ══ AGENDA ══ -->
       <div class="page" id="page-agenda">
-        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
-          <div><div class="page-title">Agenda</div><div class="page-sub">Eventos, visitas e compromissos da campanha</div></div>
-          <button class="btn btn-primary">+ Novo evento</button>
+        <div class="page-header">
+          <div class="page-title">Agenda</div>
+          <div class="page-sub">Eventos, visitas e compromissos da campanha</div>
         </div>
         <div class="grid-2">
+
+          <!-- Lista dinâmica -->
           <div>
-            <div style="font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Próximos eventos</div>
-            <div class="agenda-item">
-              <div class="ag-date"><div class="ag-day" id="ag-d1"></div><div class="ag-month" id="ag-m1"></div></div>
-              <div class="ag-info"><div class="ag-title">Reunião com Mototaxistas</div><div class="ag-local">📍 Salvador — Sede da Categoria</div><div class="ag-time">15:00 · 2h de duração</div></div>
-              <span class="badge azul">Hoje</span>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+              <div style="font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;">Próximos eventos</div>
+              <span id="agenda-count" class="badge azul" style="font-size:10px;">0</span>
             </div>
-            <div class="agenda-item verde">
-              <div class="ag-date"><div class="ag-day" id="ag-d2"></div><div class="ag-month" id="ag-m2"></div></div>
-              <div class="ag-info"><div class="ag-title">Visita Bom Jesus da Lapa</div><div class="ag-local">📍 Oeste — Interior da Bahia</div><div class="ag-time">09:00 · Dia inteiro</div></div>
-              <span class="badge verde">Amanhã</span>
+            <div id="agenda-lista">
+              <div style="font-size:13px;color:var(--cinza2);text-align:center;padding:24px;background:var(--bg3);border-radius:10px;">Carregando eventos...</div>
             </div>
-            <div class="agenda-item amarelo">
-              <div class="ag-date"><div class="ag-day">19</div><div class="ag-month">ABR</div></div>
-              <div class="ag-info"><div class="ag-title">Live Instagram — Segurança</div><div class="ag-local">📱 Digital</div><div class="ag-time">20:00 · 1h</div></div>
-              <span class="badge amarelo">Sáb</span>
-            </div>
-            <div class="agenda-item roxo">
-              <div class="ag-date"><div class="ag-day">22</div><div class="ag-month">ABR</div></div>
-              <div class="ag-info"><div class="ag-title">Plenária Republicanos Bahia</div><div class="ag-local">📍 Salvador — Sede do Partido</div><div class="ag-time">14:00 · 3h</div></div>
-              <span class="badge roxo">Ter</span>
+            <div style="margin-top:20px;">
+              <div style="font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:6px;" onclick="togglePassados()">
+                <span id="passados-arrow">▸</span> Eventos passados <span id="passados-count" style="font-size:10px;"></span>
+              </div>
+              <div id="agenda-passados" style="display:none;"></div>
             </div>
           </div>
-          <div class="panel">
-            <div class="panel-header"><div class="panel-title">Adicionar Evento</div></div>
+
+          <!-- Formulário -->
+          <div class="panel" id="agenda-form-panel">
+            <div class="panel-header">
+              <div class="panel-title" id="agenda-form-title">➕ Adicionar Evento</div>
+            </div>
             <div class="panel-body">
-              <div class="form-group"><label class="form-label">Título *</label><input class="form-input" type="text" placeholder="Ex: Reunião com lideranças"></div>
-              <div class="form-group"><label class="form-label">Data e hora *</label><input class="form-input" type="datetime-local"></div>
-              <div class="form-group"><label class="form-label">Local</label><input class="form-input" type="text" placeholder="Ex: Salvador — Pelourinho"></div>
-              <div class="form-group"><label class="form-label">Tipo</label>
-                <select class="form-select">
-                  <option>Visita ao município</option>
-                  <option>Reunião com liderança</option>
-                  <option>Evento de campanha</option>
-                  <option>Digital / Live</option>
-                  <option>Reunião interna</option>
+              <input type="hidden" id="agenda-edit-id">
+              <div class="form-group">
+                <label class="form-label">Título *</label>
+                <input class="form-input" type="text" id="ag-titulo" placeholder="Ex: Reunião com lideranças">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Data e hora *</label>
+                <input class="form-input" type="datetime-local" id="ag-data">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Local</label>
+                <input class="form-input" type="text" id="ag-local" placeholder="Ex: Salvador — Pelourinho">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Tipo</label>
+                <select class="form-select" id="ag-tipo">
+                  <option value="Visita ao município">Visita ao município</option>
+                  <option value="Reunião com liderança">Reunião com liderança</option>
+                  <option value="Evento de campanha">Evento de campanha</option>
+                  <option value="Digital / Live">Digital / Live</option>
+                  <option value="Reunião interna">Reunião interna</option>
                 </select>
               </div>
-              <div class="form-group"><label class="form-label">Observações</label><textarea class="form-textarea" placeholder="Detalhes do evento..."></textarea></div>
-              <button class="btn btn-primary" style="width:100%">Salvar evento</button>
+              <div class="form-group">
+                <label class="form-label">Observações</label>
+                <textarea class="form-textarea" id="ag-obs" placeholder="Detalhes do evento..."></textarea>
+              </div>
+              <div style="display:flex;gap:10px;">
+                <button class="btn btn-primary" id="ag-btn-salvar" onclick="salvarEvento()" style="flex:1;">Salvar evento</button>
+                <button class="btn btn-outline" id="ag-btn-cancelar" onclick="cancelarEditAgenda()" style="display:none;">Cancelar</button>
+              </div>
+              <div id="ag-feedback" style="display:none;font-size:12px;padding:10px;border-radius:8px;text-align:center;font-weight:600;margin-top:10px;"></div>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -2666,6 +2683,147 @@ function mostrarFeedback(msg, ok) {
   el.style.color = ok ? '#10B981' : '#EF4444';
   el.style.border = `1px solid ${ok ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`;
   setTimeout(() => { el.style.display='none'; }, 4000);
+}
+
+// ── AGENDA ──────────────────────────────────────────────────────────────────
+const _TIPO_COR = {
+  'Visita ao município':'verde','Reunião com liderança':'azul',
+  'Evento de campanha':'roxo','Digital / Live':'amarelo','Reunião interna':''
+};
+const _MESES_AG = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
+let _eventosData = [];
+
+_db.collection('eventos').orderBy('data_ts').onSnapshot(snap => {
+  _eventosData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderAgenda();
+}, err => console.error('Agenda error:', err));
+
+function renderAgenda() {
+  const agora = new Date();
+  const proximos = _eventosData.filter(e => e.data_ts && e.data_ts.toDate() >= agora);
+  const passados  = _eventosData.filter(e => e.data_ts && e.data_ts.toDate() <  agora).reverse();
+
+  const el = id => document.getElementById(id);
+  if(el('agenda-count'))   el('agenda-count').textContent   = proximos.length;
+  if(el('passados-count')) el('passados-count').textContent = passados.length > 0 ? `(${passados.length})` : '';
+
+  if(el('agenda-lista')) {
+    el('agenda-lista').innerHTML = proximos.length === 0
+      ? '<div style="font-size:13px;color:var(--cinza2);text-align:center;padding:24px;background:var(--bg3);border-radius:10px;">Nenhum evento próximo cadastrado.</div>'
+      : proximos.map(e => renderEventoItem(e, false)).join('');
+  }
+  if(el('agenda-passados')) {
+    el('agenda-passados').innerHTML = passados.length === 0
+      ? '<div style="font-size:12px;color:var(--cinza2);padding:8px;">Nenhum evento passado.</div>'
+      : passados.map(e => renderEventoItem(e, true)).join('');
+  }
+}
+
+function renderEventoItem(e, passado) {
+  const dt   = e.data_ts ? e.data_ts.toDate() : null;
+  const dia  = dt ? dt.getDate() : '—';
+  const mes  = dt ? _MESES_AG[dt.getMonth()] : '—';
+  const hora = dt ? dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+  const cor  = _TIPO_COR[e.tipo] || '';
+  const op   = passado ? 'opacity:0.5;' : '';
+  const titulo_safe = (e.titulo||'').replace(/'/g,"\\'");
+  return `<div class="agenda-item${cor?' '+cor:''}" style="${op}position:relative;margin-bottom:10px;">
+    <div class="ag-date"><div class="ag-day">${dia}</div><div class="ag-month">${mes}</div></div>
+    <div class="ag-info" style="flex:1;">
+      <div class="ag-title">${e.titulo||'—'}</div>
+      ${e.local?`<div class="ag-local">📍 ${e.local}</div>`:''}
+      <div class="ag-time">${hora}${e.tipo?' · '+e.tipo:''}</div>
+      ${e.obs?`<div style="font-size:11px;color:var(--cinza2);margin-top:3px;">${e.obs}</div>`:''}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
+      <button onclick="editarEvento('${e.id}')" style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;">✏️</button>
+      <button onclick="apagarEvento('${e.id}','${titulo_safe}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;">🗑️</button>
+    </div>
+  </div>`;
+}
+
+async function salvarEvento() {
+  const titulo = document.getElementById('ag-titulo').value.trim();
+  const data   = document.getElementById('ag-data').value;
+  const local  = document.getElementById('ag-local').value.trim();
+  const tipo   = document.getElementById('ag-tipo').value;
+  const obs    = document.getElementById('ag-obs').value.trim();
+  const editId = document.getElementById('agenda-edit-id').value;
+  if(!titulo) { feedbackAgenda('Informe o título do evento.',false); return; }
+  if(!data)   { feedbackAgenda('Informe a data e hora.',false); return; }
+  const btn = document.getElementById('ag-btn-salvar');
+  btn.disabled = true; btn.textContent = '⏳ Salvando...';
+  const payload = {
+    titulo, local, tipo, obs,
+    data_str: data,
+    data_ts: firebase.firestore.Timestamp.fromDate(new Date(data)),
+    updated_at: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  try {
+    if(editId) {
+      await _db.collection('eventos').doc(editId).update(payload);
+      feedbackAgenda('✅ Evento atualizado!',true);
+    } else {
+      payload.created_at = firebase.firestore.FieldValue.serverTimestamp();
+      await _db.collection('eventos').add(payload);
+      feedbackAgenda('✅ Evento salvo!',true);
+    }
+    limparFormAgenda();
+  } catch(err) { feedbackAgenda('❌ Erro: '+err.message,false); }
+  finally { btn.disabled=false; btn.textContent = document.getElementById('agenda-edit-id').value ? '💾 Atualizar' : 'Salvar evento'; }
+}
+
+function editarEvento(id) {
+  const e = _eventosData.find(x => x.id === id);
+  if(!e) return;
+  document.getElementById('agenda-edit-id').value = id;
+  document.getElementById('ag-titulo').value = e.titulo||'';
+  document.getElementById('ag-data').value   = e.data_str||'';
+  document.getElementById('ag-local').value  = e.local||'';
+  document.getElementById('ag-tipo').value   = e.tipo||'Visita ao município';
+  document.getElementById('ag-obs').value    = e.obs||'';
+  document.getElementById('agenda-form-title').textContent = '✏️ Editar Evento';
+  document.getElementById('ag-btn-salvar').textContent     = '💾 Atualizar evento';
+  document.getElementById('ag-btn-cancelar').style.display = 'block';
+  document.getElementById('agenda-form-panel').scrollIntoView({behavior:'smooth'});
+}
+
+async function apagarEvento(id, titulo) {
+  if(!confirm(`Apagar o evento "${titulo}"? Esta ação não pode ser desfeita.`)) return;
+  try { await _db.collection('eventos').doc(id).delete(); }
+  catch(e) { console.error(e); }
+}
+
+function cancelarEditAgenda() { limparFormAgenda(); }
+
+function limparFormAgenda() {
+  ['agenda-edit-id','ag-titulo','ag-data','ag-local','ag-obs'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.value = '';
+  });
+  const sel = document.getElementById('ag-tipo');
+  if(sel) sel.value = 'Visita ao município';
+  document.getElementById('agenda-form-title').textContent      = '➕ Adicionar Evento';
+  document.getElementById('ag-btn-salvar').textContent          = 'Salvar evento';
+  document.getElementById('ag-btn-cancelar').style.display      = 'none';
+}
+
+function togglePassados() {
+  const el  = document.getElementById('agenda-passados');
+  const arr = document.getElementById('passados-arrow');
+  if(!el) return;
+  const open = el.style.display !== 'none';
+  el.style.display = open ? 'none' : 'block';
+  if(arr) arr.textContent = open ? '▸' : '▾';
+}
+
+function feedbackAgenda(msg, ok) {
+  const el = document.getElementById('ag-feedback');
+  if(!el) return;
+  el.textContent = msg; el.style.display = 'block';
+  el.style.background = ok?'rgba(16,185,129,0.12)':'rgba(239,68,68,0.12)';
+  el.style.color  = ok?'#10B981':'#EF4444';
+  el.style.border = ok?'1px solid rgba(16,185,129,0.3)':'1px solid rgba(239,68,68,0.3)';
+  setTimeout(()=>{ if(el) el.style.display='none'; },3000);
 }
 </script>
 </body>
