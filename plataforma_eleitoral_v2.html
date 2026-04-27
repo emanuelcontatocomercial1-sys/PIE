@@ -1613,6 +1613,7 @@ const _auth2  = firebase.auth(_fbApp2);
 // ── AUTH STATE ──
 _auth.onAuthStateChanged(async user => {
   if (user) {
+    if (_currentUser) return; // token renovado — usuário já está carregado, ignora re-chamada
     try {
       const ref = _db.collection('usuarios').doc(user.uid);
       let docSnap = await ref.get();
