@@ -64,6 +64,22 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 .pass-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--cinza2);cursor:pointer;font-size:16px;line-height:1;padding:0;transition:color 0.2s;}
 .pass-toggle:hover{color:var(--branco);}
 
+/* ── LOGIN MULTI-VIEW ── */
+.login-view{display:none;}
+.login-view.active{display:block;}
+.login-success{font-size:12px;color:var(--verde2);margin-top:10px;display:none;text-align:center;font-weight:600;padding:8px;border-radius:8px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);}
+
+/* ── SETTINGS PAGE ── */
+.settings-card{background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:24px;margin-bottom:20px;}
+.settings-section-title{font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--borda);}
+.usr-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg3);border-radius:10px;margin-bottom:8px;border:1px solid var(--borda);transition:border-color 0.2s;}
+.usr-row:hover{border-color:rgba(255,255,255,0.1);}
+.usr-avt{width:34px;height:34px;border-radius:50%;background:var(--azul2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
+.usr-inf{flex:1;min-width:0;}
+.usr-name{font-size:13px;font-weight:700;color:var(--branco);}
+.usr-email{font-size:11px;color:var(--cinza2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.usr-acts{display:flex;gap:6px;flex-shrink:0;align-items:center;}
+
 /* ── APP LAYOUT ── */
 #app{display:none;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}
@@ -311,19 +327,61 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
 <!-- ══════════════ LOGIN ══════════════ -->
 <div id="login-screen">
-  <div class="login-card">
+  <div class="login-card" style="width:440px;max-width:95vw;">
     <div class="login-logo">
-      <div class="login-badge">Acesso Restrito</div>
-      <div class="login-title">Plataforma de Inteligência Eleitoral</div>
-      <div class="login-sub">Talita Oliveira 2026 · Republicanos #1022</div>
+      <div class="login-badge">Plataforma de Inteligência Eleitoral</div>
+      <div class="login-title">Talita Oliveira 2026</div>
+      <div class="login-sub">Republicanos #1022 · Bahia</div>
     </div>
-    <input class="login-input" type="text" id="login-user" placeholder="Usuário" onkeydown="if(event.key==='Enter')entrar()">
-    <div class="pass-wrap">
-      <input class="login-input" type="password" id="login-pass" placeholder="Senha" onkeydown="if(event.key==='Enter')entrar()">
-      <button class="pass-toggle" type="button" onclick="toggleSenha()" id="pass-toggle-btn" title="Mostrar/ocultar senha">👁</button>
+
+    <!-- VIEW: Entrar -->
+    <div class="login-view active" id="view-login">
+      <input class="login-input" type="email" id="login-email" placeholder="E-mail" autocomplete="email" onkeydown="if(event.key==='Enter')entrar()">
+      <div class="pass-wrap">
+        <input class="login-input" type="password" id="login-pass" placeholder="Senha" onkeydown="if(event.key==='Enter')entrar()">
+        <button class="pass-toggle" type="button" onclick="toggleSenha('login-pass','ptb1')" id="ptb1">👁</button>
+      </div>
+      <div style="text-align:right;margin:-4px 0 14px;">
+        <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);" onclick="mostrarView('view-esqueci')">Esqueci minha senha</button>
+      </div>
+      <button class="login-btn" id="btn-entrar" onclick="entrar()">Entrar na plataforma →</button>
+      <div class="login-err" id="login-err"></div>
+      <div style="text-align:center;margin-top:20px;font-size:12px;color:var(--cinza);">
+        Não tem conta? <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);text-decoration:underline;" onclick="mostrarView('view-criar')">Criar conta</button>
+      </div>
     </div>
-    <button class="login-btn" onclick="entrar()">Entrar na plataforma →</button>
-    <div class="login-err" id="login-err">Usuário ou senha incorretos.</div>
+
+    <!-- VIEW: Criar Conta -->
+    <div class="login-view" id="view-criar">
+      <input class="login-input" type="text" id="criar-nome" placeholder="Nome completo" autocomplete="name">
+      <input class="login-input" type="email" id="criar-email" placeholder="E-mail" autocomplete="email">
+      <div class="pass-wrap">
+        <input class="login-input" type="password" id="criar-pass" placeholder="Senha (mín. 6 caracteres)" style="margin-bottom:0;padding-right:44px;">
+        <button class="pass-toggle" type="button" onclick="toggleSenha('criar-pass','ptb2')" id="ptb2">👁</button>
+      </div>
+      <div class="pass-wrap" style="margin-top:12px;">
+        <input class="login-input" type="password" id="criar-confirm" placeholder="Confirmar senha" style="margin-bottom:0;padding-right:44px;" onkeydown="if(event.key==='Enter')criarConta()">
+        <button class="pass-toggle" type="button" onclick="toggleSenha('criar-confirm','ptb3')" id="ptb3">👁</button>
+      </div>
+      <button class="login-btn" id="btn-criar" onclick="criarConta()" style="margin-top:16px;">Criar conta →</button>
+      <div class="login-err" id="criar-err"></div>
+      <div class="login-success" id="criar-success"></div>
+      <div style="text-align:center;margin-top:16px;">
+        <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);text-decoration:underline;" onclick="mostrarView('view-login')">← Já tenho conta</button>
+      </div>
+    </div>
+
+    <!-- VIEW: Esqueci Senha -->
+    <div class="login-view" id="view-esqueci">
+      <div style="font-size:13px;color:var(--cinza);margin-bottom:20px;line-height:1.6;">Informe seu e-mail cadastrado e enviaremos um link para redefinir sua senha.</div>
+      <input class="login-input" type="email" id="reset-email" placeholder="Seu e-mail cadastrado" onkeydown="if(event.key==='Enter')enviarReset()">
+      <button class="login-btn" id="btn-reset" onclick="enviarReset()" style="margin-top:4px;">Enviar link de redefinição →</button>
+      <div class="login-err" id="reset-err"></div>
+      <div class="login-success" id="reset-success"></div>
+      <div style="text-align:center;margin-top:16px;">
+        <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);text-decoration:underline;" onclick="mostrarView('view-login')">← Voltar para o login</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -361,10 +419,15 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
         <div class="nav-item" onclick="showPage('ia',this)"><span class="ni-icon">🤖</span>IA Estratégica</div>
       </div>
 
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Sistema</div>
+        <div class="nav-item" onclick="showPage('config',this)"><span class="ni-icon">⚙️</span>Configurações</div>
+      </div>
+
       <div class="sidebar-bottom">
         <div class="user-card">
-          <div class="user-avatar">E</div>
-          <div><div class="user-name">Emanuel Silva</div><div class="user-role">Assessor Digital</div></div>
+          <div class="user-avatar" id="sidebar-avatar">?</div>
+          <div><div class="user-name" id="sidebar-nome">Carregando...</div><div class="user-role" id="sidebar-cargo">—</div></div>
           <button class="btn-logout" onclick="sair()" title="Sair">⏻</button>
         </div>
       </div>
@@ -1031,6 +1094,104 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
         </div>
       </div>
 
+      <!-- ══ CONFIGURAÇÕES ══ -->
+      <div class="page" id="page-config">
+        <div class="page-header">
+          <div class="page-title">Configurações</div>
+          <div class="page-sub">Conta, usuários e preferências da plataforma</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
+
+          <!-- Meu Perfil -->
+          <div>
+            <div class="settings-card">
+              <div class="settings-section-title">👤 Meu Perfil</div>
+              <div style="display:flex;align-items:center;gap:16px;margin-bottom:22px;">
+                <div id="cfg-avatar" style="width:56px;height:56px;border-radius:50%;background:var(--azul2);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0;">?</div>
+                <div>
+                  <div id="cfg-nome-display" style="font-size:16px;font-weight:800;color:var(--branco);">—</div>
+                  <div id="cfg-email-display" style="font-size:12px;color:var(--cinza2);margin-top:2px;">—</div>
+                  <span id="cfg-role-badge" class="badge azul" style="margin-top:6px;font-size:10px;">Usuário</span>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <div>
+                  <label class="form-label">Nome de exibição</label>
+                  <input type="text" id="cfg-nome" class="form-input" placeholder="Seu nome completo">
+                </div>
+                <div>
+                  <label class="form-label">E-mail</label>
+                  <input type="email" id="cfg-email" class="form-input" placeholder="—" readonly style="opacity:0.6;cursor:default;">
+                </div>
+                <button onclick="salvarPerfil()" class="btn btn-primary">Salvar alterações</button>
+                <div id="cfg-perfil-feedback" style="display:none;font-size:12px;padding:10px;border-radius:8px;text-align:center;font-weight:600;"></div>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="settings-section-title">🔒 Alterar Senha</div>
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <div>
+                  <label class="form-label">Nova senha</label>
+                  <input type="password" id="cfg-nova-senha" class="form-input" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div>
+                  <label class="form-label">Confirmar nova senha</label>
+                  <input type="password" id="cfg-conf-senha" class="form-input" placeholder="Repita a nova senha">
+                </div>
+                <button onclick="alterarSenha()" class="btn btn-primary">Alterar senha</button>
+                <div id="cfg-senha-feedback" style="display:none;font-size:12px;padding:10px;border-radius:8px;text-align:center;font-weight:600;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gerenciar Usuários — só admin vê -->
+          <div id="cfg-admin-panel" style="display:none;">
+            <div class="settings-card">
+              <div class="settings-section-title">👥 Gerenciar Usuários</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <div style="font-size:12px;color:var(--cinza);">Usuários cadastrados na plataforma</div>
+                <button onclick="abrirCriarUsuario()" class="btn btn-primary" style="font-size:12px;padding:7px 14px;">+ Criar usuário</button>
+              </div>
+              <div id="cfg-usuarios-lista">
+                <div style="font-size:13px;color:var(--cinza2);text-align:center;padding:20px;">Carregando...</div>
+              </div>
+            </div>
+
+            <div class="settings-card" id="cfg-criar-usuario-form" style="display:none;">
+              <div class="settings-section-title">✉️ Novo Usuário</div>
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <div>
+                  <label class="form-label">Nome completo</label>
+                  <input type="text" id="nu-nome" class="form-input" placeholder="Nome da pessoa">
+                </div>
+                <div>
+                  <label class="form-label">E-mail</label>
+                  <input type="email" id="nu-email" class="form-input" placeholder="email@dominio.com">
+                </div>
+                <div>
+                  <label class="form-label">Senha temporária</label>
+                  <input type="text" id="nu-senha" class="form-input" placeholder="Mínimo 6 caracteres">
+                </div>
+                <div>
+                  <label class="form-label">Nível de acesso</label>
+                  <select id="nu-role" class="form-select">
+                    <option value="usuario">Usuário</option>
+                    <option value="admin">Administrador</option>
+                  </select>
+                </div>
+                <div style="display:flex;gap:10px;">
+                  <button onclick="criarUsuarioAdmin()" class="btn btn-primary" style="flex:1;">Criar usuário</button>
+                  <button onclick="fecharCriarUsuario()" class="btn btn-outline">Cancelar</button>
+                </div>
+                <div id="nu-feedback" style="display:none;font-size:12px;padding:10px;border-radius:8px;text-align:center;font-weight:600;"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </main>
   </div>
 </div>
@@ -1092,27 +1253,101 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
 <script>
 // ── LOGIN ──
-const USUARIOS = {'emanuel':'talita2026','admin':'pie2026'};
+let _currentUser = null;
 
-function entrar() {
-  const u = document.getElementById('login-user').value.trim().toLowerCase();
-  const p = document.getElementById('login-pass').value;
-  if(USUARIOS[u] && USUARIOS[u] === p) {
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    initApp();
-  } else {
-    const err = document.getElementById('login-err');
-    err.style.display = 'block';
-    setTimeout(() => err.style.display = 'none', 3000);
+function mostrarView(id) {
+  document.querySelectorAll('.login-view').forEach(v => v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.login-err,.login-success').forEach(e => {
+    e.style.display = 'none'; e.textContent = '';
+  });
+}
+
+function showLoginErr(id, msg) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = msg; el.style.display = 'block';
+}
+function showLoginOk(id, msg) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = msg; el.style.display = 'block';
+}
+
+async function entrar() {
+  const email = document.getElementById('login-email').value.trim();
+  const senha = document.getElementById('login-pass').value;
+  if(!email || !senha) { showLoginErr('login-err','Preencha e-mail e senha.'); return; }
+  const btn = document.getElementById('btn-entrar');
+  btn.disabled = true; btn.textContent = 'Entrando...';
+  try {
+    await _auth.signInWithEmailAndPassword(email, senha);
+  } catch(e) {
+    const msgs = {
+      'auth/user-not-found':'E-mail não cadastrado.',
+      'auth/wrong-password':'Senha incorreta.',
+      'auth/invalid-email':'E-mail inválido.',
+      'auth/too-many-requests':'Muitas tentativas. Aguarde e tente novamente.',
+      'auth/invalid-credential':'E-mail ou senha incorretos.'
+    };
+    showLoginErr('login-err', msgs[e.code] || 'Erro ao entrar: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Entrar na plataforma →';
+  }
+}
+
+async function criarConta() {
+  const nome    = document.getElementById('criar-nome').value.trim();
+  const email   = document.getElementById('criar-email').value.trim();
+  const senha   = document.getElementById('criar-pass').value;
+  const confirm = document.getElementById('criar-confirm').value;
+  if(!nome || !email || !senha) { showLoginErr('criar-err','Preencha todos os campos.'); return; }
+  if(senha.length < 6) { showLoginErr('criar-err','A senha deve ter no mínimo 6 caracteres.'); return; }
+  if(senha !== confirm) { showLoginErr('criar-err','As senhas não coincidem.'); return; }
+  const btn = document.getElementById('btn-criar');
+  btn.disabled = true; btn.textContent = 'Criando conta...';
+  try {
+    const cred = await _auth.createUserWithEmailAndPassword(email, senha);
+    await cred.user.updateProfile({ displayName: nome });
+    const snap = await _db.collection('usuarios').get();
+    const role = snap.empty ? 'admin' : 'usuario';
+    await _db.collection('usuarios').doc(cred.user.uid).set({
+      nome, email, role, status: 'ativo',
+      created_at: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    // onAuthStateChanged cuida do resto
+  } catch(e) {
+    const msgs = {
+      'auth/email-already-in-use':'Este e-mail já está cadastrado.',
+      'auth/invalid-email':'E-mail inválido.',
+      'auth/weak-password':'Senha fraca — use pelo menos 6 caracteres.'
+    };
+    showLoginErr('criar-err', msgs[e.code] || 'Erro: ' + e.message);
+    btn.disabled = false; btn.textContent = 'Criar conta →';
+  }
+}
+
+async function enviarReset() {
+  const email = document.getElementById('reset-email').value.trim();
+  if(!email) { showLoginErr('reset-err','Informe seu e-mail.'); return; }
+  const btn = document.getElementById('btn-reset');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  try {
+    await _auth.sendPasswordResetEmail(email);
+    showLoginOk('reset-success','✅ Link enviado! Verifique sua caixa de entrada.');
+  } catch(e) {
+    const msgs = {
+      'auth/user-not-found':'E-mail não encontrado.',
+      'auth/invalid-email':'E-mail inválido.'
+    };
+    showLoginErr('reset-err', msgs[e.code] || 'Erro: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Enviar link de redefinição →';
   }
 }
 
 function sair() {
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('login-user').value = '';
-  document.getElementById('login-pass').value = '';
+  if(typeof _auth !== 'undefined') _auth.signOut();
 }
 
 // ── INIT ──
@@ -1140,7 +1375,8 @@ const PAGE_TITLES = {
   dashboard:'Dashboard',mapa:'Mapa Eleitoral',metas:'Metas 2026',
   projetos:'Projetos',crm:'Lideranças',agenda:'Agenda',
   monitoramento:'Monitoramento',trafego:'Tráfego & Leads',
-  ia:'IA Estratégica','projeto-detalhe':'Projeto'
+  ia:'IA Estratégica','projeto-detalhe':'Projeto',
+  config:'Configurações',votos:'Registrar Votos'
 };
 
 function showPage(id, el) {
@@ -1150,6 +1386,7 @@ function showPage(id, el) {
   if(el) el.classList.add('active');
   document.getElementById('topbar-title').textContent = PAGE_TITLES[id] || id;
   window.scrollTo({top:0,behavior:'smooth'});
+  if(id === 'config' && typeof carregarUsuarios === 'function') carregarUsuarios();
 }
 
 // ── PROJETOS ──
@@ -1353,15 +1590,16 @@ function limparChat() {
 }
 
 // Toggle senha
-function toggleSenha() {
-  const input = document.getElementById('login-pass');
-  const btn = document.getElementById('pass-toggle-btn');
+function toggleSenha(inputId, btnId) {
+  const input = document.getElementById(inputId || 'login-pass');
+  const btn   = document.getElementById(btnId   || 'ptb1');
+  if(!input) return;
   if(input.type === 'password') {
     input.type = 'text';
-    btn.textContent = '🙈';
+    if(btn) btn.textContent = '🙈';
   } else {
     input.type = 'password';
-    btn.textContent = '👁';
+    if(btn) btn.textContent = '👁';
   }
 }
 
@@ -1370,11 +1608,10 @@ document.addEventListener('keydown', e => {
   if(e.key==='Enter' && document.getElementById('login-screen').style.display !== 'none') entrar();
 });
 
-// ── PAGE TITLES ──
-PAGE_TITLES['votos'] = 'Registrar Votos';
 </script>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 const _fbConfig = {
@@ -1386,7 +1623,206 @@ const _fbConfig = {
   appId: "1:385341562231:web:64c50e760acc1fa6179572"
 };
 const _fbApp = firebase.initializeApp(_fbConfig, 'plataforma');
-const _db = firebase.firestore(_fbApp);
+const _db   = firebase.firestore(_fbApp);
+const _auth = firebase.auth(_fbApp);
+
+// App secundário para criar usuários sem deslogar o admin
+const _fbApp2 = firebase.initializeApp(_fbConfig, 'secondary');
+const _auth2  = firebase.auth(_fbApp2);
+
+// ── AUTH STATE ──
+_auth.onAuthStateChanged(async user => {
+  if (user) {
+    try {
+      const ref = _db.collection('usuarios').doc(user.uid);
+      let docSnap = await ref.get();
+      if (!docSnap.exists) {
+        const allSnap = await _db.collection('usuarios').get();
+        const role = allSnap.empty ? 'admin' : 'usuario';
+        await ref.set({
+          nome: user.displayName || user.email.split('@')[0],
+          email: user.email, role, status: 'ativo',
+          created_at: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        docSnap = await ref.get();
+      }
+      const ud = docSnap.data();
+      if (ud.status !== 'ativo') {
+        const msg = ud.status === 'pendente'
+          ? 'Conta aguardando aprovação do administrador.'
+          : 'Conta desativada. Entre em contato com o administrador.';
+        showLoginErr('login-err', msg);
+        mostrarView('view-login');
+        await _auth.signOut();
+        return;
+      }
+      _currentUser = { uid: user.uid, email: user.email, displayName: user.displayName, ...ud };
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      initApp();
+      atualizarSidebarUser();
+      const adminPanel = document.getElementById('cfg-admin-panel');
+      if (adminPanel) adminPanel.style.display = ud.role === 'admin' ? 'block' : 'none';
+    } catch(e) {
+      console.error('Auth error:', e);
+      showLoginErr('login-err', 'Erro ao carregar dados. Tente novamente.');
+      await _auth.signOut();
+    }
+  } else {
+    _currentUser = null;
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+  }
+});
+
+function atualizarSidebarUser() {
+  if (!_currentUser) return;
+  const nome   = _currentUser.nome || _currentUser.displayName || _currentUser.email;
+  const inicial = nome ? nome[0].toUpperCase() : '?';
+  const cargo  = _currentUser.role === 'admin' ? 'Administrador' : 'Usuário';
+  const el = id => document.getElementById(id);
+  if(el('sidebar-avatar'))   el('sidebar-avatar').textContent   = inicial;
+  if(el('sidebar-nome'))     el('sidebar-nome').textContent     = nome;
+  if(el('sidebar-cargo'))    el('sidebar-cargo').textContent    = cargo;
+  if(el('cfg-avatar'))       el('cfg-avatar').textContent       = inicial;
+  if(el('cfg-nome-display')) el('cfg-nome-display').textContent = nome;
+  if(el('cfg-email-display'))el('cfg-email-display').textContent= _currentUser.email;
+  if(el('cfg-nome'))         el('cfg-nome').value               = nome;
+  if(el('cfg-email'))        el('cfg-email').value              = _currentUser.email;
+  if(el('cfg-role-badge'))   el('cfg-role-badge').textContent   = _currentUser.role === 'admin' ? 'Administrador' : 'Usuário';
+}
+
+// ── CONFIGURAÇÕES — PERFIL ──
+async function salvarPerfil() {
+  const nome = document.getElementById('cfg-nome').value.trim();
+  if(!nome) { feedbackCfg('cfg-perfil-feedback','Informe seu nome.',false); return; }
+  try {
+    await _auth.currentUser.updateProfile({ displayName: nome });
+    await _db.collection('usuarios').doc(_currentUser.uid).update({ nome });
+    _currentUser.nome = nome; _currentUser.displayName = nome;
+    atualizarSidebarUser();
+    feedbackCfg('cfg-perfil-feedback','✅ Perfil atualizado com sucesso!',true);
+  } catch(e) { feedbackCfg('cfg-perfil-feedback','❌ Erro: '+e.message,false); }
+}
+
+async function alterarSenha() {
+  const nova    = document.getElementById('cfg-nova-senha').value;
+  const confirm = document.getElementById('cfg-conf-senha').value;
+  if(!nova || nova.length < 6) { feedbackCfg('cfg-senha-feedback','Senha deve ter no mínimo 6 caracteres.',false); return; }
+  if(nova !== confirm)          { feedbackCfg('cfg-senha-feedback','As senhas não coincidem.',false); return; }
+  try {
+    await _auth.currentUser.updatePassword(nova);
+    document.getElementById('cfg-nova-senha').value = '';
+    document.getElementById('cfg-conf-senha').value = '';
+    feedbackCfg('cfg-senha-feedback','✅ Senha alterada com sucesso!',true);
+  } catch(e) {
+    if(e.code === 'auth/requires-recent-login')
+      feedbackCfg('cfg-senha-feedback','Por segurança, faça logout e login novamente antes de alterar a senha.',false);
+    else
+      feedbackCfg('cfg-senha-feedback','❌ Erro: '+e.message,false);
+  }
+}
+
+function feedbackCfg(id, msg, ok) {
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = ok ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)';
+  el.style.color  = ok ? '#10B981' : '#EF4444';
+  el.style.border = ok ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(239,68,68,0.3)';
+  setTimeout(() => { if(el) el.style.display='none'; }, 4000);
+}
+
+// ── CONFIGURAÇÕES — GERENCIAR USUÁRIOS (admin) ──
+function abrirCriarUsuario() {
+  document.getElementById('cfg-criar-usuario-form').style.display = 'block';
+  document.getElementById('cfg-criar-usuario-form').scrollIntoView({behavior:'smooth'});
+}
+function fecharCriarUsuario() {
+  document.getElementById('cfg-criar-usuario-form').style.display = 'none';
+  ['nu-nome','nu-email','nu-senha'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+}
+
+async function criarUsuarioAdmin() {
+  const nome  = document.getElementById('nu-nome').value.trim();
+  const email = document.getElementById('nu-email').value.trim();
+  const senha = document.getElementById('nu-senha').value;
+  const role  = document.getElementById('nu-role').value;
+  if(!nome||!email||!senha) { feedbackCfg('nu-feedback','Preencha todos os campos.',false); return; }
+  if(senha.length < 6)      { feedbackCfg('nu-feedback','Senha deve ter no mínimo 6 caracteres.',false); return; }
+  const btn = document.querySelector('#cfg-criar-usuario-form .btn-primary');
+  btn.disabled = true; btn.textContent = 'Criando...';
+  try {
+    const cred = await _auth2.createUserWithEmailAndPassword(email, senha);
+    await cred.user.updateProfile({ displayName: nome });
+    await _db.collection('usuarios').doc(cred.user.uid).set({
+      nome, email, role, status: 'ativo',
+      created_at: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    await _auth2.signOut();
+    fecharCriarUsuario();
+    feedbackCfg('nu-feedback','✅ Usuário criado com sucesso!',true);
+    carregarUsuarios();
+  } catch(e) {
+    const msgs = {
+      'auth/email-already-in-use':'E-mail já cadastrado.',
+      'auth/invalid-email':'E-mail inválido.',
+      'auth/weak-password':'Senha fraca — use ao menos 6 caracteres.'
+    };
+    feedbackCfg('nu-feedback', msgs[e.code]||'Erro: '+e.message, false);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Criar usuário';
+  }
+}
+
+async function carregarUsuarios() {
+  const lista = document.getElementById('cfg-usuarios-lista');
+  if(!lista || !_currentUser || _currentUser.role !== 'admin') return;
+  try {
+    const snap = await _db.collection('usuarios').orderBy('created_at','desc').get();
+    if(snap.empty){ lista.innerHTML='<div style="font-size:13px;color:var(--cinza2);text-align:center;padding:16px;">Nenhum usuário cadastrado.</div>'; return; }
+    const roleLabel = { admin:'Admin', usuario:'Usuário' };
+    const stColor   = { ativo:'verde', pendente:'amarelo', inativo:'vermelho' };
+    lista.innerHTML = snap.docs.map(doc => {
+      const u = doc.data(); const uid = doc.id;
+      const isMe = _currentUser && _currentUser.uid === uid;
+      return `<div class="usr-row">
+        <div class="usr-avt">${(u.nome||u.email||'?')[0].toUpperCase()}</div>
+        <div class="usr-inf">
+          <div class="usr-name">${u.nome||'—'}${isMe?' <span style="font-size:10px;color:var(--cinza2);">(você)</span>':''}</div>
+          <div class="usr-email">${u.email||'—'}</div>
+        </div>
+        <span class="badge ${stColor[u.status]||'azul'}" style="font-size:10px;">${u.status||'—'}</span>
+        <span class="badge azul" style="font-size:10px;">${roleLabel[u.role]||u.role}</span>
+        <div class="usr-acts">${!isMe?`
+          <select onchange="alterarStatusUsuario('${uid}',this.value)" title="Status"
+            style="background:var(--bg4);border:1px solid var(--borda);border-radius:6px;padding:3px 6px;font-size:11px;color:var(--cinza);font-family:var(--fonte);outline:none;cursor:pointer;">
+            <option value="ativo"${u.status==='ativo'?' selected':''}>Ativo</option>
+            <option value="pendente"${u.status==='pendente'?' selected':''}>Pendente</option>
+            <option value="inativo"${u.status==='inativo'?' selected':''}>Inativo</option>
+          </select>
+          <select onchange="alterarRoleUsuario('${uid}',this.value)" title="Nível"
+            style="background:var(--bg4);border:1px solid var(--borda);border-radius:6px;padding:3px 6px;font-size:11px;color:var(--cinza);font-family:var(--fonte);outline:none;cursor:pointer;">
+            <option value="usuario"${u.role==='usuario'?' selected':''}>Usuário</option>
+            <option value="admin"${u.role==='admin'?' selected':''}>Admin</option>
+          </select>`:'<span style="font-size:11px;color:var(--cinza2);">—</span>'}
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    lista.innerHTML='<div style="font-size:13px;color:var(--vermelho2);padding:12px;">Erro ao carregar usuários.</div>';
+  }
+}
+
+async function alterarStatusUsuario(uid, status) {
+  try { await _db.collection('usuarios').doc(uid).update({ status }); carregarUsuarios(); }
+  catch(e) { console.error(e); }
+}
+async function alterarRoleUsuario(uid, role) {
+  try { await _db.collection('usuarios').doc(uid).update({ role }); carregarUsuarios(); }
+  catch(e) { console.error(e); }
+}
 
 // Lista de municípios para autocomplete
 const MUNICIPIOS_BA = [
@@ -1776,10 +2212,440 @@ async function salvarLideranca() {
   btn.textContent = '➕ Cadastrar Liderança';
 }
 
+// ── Bairros por município ─────────────────────────────────────────────────────
+const BAIRROS_BA = {
+  "Salvador":["Acupe de Brotas","Águas Claras","Alto das Pombas","Alto do Cabrito","Amaralina","Arenoso","Armação","Arraial do Retiro","Barra","Barris","Bate Facho","Beiru","Boa Viagem","Bonfim","Brotas","Cabula","Caixa D'Água","Cajazeiras I","Cajazeiras II","Cajazeiras III","Cajazeiras IV","Cajazeiras V","Cajazeiras VI","Cajazeiras VII","Cajazeiras VIII","Cajazeiras IX","Cajazeiras X","Cajazeiras XI","Calabetão","Caminho de Areia","Campinas de Pirajá","Campo Verde","Canabrava","Cândeal","Castelo Branco","Centro","Chapada do Rio Vermelho","Cidade Nova","Coutos","Cruz do Cosme","Dom Avelar","Dois de Julho","Engenho Velho da Federação","Engenho Velho de Brotas","Engomadeira","Fazenda Grande do Retiro","Fazenda Grande I","Fazenda Grande II","Fazenda Grande III","Fazenda Grande IV","Federação","Funcionários","Garcia","Graça","Imbuí","Itaigara","Itapuã","Itinga","Jardim das Margaridas","Liberdade","Lobato","Luís Anselmo","Marechal Rondon","Massaranduba","Mata Escura","Mirantes de Periperi","Mussurunga I","Mussurunga II","Nova Brasília de Itapuã","Novo Marotinho","Ogunjá","Ondina","Pernambués","Periperi","Pero Vaz","Pirajá","Piatã","Pituba","Plataforma","Politeama","Praia Grande","Retiro","Rio Vermelho","Saboeiro","Santa Cruz","Santa Mônica","Santo Antônio","Santo Agostinho","São Caetano","São Cristóvão","São Gonçalo do Retiro","Sete de Abril","SIM","Sussuarana","Tancredo Neves","Trobogy","Uruguai","Vale dos Lagos","Valéria","Vitória"],
+  "Feira de Santana":["Centro","Kalilândia","Brasília","George Américo","Tomba","SIM","Gabriela","Jardim Cruzeiro","Mangabeira","Ponto Central","Lagoa Salgada","Muchila","Aviário","Nova Esperança","Pedra do Descanso","Pampalona","Sobradinho","Limoeiro","Campo Limpo","João Durval","Conceição","Serraria Brasil","Baraúnas","Santo Antônio dos Prazeres","Subaúma","Rua Nova","Lagoa Grande","Queimadinho"],
+  "Vitória da Conquista":["Centro","Brasil","Candeias","Recreio","Cruzeiro","Bairro Universidade","Espírito Santo","Jurema","Patagônia","Alto Maron","Ibirapuera","Felícia","Santo Antônio","Zabelê","Bairro Novo","Lagoa das Bateias","Boa Vista","Morada da Serra","São Sebastião","Urbis I","Urbis II","Campinhos","Pradoso","Presidente Médici","Ciro Moreira"],
+  "Ilhéus":["Centro","Banco da Vitória","Malhado","Pontalete","Olivença","São Sebastião","Castelo Novo","Salobrinho","Aritaguá","Japu","Coutos","São Jorge","Conceição","Iguape","Nossa Senhora da Vitória","Alto do Torrão","Bairro Novo","Conquista"],
+  "Jequié":["Centro","Alto do Jequiezinho","Água Fria","Baixão","Boa Vista","Brasília","Caiçara","Cidade Nova","Dom Rodrigo","Florestal","Mandacaru","Novo Horizonte","Pradoso","Santa Terezinha","Santo Antônio","São Judas Tadeu","Telefônica","Joaquim Romão","Jequiezinho"],
+  "Juazeiro":["Centro","Abóbora","América","Beira Rio","Boa Vista","Cohab","Dom Pedro","Franciscanos","Industrial","Irmã Dulce","João Paulo II","Maracanã","Massangano","Novo Horizonte","Peixe Gordo","Santa Rita","São Geraldo","Sobradinho","Vila Rica","Panorama"],
+  "Camaçari":["Centro","Abrantes","Barra do Jacuípe","Glória","Guarajuba","Itacimirim","Monte Gordo","Polo Industrial","Portão","Praia de Arembepe","Praia do Forte","São Braz","Taquaral","Bairro Novo"],
+  "Luís Eduardo Magalhães":["Centro","Aeroporto","Bela Vista","Centro Sul","Jardim América","Novo Horizonte","Parque Industrial","Planalto","Vila Verde","Zona Norte","Pôr do Sol","Renato Gonçalves"],
+  "Lauro de Freitas":["Centro","Buraquinho","Caji","Capelinha","Ipitanga","Jardim Valéria","João Paulo II","Miragem","Pitangueiras","São Cristóvão","Vida Nova","Vilas do Atlântico","Itinga"],
+  "Porto Seguro":["Centro","Aquários","Arraial d'Ajuda","Brasil Novo","Cidade Alta","Cidade Baixa","Coqueiro","Fontanas","Guaibim","Monte Pascoal","Novo Horizonte","Trancoso","Vale Verde","Vila Verde"],
+  "Itabuna":["Centro","Fátima","Ferradas","Góes Calmon","Jardim Vitória","Lomanto Júnior","Mangabinha","Novo Horizonte","Palermo","Parque Verde","São Caetano","São José","Sievert","Urbis IV","Vital Brasil"],
+  "Teixeira de Freitas":["Centro","Aeroporto","Bela Vista","Castelão","CIBASA","Cristal","Jardim Maravilha","Liberdade","Novo Horizonte","Pequi","Primavera","Recanto dos Pássaros","Santa Cruz","Vinhático"],
+  "Alagoinhas":["Centro","Boa Vista","Campo Novo","Capuchinhos","Centro Novo","Fátima","Lagoa de Fora","Nova Alagoinhas","Olhos d'Água","Santo Antônio","Serraria","Vila Augusta","Bairro Novo"],
+  "Poções":["Centro","Alvorada","Boa Vista","Cohab","Escola Agrícola","Novo Mundo","Parque São José","São Sebastião","Vila Nova","Alto"],
+  "Santo Antônio de Jesus":["Centro","Alto da Manga","Andaiá","Candeias","Concórdia","D'Ávila","Leopoldo","Mirim","Nova Conquista","Novo Horizonte","Tomba","Zabelê"],
+  "Eunápolis":["Centro","Dinah Borges","Iguaçu","Juca Rosa","Pequi","Santo Antônio","São Marcos","Ulisses Guimarães","Vila Brasil","Novo Horizonte"],
+  "Itapetinga":["Centro","Campinhos","Cohab","Iguaçu","Juca Rosa","Mandacaru","Novo Horizonte","São Marcos","Vale do Rio","Bairro Novo"],
+  "Barreiras":["Centro","Baraúna","Boa Vista","Brejo Comprido","Coréia","Flamboyant","Morada Nobre","Nações","Novo Horizonte","Renato Gonçalves","Sítio Grande","Vila Nova","Triunfo","Olhos D'Água"],
+  "Simões Filho":["Centro","Cajazeiras","Campo Novo","Malvinas","Nova Cidade","Parque Santa Amélia","Santo Antônio","São João","Vila Bonfim","Vila São Luís"],
+  "Jaguaquara":["Centro","Alto","Boa Vista","Cohab","Liberdade","Nova Jaguaquara","São José","São Sebastião","Vila Nova"],
+  "Guanambi":["Centro","Alto da Bela Vista","Cohab","João Paulo II","Mutamba","Nova Guanambi","Recanto","Resedá","São Sebastião","Bela Vista"],
+  "Ibicaraí":["Centro","Alto","Bairro Novo","Cohab","Esperança","Nova Ibicaraí","São Sebastião","Vila Nova"],
+  "Itororó":["Centro","Alto","Bairro Novo","Cohab","Floresta","Nova Itororó","São Pedro","Vila Esperança"],
+  "Caetité":["Centro","Alto das Flores","Boa Vista","Cohab","Manoel Nóbrega","Morrão","Nova Caetité","São Sebastião","Bela Vista"],
+  "Ituberá":["Centro","Bairro Novo","Cohab","Ituberinha","Nova Ituberá","São Sebastião","Vila Nova","Zona Rural"],
+  "Mata de São João":["Centro","Bairro Novo","Forte Garcia D'Ávila","Guarajuba","Imbassaí","Praia do Forte","São Sebastião","Subaúma"],
+  "Brumado":["Centro","Alto do Cruzeiro","Boa Esperança","Cohab","Distrito Industrial","Jardim","Loanda","Paraíso","São Sebastião","Vila Nova"],
+  "Iguaí":["Centro","Alto","Bairro Novo","Cohab","Nova Iguaí","Recreio","São Sebastião","Vila Nova"],
+  "Ipiaú":["Centro","Alto","Bairro Novo","Cohab","Mandacaru","Nova Ipiaú","São Benedito","São Sebastião"],
+  "Santana":["Centro","Alto","Bairro Novo","Boa Vista","Cohab","Nova Santana","São Sebastião","Vila Nova"],
+  "Euclides da Cunha":["Centro","Boa Vista","Cohab","Desterro","Lajes","Mandacaru","Nova Canudos","São Pedro","Bairro Novo"],
+  "Vera Cruz":["Cacha Pregos","Centro","Coqueiro","Coroa","Gamboa","Mar Grande","Ponta de Areia","São Tomé","Tairu","Matarandiba"],
+  "Santo Amaro":["Centro","Alto","Bairro Novo","Cohab","Nova Santo Amaro","Oliveira","São Sebastião","Vila Nova"],
+  "Valença":["Centro","Baixa do Camutá","Boa Vista","Bomfim","Guaibim","Industrial","Nazaré","São Benedito","Bairro Novo"],
+  "Aurelino Leal":["Centro","Alto","Bairro Novo","Cohab","Nova Aurelino Leal","São Sebastião","Vila Nova","Zona Rural"],
+  "Conceição do Jacuípe":["Centro","Alto","Bairro Novo","Cohab","Nova Conceição","São Sebastião","Vila Nova"],
+  "Sento Sé":["Centro","Beira Rio","Bom Jardim","Cohab","Nova Sento Sé","Sobradinho","Vila Nova","Zona Rural"],
+  "Jacobina":["Centro","Alto da Missão","Boa Vista","Cajazeiras","Cohab","Lage","Santo Antônio","Serra do Tombador","Várzea"],
+  "Uruçuca":["Centro","Alto","Bairro Novo","Cohab","Nova Uruçuca","São Sebastião","Vila Nova","Zona Rural"],
+  "Camacan":["Centro","Alto","Bairro Novo","Cohab","Nova Camacan","São Benedito","São Sebastião","Vila Nova"],
+  "Casa Nova":["Centro","Beira Rio","Boa Vista","Cohab","Curral Velho","Junco","Nova Casa Nova","São Sebastião","Vila Nova"],
+  "Itaberaba":["Centro","Alto da Glória","Boa Vista","Cohab","Industrial","Jardim","Nova Itaberaba","São Sebastião"],
+  "Senhor do Bonfim":["Centro","Alto da Maravilha","Boa Vista","Cohab","Lago","Morada Nova","Poço da Pedra","São Benedito","Vila Nova"],
+  "Cícero Dantas":["Centro","Alto","Bairro Novo","Cohab","Nova Cícero","São Sebastião","Sítio Novo","Vila Nova"],
+  "Capim Grosso":["Centro","Alto","Bairro Novo","Cohab","Nova Capim Grosso","São Sebastião","Vila Nova"],
+  "Canavieiras":["Centro","Beira Mar","Bairro Novo","Cohab","Nova Canavieiras","São Sebastião","Vila Nova"],
+  "Barra":["Centro","Beira Rio","Boa Vista","Cohab","Nova Barra","Porto Novo","São Sebastião","Vila Nova"],
+  "Bom Jesus da Lapa":["Centro","Beira Rio","Boa Vista","Cohab","Grota do Angico","Igrejinha","Riacho Seco","São José","Vila Nova"],
+  "Barra do Choça":["Centro","Alto","Bairro Novo","Cohab","Nova Barra do Choça","São Sebastião","Vila Nova"],
+  "Wagner":["Centro","Alto","Bairro Novo","Cohab","Nova Wagner","São Sebastião","Vila Nova","Zona Rural"],
+  "Gandu":["Centro","Alto","Bairro Novo","Cohab","Nova Gandu","São Sebastião","Vila Nova"],
+  "Dias d'Ávila":["Centro","Coração de Maria","Jardim","Mineração","Nova Dias d'Ávila","Parque Anhanguera","São Sebastião","Subaé"],
+  "Ipirá":["Centro","Alto","Bairro Novo","Cohab","Nova Ipirá","Riacho","São Sebastião","Vila Nova"],
+  "Planalto":["Centro","Alto","Bairro Novo","Cohab","Nova Planalto","São Sebastião","Vila Nova"],
+  "Nova Canaã":["Centro","Alto","Bairro Novo","Cohab","Nova Expansão","São Sebastião","Vila Nova"],
+  "Itamaraju":["Centro","Bom Jesus","Cohab","Dinah Borges","Novo Horizonte","Santa Cruz","São Caetano","Vale Verde"],
+  "Itacaré":["Centro","Bairro Novo","Coroa","Ilhéus","Passagem","Resende","São Sebastião","Vila Nova"],
+  "Ibirataia":["Centro","Alto","Bairro Novo","Cohab","Nova Ibirataia","São Sebastião","Vila Nova"],
+  "Catu":["Centro","Bairro Novo","Cohab","Industrial","Mandacarú","Nova Catu","São Sebastião","Vila Nova"],
+  "Itarantim":["Centro","Alto","Bairro Novo","Cohab","Nova Itarantim","São Sebastião","Vila Nova"],
+  "São Gonçalo dos Campos":["Centro","Alto","Bairro Novo","Cohab","Nova São Gonçalo","São Sebastião","Vila Nova"],
+  "Riacho de Santana":["Centro","Alto","Bairro Novo","Cohab","Nova Riacho","São Sebastião","Vila Nova","Zona Rural"],
+  "Cotegipe":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Cotegipe","São Sebastião","Vila Nova"],
+  "Livramento de Nossa Senhora":["Centro","Alto","Bairro Novo","Cohab","Minas","Nova Livramento","São Sebastião","Vila Nova"],
+  "Jeremoabo":["Centro","Alto","Bairro Novo","Cohab","Nova Jeremoabo","São Sebastião","Vila Nova"],
+  "Licínio de Almeida":["Centro","Alto","Bairro Novo","Cohab","Nova Licínio","São Sebastião","Vila Nova"],
+  "Pindaí":["Centro","Alto","Bairro Novo","Cohab","Nova Pindaí","São Sebastião","Vila Nova"],
+  "Riachão do Jacuípe":["Centro","Alto","Bairro Novo","Cohab","Nova Riachão","São Sebastião","Vila Nova"],
+  "Aratuípe":["Centro","Alto","Bairro Novo","Cohab","Nova Aratuípe","São Sebastião","Vila Nova"],
+  "Itambé":["Centro","Alto","Bairro Novo","Cohab","Nova Itambé","São Sebastião","Vila Nova"],
+  "Itiruçu":["Centro","Alto","Bairro Novo","Cohab","Nova Itiruçu","São Sebastião","Vila Nova"],
+  "Ibirapitanga":["Centro","Alto","Bairro Novo","Cohab","Nova Ibirapitanga","São Sebastião","Vila Nova"],
+  "Itajuípe":["Centro","Alto","Bairro Novo","Cohab","Nova Itajuípe","São Sebastião","Vila Nova"],
+  "Santa Cruz Cabrália":["Centro","Bairro Novo","Coroa Vermelha","Nova Santa Cruz","Santo André","São Sebastião","Vila Verde"],
+  "Ibicuí":["Centro","Alto","Bairro Novo","Cohab","Nova Ibicuí","São Sebastião","Vila Nova"],
+  "Paratinga":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Paratinga","São Sebastião","Vila Nova"],
+  "Mucuri":["Centro","Ampliação","Colônia","Industrial","Nova Mucuri","Parque das Palmeiras","São Gonçalo","Vila Nova"],
+  "Santa Luzia":["Centro","Alto","Bairro Novo","Cohab","Nova Santa Luzia","São Sebastião","Vila Nova"],
+  "Barra da Estiva":["Centro","Alto","Bairro Novo","Cohab","Nova Barra da Estiva","São Sebastião","Vila Nova"],
+  "Belo Campo":["Centro","Alto","Bairro Novo","Cohab","Nova Belo Campo","São Sebastião","Vila Nova"],
+  "Tanhaçu":["Centro","Alto","Bairro Novo","Cohab","Nova Tanhaçu","São Sebastião","Vila Nova"],
+  "Itabela":["Centro","Córrego","Guaxuma","Industrial","Nova Itabela","Novo Horizonte","Palmital","São Marcos"],
+  "Piatã":["Centro","Alto","Bairro Novo","Cohab","Nova Piatã","São Sebastião","Vila Nova","Zona Rural"],
+  "Umburanas":["Centro","Alto","Bairro Novo","Cohab","Nova Umburanas","São Sebastião","Vila Nova"],
+  "Mutuípe":["Centro","Alto","Bairro Novo","Cohab","Nova Mutuípe","São Sebastião","Vila Nova"],
+  "Manoel Vitorino":["Centro","Alto","Bairro Novo","Cohab","Nova Manoel Vitorino","São Sebastião","Vila Nova"],
+  "Carinhanha":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Carinhanha","São Sebastião","Vila Nova"],
+  "Conceição do Coité":["Centro","Bairro Novo","Cohab","João Paulo II","Nova Esperança","Novo Horizonte","Tomba"],
+  "Irecê":["Centro","Alto","Bom Jesus","Cohab","João Paulo II","Liberdade","Novo Horizonte","Parque","São Sebastião"],
+  "Pojuca":["Centro","Alto","Bairro Novo","Cohab","Nova Pojuca","São Sebastião","Vila Nova"],
+  "Sobradinho":["Centro","Beira Rio","Cohab","Nova Sobradinho","Orla","São Sebastião","Vila Nova"],
+  "Candeias":["Centro","Bandeira","Cohab","Industrial","Lagoa","Santo Amaro","São Bartolomeu","Subaé"],
+  "Presidente Jânio Quadros":["Centro","Alto","Bairro Novo","Cohab","Nova Presidente Jânio","São Sebastião","Vila Nova"],
+  "Itagibá":["Centro","Alto","Bairro Novo","Cohab","Nova Itagibá","São Sebastião","Vila Nova"],
+  "Tucano":["Centro","Alto","Bairro Novo","Cohab","Cohab II","Nova Tucano","São João","São Sebastião"],
+  "Cairu":["Boipeba","Cairu","Centro","Galeão","Morro de São Paulo","Taperoá II","Velha Boipeba","Zona Rural"],
+  "Condeúba":["Centro","Alto","Bairro Novo","Cohab","Nova Condeúba","São Sebastião","Vila Nova"],
+  "Itapé":["Centro","Alto","Bairro Novo","Cohab","Nova Itapé","São Sebastião","Vila Nova"],
+  "Candiba":["Centro","Alto","Bairro Novo","Cohab","Nova Candiba","São Sebastião","Vila Nova"],
+  "Jitaúna":["Centro","Alto","Bairro Novo","Cohab","Nova Jitaúna","São Sebastião","Vila Nova"],
+  "Nova Fátima":["Centro","Alto","Bairro Novo","Cohab","Nova Expansão","São Sebastião","Vila Nova"],
+  "Ribeira do Pombal":["Centro","Alto","Bairro Novo","Cohab","Nova Ribeira","São Sebastião","Vila Nova","Zona Rural"],
+  "Seabra":["Centro","Alto","Bairro Novo","Cohab","Nova Seabra","São Sebastião","Vila Nova","Zona Rural"],
+  "Formosa do Rio Preto":["Centro","Alto","Bairro Novo","Cohab","Nova Formosa","São Sebastião","Vila Nova","Zona Rural"],
+  "Laje":["Centro","Alto","Bairro Novo","Cohab","Nova Laje","São Sebastião","Vila Nova"],
+  "Nova Viçosa":["Centro","Bairro Novo","Cohab","Industrial","Nova Expansão","São Sebastião","Vila Nova","Zona Praial"],
+  "Una":["Centro","Alto","Bairro Novo","Cohab","Nova Una","São Sebastião","Terreros","Vila Nova"],
+  "Santa Maria da Vitória":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Santa Maria","São Sebastião","Vila Nova"],
+  "Jacaraci":["Centro","Alto","Bairro Novo","Cohab","Nova Jacaraci","São Sebastião","Vila Nova"],
+  "Maragogipe":["Centro","Beira Mar","Bairro Novo","Cohab","Nova Maragogipe","São Sebastião","Vila Nova"],
+  "Santo Estêvão":["Centro","Alto","Bairro Novo","Cohab","Nova Santo Estêvão","São Sebastião","Vila Nova"],
+  "Cristópolis":["Centro","Alto","Bairro Novo","Cohab","Nova Cristópolis","São Sebastião","Vila Nova"],
+  "Caculé":["Centro","Alto","Bairro Novo","Cohab","Nova Caculé","São Sebastião","Vila Nova"],
+  "Correntina":["Centro","Alto","Bairro Novo","Cohab","Nova Correntina","São Sebastião","Vila Nova","Zona Rural"],
+  "Medeiros Neto":["Centro","Alto","Bairro Novo","Cohab","Nova Medeiros Neto","São Sebastião","Vila Nova"],
+  "Prado":["Centro","Bairro Novo","Cohab","Nova Prado","Praia","São Sebastião","Vila Nova"],
+  "Ubaíra":["Centro","Alto","Bairro Novo","Cohab","Nova Ubaíra","São Sebastião","Vila Nova"],
+  "Anagé":["Centro","Alto","Bairro Novo","Cohab","Nova Anagé","São Sebastião","Vila Nova"],
+  "Campo Formoso":["Centro","Angico","Boa Vista","Cohab","Lapa","Malhada","Nova Campo Formoso","São Sebastião"],
+  "Rio Real":["Centro","Alto","Bairro Novo","Cohab","Nova Rio Real","São Sebastião","Vila Nova"],
+  "Ruy Barbosa":["Centro","Alto","Bairro Novo","Cohab","Nova Ruy Barbosa","São Sebastião","Vila Nova"],
+  "Serrinha":["Centro","Bairro Novo","Boa Esperança","Cohab","Loteamento","Nova Esperança","São João","Sussuarana"],
+  "Boninal":["Centro","Alto","Bairro Novo","Cohab","Nova Boninal","São Sebastião","Vila Nova"],
+  "Itanhém":["Centro","Alto","Bairro Novo","Cohab","Nova Itanhém","São Sebastião","Vila Nova"],
+  "Itapicuru":["Centro","Alto","Bairro Novo","Cohab","Nova Itapicuru","São Sebastião","Vila Nova"],
+  "Entre Rios":["Centro","Alto","Bairro Novo","Cohab","Nova Entre Rios","São Sebastião","Subaúma","Vila Nova"],
+  "Pintadas":["Centro","Alto","Bairro Novo","Cohab","Nova Pintadas","São Sebastião","Vila Nova"],
+  "Xique-Xique":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Xique-Xique","São Sebastião","Vila Nova"],
+  "Guaratinga":["Centro","Alto","Bairro Novo","Cohab","Nova Guaratinga","São Sebastião","Vila Nova"],
+  "Remanso":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Remanso","São Sebastião","Vila Nova"],
+  "Crisópolis":["Centro","Alto","Bairro Novo","Cohab","Nova Crisópolis","São Sebastião","Vila Nova"],
+  "Cachoeira":["Centro","Alto","Bairro Novo","Cohab","Nova Cachoeira","São Sebastião","Vila Nova"],
+  "Castro Alves":["Centro","Alto","Bairro Novo","Cohab","Nova Castro Alves","São Sebastião","Vila Nova"],
+  "Curaçá":["Centro","Airi","Barra","Boa Vista","Cohab","Piranhas","São Marcos","Vila Nova"],
+  "Caravelas":["Barra de Caravelas","Centro","Bairro Novo","Cohab","Nova Caravelas","São Sebastião","Vila Nova"],
+  "Ipupiara":["Centro","Alto","Bairro Novo","Cohab","Nova Ipupiara","São Sebastião","Vila Nova"],
+  "Itatim":["Centro","Alto","Bairro Novo","Cohab","Nova Itatim","São Sebastião","Vila Nova"],
+  "Pilão Arcado":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Pilão Arcado","São Sebastião","Vila Nova"],
+  "Cruz das Almas":["Centro","Bairro Novo","Cohab","Dona Amélia","Nova Cruz","Recanto","São Benedito","Tomba"],
+  "Ubatã":["Centro","Alto","Bairro Novo","Cohab","Nova Ubatã","São Sebastião","Vila Nova"],
+  "Miguel Calmon":["Centro","Alto","Bairro Novo","Cohab","Nova Miguel Calmon","São Sebastião","Vila Nova"],
+  "Sátiro Dias":["Centro","Alto","Bairro Novo","Cohab","Nova Sátiro Dias","São Sebastião","Vila Nova"],
+  "Tremedal":["Centro","Alto","Bairro Novo","Cohab","Nova Tremedal","São Sebastião","Vila Nova"],
+  "Cipó":["Centro","Alto","Bairro Novo","Cohab","Nova Cipó","São Sebastião","Vila Nova"],
+  "Ituaçu":["Centro","Alto","Bairro Novo","Cohab","Nova Ituaçu","São Sebastião","Vila Nova"],
+  "Camamu":["Centro","Beira Mar","Bairro Novo","Cohab","Nova Camamu","São Sebastião","Vila Nova"],
+  "Macarani":["Centro","Alto","Bairro Novo","Cohab","Nova Macarani","São Sebastião","Vila Nova"],
+  "Malhada":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Malhada","São Sebastião","Vila Nova"],
+  "São Desidério":["Centro","Alto","Bairro Novo","Cohab","Nova São Desidério","São Sebastião","Vila Nova","Zona Rural"],
+  "Ibicoara":["Centro","Alto","Bairro Novo","Cohab","Nova Ibicoara","São Sebastião","Vila Nova"],
+  "Maracás":["Centro","Alto","Bairro Novo","Cohab","Nova Maracás","São Sebastião","Vila Nova"],
+  "Potiraguá":["Centro","Alto","Bairro Novo","Cohab","Nova Potiraguá","São Sebastião","Vila Nova"],
+  "Rio do Antônio":["Centro","Alto","Bairro Novo","Cohab","Nova Rio do Antônio","São Sebastião","Vila Nova"],
+  "Buerarema":["Centro","Alto","Bairro Novo","Cohab","Nova Buerarema","São Sebastião","Vila Nova"],
+  "Coaraci":["Centro","Alto","Bairro Novo","Cohab","Nova Coaraci","São Sebastião","Vila Nova"],
+  "Itapitanga":["Centro","Alto","Bairro Novo","Cohab","Nova Itapitanga","São Sebastião","Vila Nova"],
+  "Santaluz":["Centro","Alto","Bairro Novo","Cohab","Nova Santaluz","São Sebastião","Vila Nova"],
+  "Belmonte":["Centro","Beira Mar","Bairro Novo","Cohab","Nova Belmonte","São Sebastião","Vila Nova"],
+  "Brotas de Macaúbas":["Centro","Alto","Bairro Novo","Cohab","Nova Brotas","São Sebastião","Vila Nova"],
+  "Amargosa":["Centro","Alto","Bairro Novo","Cohab","Iguaçu","Nova Amargosa","São Sebastião","Zabelê"],
+  "Conceição do Almeida":["Centro","Alto","Bairro Novo","Cohab","Nova Conceição","São Sebastião","Vila Nova"],
+  "Maiquinique":["Centro","Alto","Bairro Novo","Cohab","Nova Maiquinique","São Sebastião","Vila Nova"],
+  "Maraú":["Centro","Bairro Novo","Barra Grande","Cohab","Nova Maraú","São Sebastião","Taipu de Fora"],
+  "Nordestina":["Centro","Alto","Bairro Novo","Cohab","Nova Nordestina","São Sebastião","Vila Nova"],
+  "Palmas de Monte Alto":["Centro","Alto","Bairro Novo","Cohab","Nova Palmas","São Sebastião","Vila Nova"],
+  "Presidente Tancredo Neves":["Centro","Alto","Bairro Novo","Cohab","Nova Presidente Tancredo","São Sebastião","Vila Nova"],
+  "Aracatu":["Centro","Alto","Bairro Novo","Cohab","Nova Aracatu","São Sebastião","Vila Nova"],
+  "Cândido Sales":["Centro","Alto","Bairro Novo","Cohab","Nova Cândido Sales","São Sebastião","Vila Nova"],
+  "Irará":["Centro","Alto","Bairro Novo","Cohab","Nova Irará","São Sebastião","Vila Nova"],
+  "Nazaré":["Centro","Alto","Bairro Novo","Cohab","Nova Nazaré","São Sebastião","Vila Nova"],
+  "Serra Dourada":["Centro","Alto","Bairro Novo","Cohab","Nova Serra Dourada","São Sebastião","Vila Nova"],
+  "Milagres":["Centro","Alto","Bairro Novo","Cohab","Nova Milagres","São Sebastião","Vila Nova"],
+  "Morro do Chapéu":["Centro","Alto","Bairro Novo","Cachoeira do Ferro Doido","Cohab","Nova Morro do Chapéu","São Sebastião","Vila Nova"],
+  "Oliveira dos Brejinhos":["Centro","Alto","Bairro Novo","Cohab","Nova Oliveira","São Sebastião","Vila Nova"],
+  "Antas":["Centro","Alto","Bairro Novo","Cohab","Nova Antas","São Sebastião","Vila Nova"],
+  "Barra do Rocha":["Centro","Alto","Bairro Novo","Cohab","Nova Barra do Rocha","São Sebastião","Vila Nova"],
+  "Boa Nova":["Centro","Alto","Bairro Novo","Cohab","Nova Boa Nova","São Sebastião","Vila Nova"],
+  "Palmeiras":["Centro","Alto","Bairro Novo","Capão","Cohab","Nova Palmeiras","São Sebastião","Vila Nova"],
+  "Paramirim":["Centro","Alto","Bairro Novo","Cohab","Nova Paramirim","São Sebastião","Vila Nova"],
+  "São Sebastião do Passé":["Centro","Alto","Bairro Novo","Cohab","Nova São Sebastião","São Sebastião","Vila Nova"],
+  "Alcobaça":["Alcobaça","Bairro Novo","Centro","Cohab","Nova Alcobaça","São Sebastião","Vila Nova"],
+  "Cocos":["Centro","Alto","Bairro Novo","Cohab","Nova Cocos","São Sebastião","Vila Nova","Zona Rural"],
+  "Serra do Ramalho":["Centro","Alto","Bairro Novo","Cohab","Nova Serra","São Sebastião","Vila Nova"],
+  "Wanderley":["Centro","Alto","Bairro Novo","Cohab","Nova Wanderley","São Sebastião","Vila Nova"],
+  "Cabaceiras do Paraguaçu":["Centro","Alto","Bairro Novo","Cohab","Nova Cabaceiras","São Sebastião","Vila Nova"],
+  "Ibiassucê":["Centro","Alto","Bairro Novo","Cohab","Nova Ibiassucê","São Sebastião","Vila Nova"],
+  "Mairi":["Centro","Alto","Bairro Novo","Cohab","Nova Mairi","São Sebastião","Vila Nova"],
+  "Rafael Jambeiro":["Centro","Alto","Bairro Novo","Cohab","Nova Rafael Jambeiro","São Sebastião","Vila Nova"],
+  "Uauá":["Centro","Alto","Bairro Novo","Cohab","Nova Uauá","São Sebastião","Vila Nova"],
+  "Valente":["Centro","Alto","Bairro Novo","Cohab","Nova Valente","São Sebastião","Vila Nova"],
+  "Amélia Rodrigues":["Centro","Alto","Bairro Novo","Cohab","Nova Amélia Rodrigues","São Sebastião","Vila Nova"],
+  "Floresta Azul":["Centro","Alto","Bairro Novo","Cohab","Nova Floresta Azul","São Sebastião","Vila Nova"],
+  "Ibitiara":["Centro","Alto","Bairro Novo","Cohab","Nova Ibitiara","São Sebastião","Vila Nova"],
+  "Lajedo do Tabocal":["Centro","Alto","Bairro Novo","Cohab","Nova Lajedo","São Sebastião","Vila Nova"],
+  "Pé de Serra":["Centro","Alto","Bairro Novo","Cohab","Nova Pé de Serra","São Sebastião","Vila Nova"],
+  "São Félix do Coribe":["Centro","Beira Rio","Bairro Novo","Cohab","Nova São Félix","São Sebastião","Vila Nova"],
+  "Sapeaçu":["Centro","Alto","Bairro Novo","Cohab","Nova Sapeaçu","São Sebastião","Vila Nova"],
+  "Acajutiba":["Centro","Alto","Bairro Novo","Cohab","Nova Acajutiba","São Sebastião","Vila Nova"],
+  "Marcionílio Souza":["Centro","Alto","Bairro Novo","Cohab","Nova Marcionílio","São Sebastião","Vila Nova"],
+  "São Felipe":["Centro","Alto","Bairro Novo","Cohab","Nova São Felipe","São Sebastião","Vila Nova"],
+  "Taperoá":["Centro","Alto","Bairro Novo","Cohab","Nova Taperoá","São Sebastião","Vila Nova"],
+  "Boa Vista do Tupim":["Centro","Alto","Bairro Novo","Cohab","Nova Boa Vista","São Sebastião","Vila Nova"],
+  "Conceição da Feira":["Centro","Alto","Bairro Novo","Cohab","Nova Conceição da Feira","São Sebastião","Vila Nova"],
+  "Conde":["Centro","Bairro Novo","Barra do Itariri","Cohab","Nova Conde","São Sebastião","Sítio do Conde"],
+  "Coronel João Sá":["Centro","Alto","Bairro Novo","Cohab","Nova Coronel João Sá","São Sebastião","Vila Nova"],
+  "Esplanada":["Centro","Alto","Bairro Novo","Cohab","Nova Esplanada","São Sebastião","Vila Nova"],
+  "Ibotirama":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Ibotirama","São Sebastião","Vila Nova"],
+  "Inhambupe":["Centro","Alto","Bairro Novo","Cohab","Nova Inhambupe","São Sebastião","Vila Nova"],
+  "Lençóis":["Centro","Bairro Novo","Cocalzinho","Cohab","Igatu","Nova Lençóis","São Sebastião"],
+  "Olindina":["Centro","Alto","Bairro Novo","Cohab","Nova Olindina","São Sebastião","Vila Nova"],
+  "Saubara":["Centro","Beira Mar","Bairro Novo","Cohab","Nova Saubara","São Sebastião","Vila Nova"],
+  "Coração de Maria":["Centro","Alto","Bairro Novo","Cohab","Nova Coração de Maria","São Sebastião","Vila Nova"],
+  "Coribe":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Coribe","São Sebastião","Vila Nova"],
+  "Iramaia":["Centro","Alto","Bairro Novo","Cohab","Nova Iramaia","São Sebastião","Vila Nova"],
+  "Macaúbas":["Centro","Alto","Bairro Novo","Cohab","Nova Macaúbas","São Sebastião","Vila Nova"],
+  "Rio de Contas":["Centro","Alto","Bairro Novo","Cohab","Nova Rio de Contas","São Sebastião","Vila Nova"],
+  "Várzea da Roça":["Centro","Alto","Bairro Novo","Cohab","Nova Várzea da Roça","São Sebastião","Vila Nova"],
+  "Cafarnaum":["Centro","Alto","Bairro Novo","Cohab","Nova Cafarnaum","São Sebastião","Vila Nova"],
+  "Dário Meira":["Centro","Alto","Bairro Novo","Cohab","Nova Dário Meira","São Sebastião","Vila Nova"],
+  "Encruzilhada":["Centro","Alto","Bairro Novo","Cohab","Nova Encruzilhada","São Sebastião","Vila Nova"],
+  "Ibirapuã":["Centro","Alto","Bairro Novo","Cohab","Nova Ibirapuã","São Sebastião","Vila Nova"],
+  "Jaguaripe":["Centro","Beira Mar","Bairro Novo","Cohab","Nova Jaguaripe","São Sebastião","Vila Nova"],
+  "São Francisco do Conde":["Centro","Bairro Novo","Cohab","Industrial","Nova São Francisco","São Sebastião","Vila Nova"],
+  "Bom Jesus da Serra":["Centro","Alto","Bairro Novo","Cohab","Nova Bom Jesus","São Sebastião","Vila Nova"],
+  "Itiúba":["Centro","Alto","Bairro Novo","Cohab","Nova Itiúba","São Sebastião","Vila Nova"],
+  "João Dourado":["Centro","Alto","Bairro Novo","Cohab","Nova João Dourado","São Sebastião","Vila Nova"],
+  "Paripiranga":["Centro","Alto","Bairro Novo","Cohab","Nova Paripiranga","São Sebastião","Vila Nova"],
+  "Salinas da Margarida":["Centro","Beira Mar","Bairro Novo","Cohab","Nova Salinas","São Sebastião","Vila Nova"],
+  "Angical":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Angical","São Sebastião","Vila Nova"],
+  "Brejões":["Centro","Alto","Bairro Novo","Cohab","Nova Brejões","São Sebastião","Vila Nova"],
+  "Firmino Alves":["Centro","Alto","Bairro Novo","Cohab","Nova Firmino Alves","São Sebastião","Vila Nova"],
+  "Glória":["Centro","Alto","Bairro Novo","Cohab","Nova Glória","São Sebastião","Vila Nova"],
+  "Lapão":["Centro","Alto","Bairro Novo","Cohab","Nova Lapão","São Sebastião","Vila Nova"],
+  "Mortugaba":["Centro","Alto","Bairro Novo","Cohab","Nova Mortugaba","São Sebastião","Vila Nova"],
+  "Novo Horizonte":["Centro","Alto","Bairro Novo","Cohab","Nova Expansão","São Sebastião","Vila Nova"],
+  "Antônio Gonçalves":["Centro","Alto","Bairro Novo","Cohab","Nova Antônio Gonçalves","São Sebastião","Vila Nova"],
+  "Monte Santo":["Centro","Alto","Bairro Novo","Cohab","Nova Monte Santo","São Sebastião","Vila Nova"],
+  "Nilo Peçanha":["Centro","Alto","Bairro Novo","Cohab","Nova Nilo Peçanha","São Sebastião","Vila Nova"],
+  "Andorinha":["Centro","Alto","Bairro Novo","Cohab","Nova Andorinha","São Sebastião","Vila Nova"],
+  "Caraíbas":["Centro","Alto","Bairro Novo","Cohab","Nova Caraíbas","São Sebastião","Vila Nova"],
+  "Governador Mangabeira":["Centro","Alto","Bairro Novo","Cohab","Nova Governador Mangabeira","São Sebastião","Vila Nova"],
+  "Maetinga":["Centro","Alto","Bairro Novo","Cohab","Nova Maetinga","São Sebastião","Vila Nova"],
+  "Muniz Ferreira":["Centro","Alto","Bairro Novo","Cohab","Nova Muniz Ferreira","São Sebastião","Vila Nova"],
+  "Nova Redenção":["Centro","Alto","Bairro Novo","Cohab","Nova Expansão","São Sebastião","Vila Nova"],
+  "Sítio do Mato":["Centro","Alto","Bairro Novo","Cohab","Nova Sítio do Mato","São Sebastião","Vila Nova"],
+  "Tapiramutá":["Centro","Alto","Bairro Novo","Cohab","Nova Tapiramutá","São Sebastião","Vila Nova"],
+  "Feira da Mata":["Centro","Alto","Bairro Novo","Cohab","Nova Feira da Mata","São Sebastião","Vila Nova"],
+  "Gentio do Ouro":["Centro","Alto","Bairro Novo","Cohab","Nova Gentio do Ouro","São Sebastião","Vila Nova"],
+  "Madre de Deus":["Centro","Bairro Novo","Cohab","Industrial","Nova Madre de Deus","São Sebastião","Vila Nova"],
+  "Malhada de Pedras":["Centro","Alto","Bairro Novo","Cohab","Nova Malhada","São Sebastião","Vila Nova"],
+  "Mirante":["Centro","Alto","Bairro Novo","Cohab","Nova Mirante","São Sebastião","Vila Nova"],
+  "Pau Brasil":["Centro","Alto","Bairro Novo","Cohab","Nova Pau Brasil","São Sebastião","Vila Nova"],
+  "América Dourada":["Centro","Alto","Bairro Novo","Cohab","Nova América Dourada","São Sebastião","Vila Nova"],
+  "Araci":["Centro","Alto","Bairro Novo","Cohab","Nova Araci","São Sebastião","Vila Nova"],
+  "Caatiba":["Centro","Alto","Bairro Novo","Cohab","Nova Caatiba","São Sebastião","Vila Nova"],
+  "Cansanção":["Centro","Alto","Bairro Novo","Cohab","Nova Cansanção","São Sebastião","Vila Nova"],
+  "Capela do Alto Alegre":["Centro","Alto","Bairro Novo","Cohab","Nova Capela","São Sebastião","Vila Nova"],
+  "Contendas do Sincorá":["Centro","Alto","Bairro Novo","Cohab","Nova Contendas","São Sebastião","Vila Nova"],
+  "Filadélfia":["Centro","Alto","Bairro Novo","Cohab","Nova Filadélfia","São Sebastião","Vila Nova"],
+  "Itaparica":["Centro","Bairro Novo","Cohab","Mar Grande","Nova Itaparica","São Sebastião","Vila Nova"],
+  "Iuiu":["Centro","Alto","Bairro Novo","Cohab","Nova Iuiu","São Sebastião","Vila Nova"],
+  "Jussari":["Centro","Alto","Bairro Novo","Cohab","Nova Jussari","São Sebastião","Vila Nova"],
+  "Mucugê":["Centro","Alto","Bairro Novo","Cohab","Nova Mucugê","São Sebastião","Vila Nova"],
+  "Quijingue":["Centro","Alto","Bairro Novo","Cohab","Nova Quijingue","São Sebastião","Vila Nova"],
+  "Varzedo":["Centro","Alto","Bairro Novo","Cohab","Nova Varzedo","São Sebastião","Vila Nova"],
+  "Baianópolis":["Centro","Alto","Bairro Novo","Cohab","Nova Baianópolis","São Sebastião","Vila Nova","Zona Rural"],
+  "Fátima":["Centro","Alto","Bairro Novo","Cohab","Nova Fátima","São Sebastião","Vila Nova"],
+  "Jaguarari":["Centro","Alto","Bairro Novo","Cohab","Nova Jaguarari","São Sebastião","Vila Nova"],
+  "Jiquiriçá":["Centro","Alto","Bairro Novo","Cohab","Nova Jiquiriçá","São Sebastião","Vila Nova"],
+  "Uibaí":["Centro","Alto","Bairro Novo","Cohab","Nova Uibaí","São Sebastião","Vila Nova"],
+  "Caém":["Centro","Alto","Bairro Novo","Cohab","Nova Caém","São Sebastião","Vila Nova"],
+  "Cordeiros":["Centro","Alto","Bairro Novo","Cohab","Nova Cordeiros","São Sebastião","Vila Nova"],
+  "Igaporã":["Centro","Alto","Bairro Novo","Cohab","Nova Igaporã","São Sebastião","Vila Nova"],
+  "Mascote":["Centro","Alto","Bairro Novo","Cohab","Nova Mascote","São Sebastião","Vila Nova"],
+  "Morpará":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Morpará","São Sebastião","Vila Nova"],
+  "Piritiba":["Centro","Alto","Bairro Novo","Cohab","Nova Piritiba","São Sebastião","Vila Nova"],
+  "Santa Cruz da Vitória":["Centro","Alto","Bairro Novo","Cohab","Nova Santa Cruz","São Sebastião","Vila Nova"],
+  "São José da Vitória":["Centro","Alto","Bairro Novo","Cohab","Nova São José","São Sebastião","Vila Nova"],
+  "Souto Soares":["Centro","Alto","Bairro Novo","Cohab","Nova Souto Soares","São Sebastião","Vila Nova"],
+  "Jucuruçu":["Centro","Alto","Bairro Novo","Cohab","Nova Jucuruçu","São Sebastião","Vila Nova"],
+  "Jussiape":["Centro","Alto","Bairro Novo","Cohab","Nova Jussiape","São Sebastião","Vila Nova"],
+  "Lagoa Real":["Centro","Alto","Bairro Novo","Cohab","Nova Lagoa Real","São Sebastião","Vila Nova"],
+  "Mundo Novo":["Centro","Alto","Bairro Novo","Cohab","Nova Mundo Novo","São Sebastião","Vila Nova"],
+  "Nova Ibiá":["Centro","Alto","Bairro Novo","Cohab","Nova Expansão","São Sebastião","Vila Nova"],
+  "Nova Soure":["Centro","Alto","Bairro Novo","Cohab","Nova Expansão","São Sebastião","Vila Nova"],
+  "Santa Bárbara":["Centro","Alto","Bairro Novo","Cohab","Nova Santa Bárbara","São Sebastião","Vila Nova"],
+  "Serra Preta":["Centro","Alto","Bairro Novo","Cohab","Nova Serra Preta","São Sebastião","Vila Nova"],
+  "Baixa Grande":["Centro","Alto","Bairro Novo","Cohab","Nova Baixa Grande","São Sebastião","Vila Nova"],
+  "Gavião":["Centro","Alto","Bairro Novo","Cohab","Nova Gavião","São Sebastião","Vila Nova"],
+  "Ipecaetá":["Centro","Alto","Bairro Novo","Cohab","Nova Ipecaetá","São Sebastião","Vila Nova"],
+  "Pindobaçu":["Centro","Alto","Bairro Novo","Cohab","Nova Pindobaçu","São Sebastião","Vila Nova"],
+  "Riachão das Neves":["Centro","Alto","Bairro Novo","Cohab","Nova Riachão","São Sebastião","Vila Nova","Zona Rural"],
+  "São Miguel das Matas":["Centro","Alto","Bairro Novo","Cohab","Nova São Miguel","São Sebastião","Vila Nova"],
+  "Teolândia":["Centro","Alto","Bairro Novo","Cohab","Nova Teolândia","São Sebastião","Vila Nova"],
+  "Utinga":["Centro","Alto","Bairro Novo","Cohab","Nova Utinga","São Sebastião","Vila Nova"],
+  "Andaraí":["Centro","Alto","Bairro Novo","Cohab","Nova Andaraí","São Sebastião","Vila Nova"],
+  "Barro Alto":["Centro","Alto","Bairro Novo","Cohab","Nova Barro Alto","São Sebastião","Vila Nova"],
+  "Elísio Medrado":["Centro","Alto","Bairro Novo","Cohab","Nova Elísio","São Sebastião","Vila Nova"],
+  "Iaçu":["Centro","Alto","Bairro Novo","Cohab","Nova Iaçu","São Sebastião","Vila Nova"],
+  "Muritiba":["Centro","Alto","Bairro Novo","Cohab","Nova Muritiba","São Sebastião","Vila Nova"],
+  "Pedro Alexandre":["Centro","Alto","Bairro Novo","Cohab","Nova Pedro Alexandre","São Sebastião","Vila Nova"],
+  "Terra Nova":["Centro","Alto","Bairro Novo","Cohab","Nova Expansão","São Sebastião","Vila Nova"],
+  "Buritirama":["Centro","Alto","Bairro Novo","Cohab","Nova Buritirama","São Sebastião","Vila Nova","Zona Rural"],
+  "Campo Alegre de Lourdes":["Centro","Alto","Bairro Novo","Cohab","Nova Campo Alegre","São Sebastião","Vila Nova"],
+  "Itapebi":["Centro","Alto","Bairro Novo","Cohab","Nova Itapebi","São Sebastião","Vila Nova"],
+  "Nova Itarana":["Centro","Alto","Bairro Novo","Cohab","Nova Expansão","São Sebastião","Vila Nova"],
+  "Presidente Dutra":["Centro","Alto","Bairro Novo","Cohab","Nova Presidente Dutra","São Sebastião","Vila Nova"],
+  "Santa Rita de Cássia":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Santa Rita","São Sebastião","Vila Nova"],
+  "Aporá":["Centro","Alto","Bairro Novo","Cohab","Nova Aporá","São Sebastião","Vila Nova"],
+  "Apuarema":["Centro","Alto","Bairro Novo","Cohab","Nova Apuarema","São Sebastião","Vila Nova"],
+  "Barrocas":["Centro","Alto","Bairro Novo","Cohab","Nova Barrocas","São Sebastião","Vila Nova"],
+  "Bonito":["Centro","Alto","Bairro Novo","Cohab","Nova Bonito","São Sebastião","Vila Nova"],
+  "Canarana":["Centro","Alto","Bairro Novo","Cohab","Nova Canarana","São Sebastião","Vila Nova","Zona Rural"],
+  "Caturama":["Centro","Alto","Bairro Novo","Cohab","Nova Caturama","São Sebastião","Vila Nova"],
+  "Central":["Centro","Alto","Bairro Novo","Cohab","Nova Central","São Sebastião","Vila Nova"],
+  "Igrapiúna":["Centro","Alto","Bairro Novo","Cohab","Nova Igrapiúna","São Sebastião","Vila Nova"],
+  "Irajuba":["Centro","Alto","Bairro Novo","Cohab","Nova Irajuba","São Sebastião","Vila Nova"],
+  "Itagi":["Centro","Alto","Bairro Novo","Cohab","Nova Itagi","São Sebastião","Vila Nova"],
+  "Mirangaba":["Centro","Alto","Bairro Novo","Cohab","Nova Mirangaba","São Sebastião","Vila Nova"],
+  "Ourolândia":["Centro","Alto","Bairro Novo","Cohab","Nova Ourolândia","São Sebastião","Vila Nova"],
+  "Planaltino":["Centro","Alto","Bairro Novo","Cohab","Nova Planaltino","São Sebastião","Vila Nova"],
+  "Tabocas do Brejo Velho":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Tabocas","São Sebastião","Vila Nova"],
+  "Barra do Mendes":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Barra do Mendes","São Sebastião","Vila Nova"],
+  "Heliópolis":["Centro","Alto","Bairro Novo","Cohab","Nova Heliópolis","São Sebastião","Vila Nova"],
+  "Ibititá":["Centro","Alto","Bairro Novo","Cohab","Nova Ibititá","São Sebastião","Vila Nova"],
+  "Iraquara":["Centro","Alto","Bairro Novo","Cohab","Nova Iraquara","São Sebastião","Vila Nova"],
+  "Itagimirim":["Centro","Alto","Bairro Novo","Cohab","Nova Itagimirim","São Sebastião","Vila Nova"],
+  "Queimadas":["Centro","Alto","Bairro Novo","Cohab","Nova Queimadas","São Sebastião","Vila Nova"],
+  "Ribeira do Amparo":["Centro","Alto","Bairro Novo","Cohab","Nova Ribeira","São Sebastião","Vila Nova"],
+  "Wenceslau Guimarães":["Centro","Alto","Bairro Novo","Cohab","Nova Wenceslau","São Sebastião","Vila Nova"],
+  "Adustina":["Centro","Alto","Bairro Novo","Cohab","Nova Adustina","São Sebastião","Vila Nova"],
+  "Almadina":["Centro","Alto","Bairro Novo","Cohab","Nova Almadina","São Sebastião","Vila Nova"],
+  "Anguera":["Centro","Alto","Bairro Novo","Cohab","Nova Anguera","São Sebastião","Vila Nova"],
+  "Dom Basílio":["Centro","Alto","Bairro Novo","Cohab","Nova Dom Basílio","São Sebastião","Vila Nova"],
+  "Dom Macedo Costa":["Centro","Alto","Bairro Novo","Cohab","Nova Dom Macedo","São Sebastião","Vila Nova"],
+  "Jussara":["Centro","Alto","Bairro Novo","Cohab","Nova Jussara","São Sebastião","Vila Nova"],
+  "Várzea Nova":["Centro","Alto","Bairro Novo","Cohab","Nova Várzea","São Sebastião","Vila Nova"],
+  "Aiquara":["Centro","Alto","Bairro Novo","Cohab","Nova Aiquara","São Sebastião","Vila Nova"],
+  "Aramari":["Centro","Alto","Bairro Novo","Cohab","Nova Aramari","São Sebastião","Vila Nova"],
+  "Gongogi":["Centro","Alto","Bairro Novo","Cohab","Nova Gongogi","São Sebastião","Vila Nova"],
+  "Ibipeba":["Centro","Alto","Bairro Novo","Cohab","Nova Ibipeba","São Sebastião","Vila Nova"],
+  "Itaquara":["Centro","Alto","Bairro Novo","Cohab","Nova Itaquara","São Sebastião","Vila Nova"],
+  "Lafaiete Coutinho":["Centro","Alto","Bairro Novo","Cohab","Nova Lafaiete","São Sebastião","Vila Nova"],
+  "Santa Brígida":["Centro","Alto","Bairro Novo","Cohab","Nova Santa Brígida","São Sebastião","Vila Nova"],
+  "São Félix":["Centro","Alto","Bairro Novo","Cohab","Nova São Félix","São Sebastião","Vila Nova"],
+  "São Gabriel":["Centro","Alto","Bairro Novo","Cohab","Nova São Gabriel","São Sebastião","Vila Nova"],
+  "São José do Jacuípe":["Centro","Alto","Bairro Novo","Cohab","Nova São José","São Sebastião","Vila Nova"],
+  "Sítio do Quinto":["Centro","Alto","Bairro Novo","Cohab","Nova Sítio do Quinto","São Sebastião","Vila Nova"],
+  "Abaíra":["Centro","Alto","Bairro Novo","Cohab","Nova Abaíra","São Sebastião","Vila Nova"],
+  "Banzaê":["Centro","Alto","Bairro Novo","Cohab","Nova Banzaê","São Sebastião","Vila Nova"],
+  "Boquira":["Centro","Alto","Bairro Novo","Cohab","Nova Boquira","São Sebastião","Vila Nova"],
+  "Caetanos":["Centro","Alto","Bairro Novo","Cohab","Nova Caetanos","São Sebastião","Vila Nova"],
+  "Lajedinho":["Centro","Alto","Bairro Novo","Cohab","Nova Lajedinho","São Sebastião","Vila Nova"],
+  "Matina":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Matina","São Sebastião","Vila Nova"],
+  "Quixabeira":["Centro","Alto","Bairro Novo","Cohab","Nova Quixabeira","São Sebastião","Vila Nova"],
+  "Rio do Pires":["Centro","Alto","Bairro Novo","Cohab","Nova Rio do Pires","São Sebastião","Vila Nova"],
+  "Santa Inês":["Centro","Alto","Bairro Novo","Cohab","Nova Santa Inês","São Sebastião","Vila Nova"],
+  "Saúde":["Centro","Alto","Bairro Novo","Cohab","Nova Saúde","São Sebastião","Vila Nova"],
+  "Tanque Novo":["Centro","Alto","Bairro Novo","Cohab","Nova Tanque Novo","São Sebastião","Vila Nova"],
+  "Urandi":["Centro","Alto","Bairro Novo","Cohab","Nova Urandi","São Sebastião","Vila Nova"],
+  "Vereda":["Centro","Alto","Bairro Novo","Cohab","Nova Vereda","São Sebastião","Vila Nova"],
+  "Érico Cardoso":["Centro","Alto","Bairro Novo","Cohab","Nova Érico Cardoso","São Sebastião","Vila Nova"],
+  "Antônio Cardoso":["Centro","Alto","Bairro Novo","Cohab","Nova Antônio Cardoso","São Sebastião","Vila Nova"],
+  "Botuporã":["Centro","Alto","Bairro Novo","Cohab","Nova Botuporã","São Sebastião","Vila Nova"],
+  "Cardeal da Silva":["Centro","Alto","Bairro Novo","Cohab","Nova Cardeal da Silva","São Sebastião","Vila Nova"],
+  "Itaju do Colônia":["Centro","Alto","Bairro Novo","Cohab","Nova Itaju","São Sebastião","Vila Nova"],
+  "Itamari":["Centro","Alto","Bairro Novo","Cohab","Nova Itamari","São Sebastião","Vila Nova"],
+  "Jaborandi":["Centro","Alto","Bairro Novo","Cohab","Nova Jaborandi","São Sebastião","Vila Nova","Zona Rural"],
+  "Lajedão":["Centro","Alto","Bairro Novo","Cohab","Nova Lajedão","São Sebastião","Vila Nova"],
+  "Ponto Novo":["Centro","Alto","Bairro Novo","Cohab","Nova Ponto Novo","São Sebastião","Vila Nova"],
+  "Ribeirão do Largo":["Centro","Alto","Bairro Novo","Cohab","Nova Ribeirão","São Sebastião","Vila Nova"],
+  "Abaré":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Abaré","São Sebastião","Vila Nova"],
+  "Araçás":["Centro","Alto","Bairro Novo","Cohab","Nova Araçás","São Sebastião","Vila Nova"],
+  "Canápolis":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Canápolis","São Sebastião","Vila Nova"],
+  "Canudos":["Centro","Alto","Bairro Novo","Cocorobó","Cohab","Nova Canudos","São Sebastião","Vila Nova"],
+  "Itaguaçu da Bahia":["Centro","Alto","Bairro Novo","Cohab","Nova Itaguaçu","São Sebastião","Vila Nova"],
+  "Itanagra":["Centro","Alto","Bairro Novo","Cohab","Nova Itanagra","São Sebastião","Vila Nova"],
+  "Mulungu do Morro":["Centro","Alto","Bairro Novo","Cohab","Nova Mulungu","São Sebastião","Vila Nova"],
+  "Piripá":["Centro","Alto","Bairro Novo","Cohab","Nova Piripá","São Sebastião","Vila Nova"],
+  "Retirolândia":["Centro","Alto","Bairro Novo","Cohab","Nova Retirolândia","São Sebastião","Vila Nova"],
+  "Serrolândia":["Centro","Alto","Bairro Novo","Cohab","Nova Serrolândia","São Sebastião","Vila Nova"],
+  "Água Fria":["Centro","Alto","Bairro Novo","Cohab","Nova Água Fria","São Sebastião","Vila Nova"],
+  "Candeal":["Centro","Alto","Bairro Novo","Cohab","Nova Candeal","São Sebastião","Vila Nova"],
+  "Ichu":["Centro","Alto","Bairro Novo","Cohab","Nova Ichu","São Sebastião","Vila Nova"],
+  "Santa Terezinha":["Centro","Alto","Bairro Novo","Cohab","Nova Santa Terezinha","São Sebastião","Vila Nova"],
+  "Teodoro Sampaio":["Centro","Alto","Bairro Novo","Cohab","Nova Teodoro Sampaio","São Sebastião","Vila Nova"],
+  "Teofilândia":["Centro","Alto","Bairro Novo","Cohab","Nova Teofilândia","São Sebastião","Vila Nova"],
+  "Barro Preto":["Centro","Alto","Bairro Novo","Cohab","Nova Barro Preto","São Sebastião","Vila Nova"],
+  "Jandaíra":["Centro","Alto","Bairro Novo","Cohab","Nova Jandaíra","São Sebastião","Vila Nova"],
+  "Novo Triunfo":["Centro","Alto","Bairro Novo","Cohab","Nova Expansão","São Sebastião","Vila Nova"],
+  "Ouriçangas":["Centro","Alto","Bairro Novo","Cohab","Nova Ouriçangas","São Sebastião","Vila Nova"],
+  "Pedrão":["Centro","Alto","Bairro Novo","Cohab","Nova Pedrão","São Sebastião","Vila Nova"],
+  "Piraí do Norte":["Centro","Alto","Bairro Novo","Cohab","Nova Piraí","São Sebastião","Vila Nova"],
+  "Santanópolis":["Centro","Alto","Bairro Novo","Cohab","Nova Santanópolis","São Sebastião","Vila Nova"],
+  "Sebastião Laranjeiras":["Centro","Alto","Bairro Novo","Cohab","Nova Sebastião Laranjeiras","São Sebastião","Vila Nova"],
+  "Chorrochó":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Chorrochó","São Sebastião","Vila Nova"],
+  "Cravolândia":["Centro","Alto","Bairro Novo","Cohab","Nova Cravolândia","São Sebastião","Vila Nova"],
+  "Macajuba":["Centro","Alto","Bairro Novo","Cohab","Nova Macajuba","São Sebastião","Vila Nova"],
+  "Macururé":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Macururé","São Sebastião","Vila Nova"],
+  "Várzea do Poço":["Centro","Alto","Bairro Novo","Cohab","Nova Várzea do Poço","São Sebastião","Vila Nova"],
+  "Brejolândia":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Brejolândia","São Sebastião","Vila Nova"],
+  "Ibiquera":["Centro","Alto","Bairro Novo","Cohab","Nova Ibiquera","São Sebastião","Vila Nova"],
+  "Rodelas":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Rodelas","São Sebastião","Vila Nova"],
+  "São Domingos":["Centro","Alto","Bairro Novo","Cohab","Nova São Domingos","São Sebastião","Vila Nova"],
+  "Tanquinho":["Centro","Alto","Bairro Novo","Cohab","Nova Tanquinho","São Sebastião","Vila Nova"],
+  "Biritinga":["Centro","Alto","Bairro Novo","Cohab","Nova Biritinga","São Sebastião","Vila Nova"],
+  "Guajeru":["Centro","Alto","Bairro Novo","Cohab","Nova Guajeru","São Sebastião","Vila Nova"],
+  "Caldeirão Grande":["Centro","Alto","Bairro Novo","Cohab","Nova Caldeirão Grande","São Sebastião","Vila Nova"],
+  "Muquém do São Francisco":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Muquém","São Sebastião","Vila Nova"],
+  "Pilão Arcado":["Centro","Beira Rio","Bairro Novo","Cohab","Nova Pilão Arcado","São Sebastião","Vila Nova"]
+};
+
+const BAIRROS_PADRAO = ["Centro","Bairro Novo","Cohab","Novo Horizonte","Alto","Boa Vista","São Sebastião","Vila Nova","Zona Rural","Conjunto Habitacional","Nova Cidade","Loteamento"];
+
+function getBairros(municipio) {
+  return BAIRROS_BA[municipio] || BAIRROS_PADRAO;
+}
+
 function atualizarRegiaoLid() {
   const mun = document.getElementById('crm-municipio').value.trim();
   const reg = REGIOES_MAP[mun] || '';
   document.getElementById('crm-regiao').value = reg;
+  // Atualiza datalist de bairros
+  const dl = document.getElementById('bairros-list');
+  if(dl) {
+    dl.innerHTML = '';
+    getBairros(mun).forEach(b => {
+      const opt = document.createElement('option');
+      opt.value = b;
+      dl.appendChild(opt);
+    });
+  }
 }
 
 function mostrarFeedbackCRM(msg, ok) {
