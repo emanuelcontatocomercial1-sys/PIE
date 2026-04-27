@@ -1646,8 +1646,8 @@ _auth.onAuthStateChanged(async user => {
       if (adminPanel) adminPanel.style.display = ud.role === 'admin' ? 'block' : 'none';
     } catch(e) {
       console.error('Auth error:', e);
+      // Não desloga em erros transitórios — só mostra mensagem e tenta recarregar
       showLoginErr('login-err', 'Erro ao carregar dados. Tente novamente.');
-      await _auth.signOut();
     }
   } else {
     _currentUser = null;
