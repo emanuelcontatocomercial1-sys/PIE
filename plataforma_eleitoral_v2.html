@@ -3050,52 +3050,49 @@ function iniciarAutocomplete() {
   input.addEventListener('input', () => {
     clearTimeout(_acTimer);
     const q = input.value.trim();
-    if (q.length < 3) { box.style.display = 'none'; return; }
-    _acTimer = setTimeout(() => buscarCandidatosTSE(q, box, input), 400);
+    if (q.length < 4) { box.style.display = 'none'; return; }
+    _acTimer = setTimeout(() => buscarCandidatosTSE(q, box, input), 500);
   });
 
   document.addEventListener('click', e => { if (!wrap.contains(e.target)) box.style.display = 'none'; });
 }
 
+async function _fetchTSE(url) {
+  const proxies = [
+    async () => { const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`); return r.json(); },
+    async () => { const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`); const j = await r.json(); return JSON.parse(j.contents); },
+    async () => { const r = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`); return r.json(); }
+  ];
+  for (const p of proxies) {
+    try { const d = await p(); if (d?.candidatos !== undefined) return d; } catch(e) {}
+  }
+  return null;
+}
+
 async function buscarCandidatosTSE(q, box, input) {
   box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Buscando...</div>';
   box.style.display = 'block';
-  const tseUrl = `https://divulgacandcontas.tse.jus.br/divulga/rest/v1/candidatura/listar/2022/BA/6/${encodeURIComponent(q.toUpperCase())}/candidatos`;
-  const proxies = [
-    async () => {
-      const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(tseUrl)}`);
-      return r.json();
-    },
-    async () => {
-      const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(tseUrl)}`);
-      const j = await r.json();
-      return JSON.parse(j.contents);
-    },
-    async () => {
-      const r = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(tseUrl)}`);
-      return r.json();
-    }
-  ];
-  let data = null;
-  for (const proxy of proxies) {
-    try { data = await proxy(); if (data?.candidatos !== undefined) break; } catch(e) {}
-  }
-  if (!data) {
-    box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Erro ao buscar. Preencha manualmente.</div>';
-    return;
-  }
-  const candidatos = (data.candidatos || []).slice(0, 8);
+  const qUp = q.toUpperCase();
+  // Busca em paralelo: dep federal (6), dep estadual (7), senador (5)
+  const cargos = [{cod:'6',label:'Dep. Federal'},{cod:'7',label:'Dep. Estadual'},{cod:'5',label:'Senador'}];
+  const resultados = await Promise.all(cargos.map(async cg => {
+    const url = `https://divulgacandcontas.tse.jus.br/divulga/rest/v1/candidatura/listar/2022/BA/${cg.cod}/${encodeURIComponent(qUp)}/candidatos`;
+    const data = await _fetchTSE(url);
+    return (data?.candidatos || []).map(c => ({...c, _cargo: cg.label}));
+  }));
+  const candidatos = resultados.flat().slice(0, 10);
   if (!candidatos.length) { box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Nenhum candidato encontrado.</div>'; return; }
   box.innerHTML = candidatos.map(c => {
     const nome = c.nomeUrna || c.nome || '';
     const partido = c.partido?.sigla || '';
     const foto = c.fotoUrl || '';
     const votos = c.totalVotos ? Number(c.totalVotos).toLocaleString('pt-BR') : '';
+    const cargo = c._cargo || '';
     return `<div class="autocomplete-item" onclick="selecionarCandidatoTSE(${JSON.stringify({nome,partido,foto,votos,sq:c.sequencialCandidato||''}).replace(/"/g,'&quot;')})">
       ${foto ? `<img src="${foto}" onerror="this.style.display='none'">` : `<div class="ac-init">${nome[0]||'?'}</div>`}
       <div>
         <div style="font-weight:700;">${nome}</div>
-        <div style="font-size:11px;color:var(--cinza2);">${partido}${votos?' · '+votos+' votos (2022)':''}</div>
+        <div style="font-size:11px;color:var(--cinza2);">${partido} · ${cargo}${votos?' · '+votos+' votos':''}</div>
       </div>
     </div>`;
   }).join('');
