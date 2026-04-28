@@ -3079,12 +3079,16 @@ function _fetchComTimeout(url, ms=6000) {
 
 async function _fetchTSE(tseUrl) {
   const proxies = [
+    async () => JSON.parse(await _fetchComTimeout(tseUrl)), // direto (TSE pode ter CORS aberto)
     async () => JSON.parse(await _fetchComTimeout(`https://corsproxy.io/?${encodeURIComponent(tseUrl)}`)),
     async () => { const j = JSON.parse(await _fetchComTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(tseUrl)}`)); return JSON.parse(j.contents); },
-    async () => JSON.parse(await _fetchComTimeout(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(tseUrl)}`)),
+    async () => JSON.parse(await _fetchComTimeout(`https://thingproxy.freeboard.io/fetch/${tseUrl}`)),
   ];
   for (const p of proxies) {
-    try { const d = await p(); if (Array.isArray(d?.candidatos)) return d; } catch(e) { console.warn('proxy falhou:', e.message); }
+    try {
+      const d = await p();
+      if (Array.isArray(d?.candidatos)) { console.log('TSE ok:', d.candidatos.length, 'candidatos'); return d; }
+    } catch(e) { console.warn('TSE proxy falhou:', e.message); }
   }
   return null;
 }
