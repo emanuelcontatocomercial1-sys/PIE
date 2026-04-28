@@ -968,34 +968,117 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
       <!-- ══ MONITORAMENTO ══ -->
       <div class="page" id="page-monitoramento">
-        <div class="page-header">
-          <div class="page-title">Monitoramento</div>
-          <div class="page-sub">Adversários, pautas e cenário político na Bahia</div>
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div class="page-title">Monitoramento de Concorrentes</div>
+            <div class="page-sub">Dep. Federal Bahia 2026 · Republicanos e adversários · Redes sociais em tempo real</div>
+          </div>
+          <button class="btn btn-primary" onclick="abrirModalConcorrente()">+ Adicionar concorrente</button>
         </div>
-        <div class="grid-3">
-          <div class="panel">
-            <div class="panel-header"><div class="panel-title">Adversários</div></div>
-            <div class="panel-body">
-              <div class="lista-item"><div class="li-info"><div class="li-name">ACM Neto</div><div class="li-sub">DEM/União — Governador</div></div><span class="badge vermelho">Monitorar</span></div>
-              <div class="lista-item"><div class="li-info"><div class="li-name">Jerônimo Rodrigues</div><div class="li-sub">PT — Governador atual</div></div><span class="badge vermelho">Monitorar</span></div>
-              <div class="lista-item"><div class="li-info"><div class="li-name">Otto Alencar</div><div class="li-sub">PSD — Senador</div></div><span class="badge amarelo">Observar</span></div>
-            </div>
+
+        <!-- Stats -->
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;">
+          <div class="stat-card azul"><span class="stat-icon">👥</span><div class="stat-num" id="mon-total">0</div><div class="stat-label">Total monitorados</div></div>
+          <div class="stat-card vermelho"><span class="stat-icon">🔴</span><div class="stat-num" id="mon-intrapartidario">0</div><div class="stat-label">Intrapartidários</div></div>
+          <div class="stat-card amarelo"><span class="stat-icon">⚠️</span><div class="stat-num" id="mon-adversario">0</div><div class="stat-label">Adversários</div></div>
+          <div class="stat-card verde"><span class="stat-icon">🤝</span><div class="stat-num" id="mon-aliado">0</div><div class="stat-label">Aliados</div></div>
+        </div>
+
+        <!-- Filtros -->
+        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+          <button class="btn btn-outline mon-filtro active" onclick="filtrarConcorrentes('todos',this)" style="font-size:12px;padding:7px 14px;">Todos</button>
+          <button class="btn btn-outline mon-filtro" onclick="filtrarConcorrentes('Republicanos',this)" style="font-size:12px;padding:7px 14px;">🔵 Republicanos</button>
+          <button class="btn btn-outline mon-filtro" onclick="filtrarConcorrentes('adversario',this)" style="font-size:12px;padding:7px 14px;">🔴 Adversários</button>
+          <button class="btn btn-outline mon-filtro" onclick="filtrarConcorrentes('aliado',this)" style="font-size:12px;padding:7px 14px;">🤝 Aliados</button>
+          <input type="text" id="mon-busca" placeholder="🔍 Buscar por nome..." oninput="renderConcorrentes()"
+            style="background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--branco);font-family:var(--fonte);outline:none;margin-left:auto;width:220px;">
+        </div>
+
+        <!-- Tabela -->
+        <div class="panel">
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;" id="mon-tabela">
+              <thead>
+                <tr style="border-bottom:1px solid var(--borda);">
+                  <th style="padding:12px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;white-space:nowrap;">Candidato</th>
+                  <th style="padding:12px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;">Partido</th>
+                  <th style="padding:12px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;">Redes Sociais</th>
+                  <th style="padding:12px 16px;text-align:right;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;white-space:nowrap;">Seguidores IG</th>
+                  <th style="padding:12px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;">Relação</th>
+                  <th style="padding:12px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;">Ações</th>
+                </tr>
+              </thead>
+              <tbody id="mon-tbody">
+                <tr><td colspan="6" style="padding:40px;text-align:center;color:var(--cinza2);font-size:13px;">Carregando...</td></tr>
+              </tbody>
+            </table>
           </div>
-          <div class="panel">
-            <div class="panel-header"><div class="panel-title">Pautas Quentes</div></div>
-            <div class="panel-body">
-              <div class="lista-item"><div class="li-info"><div class="li-name">Segurança pública</div><div class="li-sub">Alta relevância no interior</div></div><span class="badge verde">Oportunidade</span></div>
-              <div class="lista-item"><div class="li-info"><div class="li-name">Saúde no sertão</div><div class="li-sub">Demanda crescente</div></div><span class="badge verde">Oportunidade</span></div>
-              <div class="lista-item"><div class="li-info"><div class="li-name">Reforma tributária</div><div class="li-sub">Impacto no agro baiano</div></div><span class="badge azul">Relevante</span></div>
-            </div>
+        </div>
+      </div>
+
+      <!-- MODAL CONCORRENTE -->
+      <div class="modal-overlay" id="modal-concorrente">
+        <div class="modal" style="max-width:640px;">
+          <div class="modal-header">
+            <div class="modal-title" id="modal-conc-title">Adicionar Concorrente</div>
+            <button class="modal-close" onclick="fecharModalConcorrente()">✕</button>
           </div>
-          <div class="panel">
-            <div class="panel-header"><div class="panel-title">Redes Sociais</div></div>
-            <div class="panel-body">
-              <div class="lista-item"><div class="li-info"><div class="li-name">@aguiasdobrasil_bahia</div><div class="li-sub">Instagram</div></div><span class="badge azul">Ativo</span></div>
-              <div class="lista-item"><div class="li-info"><div class="li-name">@intercessoresdobrasil</div><div class="li-sub">Instagram</div></div><span class="badge azul">Ativo</span></div>
-              <div class="lista-item"><div class="li-info"><div class="li-name">Talita Oliveira Oficial</div><div class="li-sub">Facebook</div></div><span class="badge verde">Crescendo</span></div>
+          <div class="modal-body">
+            <input type="hidden" id="conc-edit-id">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Nome completo *</label>
+                <input class="form-input" type="text" id="conc-nome" placeholder="Ex: João Silva">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Partido *</label>
+                <input class="form-input" type="text" id="conc-partido" placeholder="Ex: Republicanos, PT, PL...">
+              </div>
             </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Relação</label>
+                <select class="form-select" id="conc-relacao">
+                  <option value="Republicanos">Intrapartidário (Republicanos)</option>
+                  <option value="adversario">Adversário</option>
+                  <option value="aliado">Aliado</option>
+                  <option value="observar">Observar</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Seguidores Instagram</label>
+                <input class="form-input" type="number" id="conc-seg-ig" placeholder="Ex: 15000">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Instagram (@ sem arroba)</label>
+                <input class="form-input" type="text" id="conc-ig" placeholder="Ex: talitaoliveira2026">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Facebook (URL ou nome)</label>
+                <input class="form-input" type="text" id="conc-fb" placeholder="Ex: talitaoliveira.ba">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">YouTube (@ sem arroba)</label>
+                <input class="form-input" type="text" id="conc-yt" placeholder="Ex: talitaoliveira">
+              </div>
+              <div class="form-group">
+                <label class="form-label">TikTok (@ sem arroba)</label>
+                <input class="form-input" type="text" id="conc-tt" placeholder="Ex: talitaoliveira">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Observações</label>
+              <textarea class="form-textarea" id="conc-obs" placeholder="Base eleitoral, pontos fortes, estratégia observada..." style="min-height:80px;"></textarea>
+            </div>
+            <div style="display:flex;gap:10px;justify-content:flex-end;">
+              <button class="btn btn-outline" onclick="fecharModalConcorrente()">Cancelar</button>
+              <button class="btn btn-primary" id="conc-btn-salvar" onclick="salvarConcorrente()">Salvar</button>
+            </div>
+            <div id="conc-feedback" style="display:none;margin-top:10px;font-size:13px;text-align:center;padding:10px;border-radius:8px;font-weight:600;"></div>
           </div>
         </div>
       </div>
@@ -2655,6 +2738,159 @@ function mostrarFeedback(msg, ok) {
   el.style.color = ok ? '#10B981' : '#EF4444';
   el.style.border = `1px solid ${ok ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`;
   setTimeout(() => { el.style.display='none'; }, 4000);
+}
+
+// ── MONITORAMENTO ────────────────────────────────────────────────────────────
+let _concorrentesData = [];
+let _monFiltro = 'todos';
+
+_db.collection('concorrentes').orderBy('nome').onSnapshot(snap => {
+  _concorrentesData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  renderConcorrentes();
+  atualizarStatsMon();
+}, err => console.error('Monitoramento error:', err));
+
+function atualizarStatsMon() {
+  const el = id => document.getElementById(id);
+  if (!el('mon-total')) return;
+  el('mon-total').textContent = _concorrentesData.length;
+  el('mon-intrapartidario').textContent = _concorrentesData.filter(c => c.relacao === 'Republicanos').length;
+  el('mon-adversario').textContent = _concorrentesData.filter(c => c.relacao === 'adversario').length;
+  el('mon-aliado').textContent = _concorrentesData.filter(c => c.relacao === 'aliado').length;
+}
+
+function filtrarConcorrentes(filtro, el) {
+  _monFiltro = filtro;
+  document.querySelectorAll('.mon-filtro').forEach(b => b.classList.remove('active'));
+  if (el) el.classList.add('active');
+  renderConcorrentes();
+}
+
+function renderConcorrentes() {
+  const tbody = document.getElementById('mon-tbody');
+  if (!tbody) return;
+  const busca = (document.getElementById('mon-busca')?.value || '').toLowerCase();
+  let lista = _concorrentesData;
+  if (_monFiltro !== 'todos') lista = lista.filter(c => c.relacao === _monFiltro);
+  if (busca) lista = lista.filter(c => (c.nome||'').toLowerCase().includes(busca));
+
+  if (lista.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="padding:40px;text-align:center;color:var(--cinza2);font-size:13px;">
+      ${_concorrentesData.length === 0 ? 'Nenhum concorrente cadastrado ainda. Clique em "+ Adicionar concorrente".' : 'Nenhum resultado para o filtro selecionado.'}</td></tr>`;
+    return;
+  }
+
+  const relacaoCor = { Republicanos:'azul', adversario:'vermelho', aliado:'verde', observar:'amarelo' };
+  const relacaoLabel = { Republicanos:'Intrapartidário', adversario:'Adversário', aliado:'Aliado', observar:'Observar' };
+
+  tbody.innerHTML = lista.map(c => {
+    const redes = [];
+    if (c.ig)  redes.push(`<a href="https://instagram.com/${c.ig}" target="_blank" title="Instagram @${c.ig}" style="color:var(--cinza);font-size:18px;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='var(--cinza)'">📸</a>`);
+    if (c.fb)  redes.push(`<a href="https://facebook.com/${c.fb}" target="_blank" title="Facebook" style="color:var(--cinza);font-size:18px;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#1877F2'" onmouseout="this.style.color='var(--cinza)'">📘</a>`);
+    if (c.yt)  redes.push(`<a href="https://youtube.com/@${c.yt}" target="_blank" title="YouTube" style="color:var(--cinza);font-size:18px;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#FF0000'" onmouseout="this.style.color='var(--cinza)'">▶️</a>`);
+    if (c.tt)  redes.push(`<a href="https://tiktok.com/@${c.tt}" target="_blank" title="TikTok" style="color:var(--cinza);font-size:18px;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--branco)'" onmouseout="this.style.color='var(--cinza)'">🎵</a>`);
+    const segStr = c.seg_ig ? Number(c.seg_ig).toLocaleString('pt-BR') : '—';
+    const cor = relacaoCor[c.relacao] || 'azul';
+    const label = relacaoLabel[c.relacao] || c.relacao;
+    return `<tr style="border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
+      <td style="padding:14px 16px;">
+        <div style="font-size:13px;font-weight:700;color:var(--branco);">${c.nome}</div>
+        ${c.obs ? `<div style="font-size:11px;color:var(--cinza2);margin-top:2px;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.obs}</div>` : ''}
+      </td>
+      <td style="padding:14px 16px;font-size:13px;color:var(--cinza);">${c.partido||'—'}</td>
+      <td style="padding:14px 16px;text-align:center;">
+        <div style="display:flex;gap:10px;justify-content:center;align-items:center;">${redes.length ? redes.join('') : '<span style="color:var(--cinza2);font-size:12px;">—</span>'}</div>
+      </td>
+      <td style="padding:14px 16px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:700;color:var(--azul3);">${segStr}</td>
+      <td style="padding:14px 16px;text-align:center;"><span class="badge ${cor}" style="font-size:11px;">${label}</span></td>
+      <td style="padding:14px 16px;text-align:center;">
+        <div style="display:flex;gap:6px;justify-content:center;">
+          <button onclick="editarConcorrente('${c.id}')" style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:var(--fonte);font-weight:700;">✏️ Editar</button>
+          <button onclick="apagarConcorrente('${c.id}','${c.nome.replace(/'/g,"\\'")}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:var(--fonte);font-weight:700;">🗑️</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function abrirModalConcorrente() {
+  document.getElementById('modal-conc-title').textContent = 'Adicionar Concorrente';
+  document.getElementById('conc-edit-id').value = '';
+  ['conc-nome','conc-partido','conc-ig','conc-fb','conc-yt','conc-tt','conc-obs'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  document.getElementById('conc-seg-ig').value = '';
+  document.getElementById('conc-relacao').value = 'Republicanos';
+  document.getElementById('conc-feedback').style.display = 'none';
+  document.getElementById('modal-concorrente').classList.add('show');
+}
+
+function fecharModalConcorrente() {
+  document.getElementById('modal-concorrente').classList.remove('show');
+}
+
+function editarConcorrente(id) {
+  const c = _concorrentesData.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('modal-conc-title').textContent = 'Editar Concorrente';
+  document.getElementById('conc-edit-id').value = id;
+  document.getElementById('conc-nome').value = c.nome || '';
+  document.getElementById('conc-partido').value = c.partido || '';
+  document.getElementById('conc-relacao').value = c.relacao || 'adversario';
+  document.getElementById('conc-seg-ig').value = c.seg_ig || '';
+  document.getElementById('conc-ig').value = c.ig || '';
+  document.getElementById('conc-fb').value = c.fb || '';
+  document.getElementById('conc-yt').value = c.yt || '';
+  document.getElementById('conc-tt').value = c.tt || '';
+  document.getElementById('conc-obs').value = c.obs || '';
+  document.getElementById('conc-feedback').style.display = 'none';
+  document.getElementById('modal-concorrente').classList.add('show');
+}
+
+async function salvarConcorrente() {
+  const nome = document.getElementById('conc-nome').value.trim();
+  const partido = document.getElementById('conc-partido').value.trim();
+  if (!nome) { mostrarFeedbackConc('Informe o nome do candidato.', false); return; }
+  const btn = document.getElementById('conc-btn-salvar');
+  btn.disabled = true; btn.textContent = 'Salvando...';
+  const payload = {
+    nome, partido,
+    relacao: document.getElementById('conc-relacao').value,
+    seg_ig: parseInt(document.getElementById('conc-seg-ig').value) || 0,
+    ig: document.getElementById('conc-ig').value.trim().replace('@',''),
+    fb: document.getElementById('conc-fb').value.trim(),
+    yt: document.getElementById('conc-yt').value.trim().replace('@',''),
+    tt: document.getElementById('conc-tt').value.trim().replace('@',''),
+    obs: document.getElementById('conc-obs').value.trim(),
+    updated_at: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  try {
+    const editId = document.getElementById('conc-edit-id').value;
+    if (editId) {
+      await _db.collection('concorrentes').doc(editId).update(payload);
+    } else {
+      payload.created_at = firebase.firestore.FieldValue.serverTimestamp();
+      await _db.collection('concorrentes').add(payload);
+    }
+    fecharModalConcorrente();
+  } catch(e) {
+    mostrarFeedbackConc('Erro ao salvar: ' + e.message, false);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Salvar';
+  }
+}
+
+async function apagarConcorrente(id, nome) {
+  if (!confirm(`Remover "${nome}" do monitoramento?`)) return;
+  try { await _db.collection('concorrentes').doc(id).delete(); }
+  catch(e) { alert('Erro ao apagar: ' + e.message); }
+}
+
+function mostrarFeedbackConc(msg, ok) {
+  const el = document.getElementById('conc-feedback');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = ok ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)';
+  el.style.color = ok ? '#10B981' : '#EF4444';
+  el.style.border = ok ? '1px solid rgba(16,185,129,0.3)' : '1px solid rgba(239,68,68,0.3)';
 }
 
 // ── AGENDA ──────────────────────────────────────────────────────────────────
