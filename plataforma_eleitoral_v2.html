@@ -3070,38 +3070,49 @@ function iniciarAutocomplete() {
   });
 }
 
-async function _fetchTSE(url) {
+function _fetchComTimeout(url, ms=6000) {
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error('timeout')), ms);
+    fetch(url).then(r => r.text()).then(txt => { clearTimeout(t); resolve(txt); }).catch(e => { clearTimeout(t); reject(e); });
+  });
+}
+
+async function _fetchTSE(tseUrl) {
   const proxies = [
-    async () => { const r = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`); return r.json(); },
-    async () => { const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`); const j = await r.json(); return JSON.parse(j.contents); },
-    async () => { const r = await fetch(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`); return r.json(); }
+    async () => JSON.parse(await _fetchComTimeout(`https://corsproxy.io/?${encodeURIComponent(tseUrl)}`)),
+    async () => { const j = JSON.parse(await _fetchComTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(tseUrl)}`)); return JSON.parse(j.contents); },
+    async () => JSON.parse(await _fetchComTimeout(`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(tseUrl)}`)),
   ];
   for (const p of proxies) {
-    try { const d = await p(); if (d?.candidatos !== undefined) return d; } catch(e) {}
+    try { const d = await p(); if (Array.isArray(d?.candidatos)) return d; } catch(e) { console.warn('proxy falhou:', e.message); }
   }
   return null;
 }
 
 async function buscarCandidatosTSE(q, box, input) {
-  box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Buscando...</div>';
+  box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Buscando no TSE...</div>';
   box.style.display = 'block';
-  const qUp = q.toUpperCase();
-  // Busca em paralelo: dep federal (6), dep estadual (7), senador (5)
-  const cargos = [{cod:'6',label:'Dep. Federal'},{cod:'7',label:'Dep. Estadual'},{cod:'5',label:'Senador'}];
-  const resultados = await Promise.all(cargos.map(async cg => {
-    const url = `https://divulgacandcontas.tse.jus.br/divulga/rest/v1/candidatura/listar/2022/BA/${cg.cod}/${encodeURIComponent(qUp)}/candidatos`;
+  const qUp = encodeURIComponent(q.toUpperCase());
+  // Tenta dep federal primeiro, depois estadual
+  let candidatos = [];
+  for (const [cod, label] of [['6','Dep. Federal'],['7','Dep. Estadual'],['5','Senador']]) {
+    if (candidatos.length) break;
+    const url = `https://divulgacandcontas.tse.jus.br/divulga/rest/v1/candidatura/listar/2022/BA/${cod}/${qUp}/candidatos`;
     const data = await _fetchTSE(url);
-    return (data?.candidatos || []).map(c => ({...c, _cargo: cg.label}));
-  }));
-  const candidatos = resultados.flat().slice(0, 10);
-  if (!candidatos.length) { box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Nenhum candidato encontrado.</div>'; return; }
+    candidatos = (data?.candidatos || []).map(c => ({...c, _cargo: label}));
+  }
+  candidatos = candidatos.slice(0, 10);
+  if (!candidatos.length) {
+    box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Nenhum candidato encontrado. Preencha manualmente.</div>';
+    return;
+  }
   box.innerHTML = candidatos.map(c => {
     const nome = c.nomeUrna || c.nome || '';
     const partido = c.partido?.sigla || '';
     const foto = c.fotoUrl || '';
     const votos = c.totalVotos ? Number(c.totalVotos).toLocaleString('pt-BR') : '';
     const cargo = c._cargo || '';
-    return `<div class="autocomplete-item" onclick="selecionarCandidatoTSE(${JSON.stringify({nome,partido,foto,votos,sq:c.sequencialCandidato||''}).replace(/"/g,'&quot;')})">
+    return `<div class="autocomplete-item" onclick="selecionarCandidatoTSE(${JSON.stringify({nome,partido,foto,votos}).replace(/"/g,'&quot;')})">
       ${foto ? `<img src="${foto}" onerror="this.style.display='none'">` : `<div class="ac-init">${nome[0]||'?'}</div>`}
       <div>
         <div style="font-weight:700;">${nome}</div>
