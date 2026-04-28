@@ -296,6 +296,25 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 .metrica-label{font-size:11px;color:var(--cinza);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;}
 .metrica-sub{font-size:12px;margin-top:6px;font-weight:700;}
 
+/* ── CONCORRENTE CARDS ── */
+.conc-card{background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:20px;cursor:pointer;transition:all 0.2s;text-align:center;position:relative;}
+.conc-card:hover{border-color:var(--azul2);transform:translateY(-3px);box-shadow:0 8px 24px rgba(37,99,235,0.12);}
+.conc-avatar{width:72px;height:72px;border-radius:50%;margin:0 auto 12px;border:3px solid var(--borda);overflow:hidden;background:var(--azul2);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:800;color:#fff;}
+.conc-avatar img{width:100%;height:100%;object-fit:cover;}
+.conc-actions{position:absolute;top:10px;right:10px;display:flex;gap:4px;opacity:0;transition:opacity 0.2s;}
+.conc-card:hover .conc-actions{opacity:1;}
+.conc-act-btn{background:var(--bg3);border:1px solid var(--borda);border-radius:6px;padding:4px 7px;font-size:11px;cursor:pointer;color:var(--cinza);transition:all 0.2s;}
+.conc-act-btn:hover{border-color:var(--azul2);color:var(--azul3);}
+.conc-act-btn.del:hover{border-color:var(--vermelho2);color:var(--vermelho2);}
+/* ── ABAS DETALHE ── */
+.det-tab{transition:all 0.2s;}
+.det-tab.active{color:var(--azul3)!important;border-bottom:2px solid var(--azul2)!important;}
+/* ── AUTOCOMPLETE ── */
+.autocomplete-box{position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--azul2);border-radius:0 0 10px 10px;z-index:9999;max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.4);}
+.autocomplete-item{padding:10px 14px;cursor:pointer;font-size:13px;color:var(--branco);border-bottom:1px solid var(--borda);transition:background 0.15s;display:flex;align-items:center;gap:10px;}
+.autocomplete-item:hover{background:var(--bg3);}
+.autocomplete-item img{width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;}
+.autocomplete-item .ac-init{width:32px;height:32px;border-radius:50%;background:var(--azul2);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:#fff;flex-shrink:0;}
 /* LOADING OVERLAY */
 #loading{display:none;position:fixed;inset:0;background:rgba(8,12,20,0.9);z-index:9998;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
 #loading.show{display:flex;}
@@ -971,7 +990,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
           <div>
             <div class="page-title">Monitoramento de Concorrentes</div>
-            <div class="page-sub">Dep. Federal Bahia 2026 · Republicanos e adversários · Redes sociais em tempo real</div>
+            <div class="page-sub">Dep. Federal Bahia 2026 · Clique no candidato para ver detalhes</div>
           </div>
           <button class="btn btn-primary" onclick="abrirModalConcorrente()">+ Adicionar concorrente</button>
         </div>
@@ -979,13 +998,13 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
         <!-- Stats -->
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;">
           <div class="stat-card azul"><span class="stat-icon">👥</span><div class="stat-num" id="mon-total">0</div><div class="stat-label">Total monitorados</div></div>
-          <div class="stat-card vermelho"><span class="stat-icon">🔴</span><div class="stat-num" id="mon-intrapartidario">0</div><div class="stat-label">Intrapartidários</div></div>
+          <div class="stat-card vermelho"><span class="stat-icon">🔵</span><div class="stat-num" id="mon-intrapartidario">0</div><div class="stat-label">Intrapartidários</div></div>
           <div class="stat-card amarelo"><span class="stat-icon">⚠️</span><div class="stat-num" id="mon-adversario">0</div><div class="stat-label">Adversários</div></div>
           <div class="stat-card verde"><span class="stat-icon">🤝</span><div class="stat-num" id="mon-aliado">0</div><div class="stat-label">Aliados</div></div>
         </div>
 
         <!-- Filtros -->
-        <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+        <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
           <button class="btn btn-outline mon-filtro active" onclick="filtrarConcorrentes('todos',this)" style="font-size:12px;padding:7px 14px;">Todos</button>
           <button class="btn btn-outline mon-filtro" onclick="filtrarConcorrentes('Republicanos',this)" style="font-size:12px;padding:7px 14px;">🔵 Republicanos</button>
           <button class="btn btn-outline mon-filtro" onclick="filtrarConcorrentes('adversario',this)" style="font-size:12px;padding:7px 14px;">🔴 Adversários</button>
@@ -994,37 +1013,110 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
             style="background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--branco);font-family:var(--fonte);outline:none;margin-left:auto;width:220px;">
         </div>
 
-        <!-- Tabela -->
-        <div class="panel">
-          <div style="overflow-x:auto;">
-            <table style="width:100%;border-collapse:collapse;" id="mon-tabela">
-              <thead>
-                <tr style="border-bottom:1px solid var(--borda);">
-                  <th style="padding:12px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;white-space:nowrap;">Candidato</th>
-                  <th style="padding:12px 16px;text-align:left;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;">Partido</th>
-                  <th style="padding:12px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;">Redes Sociais</th>
-                  <th style="padding:12px 16px;text-align:right;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;white-space:nowrap;">Seguidores IG</th>
-                  <th style="padding:12px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;">Relação</th>
-                  <th style="padding:12px 16px;text-align:center;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;">Ações</th>
-                </tr>
-              </thead>
-              <tbody id="mon-tbody">
-                <tr><td colspan="6" style="padding:40px;text-align:center;color:var(--cinza2);font-size:13px;">Carregando...</td></tr>
-              </tbody>
-            </table>
+        <!-- Cards -->
+        <div id="mon-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;">
+          <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--cinza2);font-size:13px;">Carregando...</div>
+        </div>
+      </div>
+
+      <!-- ══ DETALHE CONCORRENTE ══ -->
+      <div class="page" id="page-concorrente-detalhe">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+          <button class="btn btn-outline" onclick="showPage('monitoramento',document.querySelector('[onclick*=monitoramento]'))" style="font-size:12px;padding:8px 14px;">← Voltar</button>
+          <div style="flex:1;">
+            <div class="page-title" id="det-conc-nome">—</div>
+            <div class="page-sub" id="det-conc-partido">—</div>
+          </div>
+          <button class="btn btn-outline" onclick="editarConcorrenteAtual()" style="font-size:12px;padding:8px 14px;">✏️ Editar</button>
+        </div>
+
+        <!-- Header do perfil -->
+        <div class="panel" style="margin-bottom:20px;">
+          <div style="padding:24px;display:flex;align-items:center;gap:24px;flex-wrap:wrap;">
+            <div id="det-conc-foto" style="width:90px;height:90px;border-radius:50%;flex-shrink:0;background:var(--azul2);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:#fff;border:3px solid var(--borda);overflow:hidden;"></div>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+                <span id="det-conc-badge" class="badge azul">—</span>
+                <span id="det-conc-seg" style="font-size:13px;color:var(--cinza);"></span>
+              </div>
+              <div id="det-conc-redes" style="display:flex;gap:14px;flex-wrap:wrap;"></div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:28px;font-weight:800;color:var(--branco);font-family:var(--mono);" id="det-votos-2022">—</div>
+              <div style="font-size:11px;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;">Votos em 2022</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abas -->
+        <div style="display:flex;gap:0;border-bottom:1px solid var(--borda);margin-bottom:20px;">
+          <button class="det-tab active" onclick="trocarAbaConc('noticias',this)" style="padding:12px 20px;background:none;border:none;color:var(--cinza);font-size:13px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;font-family:var(--fonte);transition:all 0.2s;">📰 Notícias</button>
+          <button class="det-tab" onclick="trocarAbaConc('redes',this)" style="padding:12px 20px;background:none;border:none;color:var(--cinza);font-size:13px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;font-family:var(--fonte);transition:all 0.2s;">📱 Redes Sociais</button>
+          <button class="det-tab" onclick="trocarAbaConc('eleicoes',this)" style="padding:12px 20px;background:none;border:none;color:var(--cinza);font-size:13px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;font-family:var(--fonte);transition:all 0.2s;">🗳️ Eleições Passadas</button>
+          <button class="det-tab" onclick="trocarAbaConc('obs',this)" style="padding:12px 20px;background:none;border:none;color:var(--cinza);font-size:13px;font-weight:700;cursor:pointer;border-bottom:2px solid transparent;font-family:var(--fonte);transition:all 0.2s;">📝 Observações</button>
+        </div>
+
+        <!-- Aba Notícias -->
+        <div id="aba-noticias" class="det-aba">
+          <div id="det-noticias-lista" style="display:flex;flex-direction:column;gap:12px;">
+            <div style="text-align:center;padding:30px;color:var(--cinza2);font-size:13px;">Carregando notícias...</div>
+          </div>
+        </div>
+
+        <!-- Aba Redes Sociais -->
+        <div id="aba-redes" class="det-aba" style="display:none;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;" id="det-redes-cards"></div>
+        </div>
+
+        <!-- Aba Eleições -->
+        <div id="aba-eleicoes" class="det-aba" style="display:none;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;">
+            <div class="panel" style="text-align:center;padding:20px;">
+              <div style="font-size:28px;font-weight:800;color:var(--azul3);font-family:var(--mono);" id="det-el-votos">—</div>
+              <div style="font-size:11px;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Votos 2022</div>
+            </div>
+            <div class="panel" style="text-align:center;padding:20px;">
+              <div style="font-size:28px;font-weight:800;color:var(--amarelo2);font-family:var(--mono);" id="det-el-posicao">—</div>
+              <div style="font-size:11px;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Colocação</div>
+            </div>
+            <div class="panel" style="text-align:center;padding:20px;">
+              <div style="font-size:28px;font-weight:800;color:var(--verde2);font-family:var(--mono);" id="det-el-resultado">—</div>
+              <div style="font-size:11px;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-top:4px;">Resultado</div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Municípios mais votados (2022)</div></div>
+            <div class="panel-body" id="det-el-municipios"><div style="color:var(--cinza2);font-size:13px;">Nenhum dado cadastrado.</div></div>
+          </div>
+        </div>
+
+        <!-- Aba Observações -->
+        <div id="aba-obs" class="det-aba" style="display:none;">
+          <div class="panel">
+            <div class="panel-body" id="det-obs-texto" style="font-size:14px;color:var(--cinza);line-height:1.8;white-space:pre-wrap;">Nenhuma observação cadastrada.</div>
           </div>
         </div>
       </div>
 
       <!-- MODAL CONCORRENTE -->
       <div class="modal-overlay" id="modal-concorrente">
-        <div class="modal" style="max-width:640px;">
+        <div class="modal" style="max-width:660px;">
           <div class="modal-header">
             <div class="modal-title" id="modal-conc-title">Adicionar Concorrente</div>
             <button class="modal-close" onclick="fecharModalConcorrente()">✕</button>
           </div>
           <div class="modal-body">
             <input type="hidden" id="conc-edit-id">
+
+            <!-- Foto -->
+            <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px;padding:14px;background:var(--bg3);border-radius:10px;">
+              <div id="conc-foto-preview" style="width:60px;height:60px;border-radius:50%;background:var(--azul2);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;color:#fff;flex-shrink:0;overflow:hidden;border:2px solid var(--borda);"></div>
+              <div style="flex:1;">
+                <label class="form-label">URL da foto (link direto para imagem)</label>
+                <input class="form-input" type="url" id="conc-foto" placeholder="https://..." oninput="previewFoto()" style="margin-top:4px;">
+              </div>
+            </div>
+
             <div class="form-row">
               <div class="form-group">
                 <label class="form-label">Nome completo *</label>
@@ -1052,27 +1144,56 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">Instagram (@ sem arroba)</label>
+                <label class="form-label">Instagram (sem @)</label>
                 <input class="form-input" type="text" id="conc-ig" placeholder="Ex: talitaoliveira2026">
               </div>
               <div class="form-group">
-                <label class="form-label">Facebook (URL ou nome)</label>
+                <label class="form-label">Facebook</label>
                 <input class="form-input" type="text" id="conc-fb" placeholder="Ex: talitaoliveira.ba">
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label class="form-label">YouTube (@ sem arroba)</label>
+                <label class="form-label">YouTube (sem @)</label>
                 <input class="form-input" type="text" id="conc-yt" placeholder="Ex: talitaoliveira">
               </div>
               <div class="form-group">
-                <label class="form-label">TikTok (@ sem arroba)</label>
+                <label class="form-label">TikTok (sem @)</label>
                 <input class="form-input" type="text" id="conc-tt" placeholder="Ex: talitaoliveira">
               </div>
             </div>
-            <div class="form-group">
-              <label class="form-label">Observações</label>
-              <textarea class="form-textarea" id="conc-obs" placeholder="Base eleitoral, pontos fortes, estratégia observada..." style="min-height:80px;"></textarea>
+
+            <div style="font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:1px;margin:16px 0 10px;padding-top:14px;border-top:1px solid var(--borda);">Eleições 2022</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Votos obtidos</label>
+                <input class="form-input" type="number" id="conc-votos22" placeholder="Ex: 45000">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Colocação</label>
+                <input class="form-input" type="text" id="conc-posicao22" placeholder="Ex: 12º lugar">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Resultado</label>
+                <select class="form-select" id="conc-resultado22">
+                  <option value="">— Selecione —</option>
+                  <option value="Eleito">Eleito</option>
+                  <option value="Suplente">Suplente</option>
+                  <option value="Não eleito">Não eleito</option>
+                  <option value="Primeira candidatura">Primeira candidatura</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Municípios fortes</label>
+                <input class="form-input" type="text" id="conc-municipios22" placeholder="Ex: Salvador, Feira, Vitória">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-top:4px;">
+              <label class="form-label">Observações estratégicas</label>
+              <textarea class="form-textarea" id="conc-obs" placeholder="Base eleitoral, pontos fortes, estratégia observada..." style="min-height:70px;"></textarea>
             </div>
             <div style="display:flex;gap:10px;justify-content:flex-end;">
               <button class="btn btn-outline" onclick="fecharModalConcorrente()">Cancelar</button>
@@ -1439,6 +1560,7 @@ const PAGE_TITLES = {
   projetos:'Projetos',crm:'Lideranças',agenda:'Agenda',
   monitoramento:'Monitoramento',trafego:'Tráfego & Leads',
   ia:'IA Estratégica','projeto-detalhe':'Projeto',
+  'concorrente-detalhe':'Perfil do Concorrente',
   config:'Configurações',votos:'Registrar Votos'
 };
 
@@ -2743,6 +2865,7 @@ function mostrarFeedback(msg, ok) {
 // ── MONITORAMENTO ────────────────────────────────────────────────────────────
 let _concorrentesData = [];
 let _monFiltro = 'todos';
+let _concorrenteAtual = null;
 
 _db.collection('concorrentes').orderBy('nome').onSnapshot(snap => {
   _concorrentesData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -2766,61 +2889,234 @@ function filtrarConcorrentes(filtro, el) {
   renderConcorrentes();
 }
 
+const _relacaoCor   = { Republicanos:'azul', adversario:'vermelho', aliado:'verde', observar:'amarelo' };
+const _relacaoLabel = { Republicanos:'Intrapartidário', adversario:'Adversário', aliado:'Aliado', observar:'Observar' };
+
+function _avatarHtml(c, size=72, fontSize=26) {
+  if (c.foto_url) return `<img src="${c.foto_url}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" style="width:100%;height:100%;object-fit:cover;"><span style="display:none;align-items:center;justify-content:center;width:100%;height:100%;font-size:${Math.round(fontSize*0.8)}px;font-weight:800;">${(c.nome||'?')[0].toUpperCase()}</span>`;
+  return `<span style="font-size:${fontSize}px;font-weight:800;">${(c.nome||'?')[0].toUpperCase()}</span>`;
+}
+
 function renderConcorrentes() {
-  const tbody = document.getElementById('mon-tbody');
-  if (!tbody) return;
+  const wrap = document.getElementById('mon-cards');
+  if (!wrap) return;
   const busca = (document.getElementById('mon-busca')?.value || '').toLowerCase();
   let lista = _concorrentesData;
   if (_monFiltro !== 'todos') lista = lista.filter(c => c.relacao === _monFiltro);
   if (busca) lista = lista.filter(c => (c.nome||'').toLowerCase().includes(busca));
 
   if (lista.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="padding:40px;text-align:center;color:var(--cinza2);font-size:13px;">
-      ${_concorrentesData.length === 0 ? 'Nenhum concorrente cadastrado ainda. Clique em "+ Adicionar concorrente".' : 'Nenhum resultado para o filtro selecionado.'}</td></tr>`;
+    wrap.innerHTML = `<div style="grid-column:1/-1;padding:48px;text-align:center;color:var(--cinza2);font-size:13px;">${_concorrentesData.length===0?'Nenhum concorrente cadastrado. Clique em "+ Adicionar concorrente".':'Nenhum resultado para o filtro.'}</div>`;
     return;
   }
 
-  const relacaoCor = { Republicanos:'azul', adversario:'vermelho', aliado:'verde', observar:'amarelo' };
-  const relacaoLabel = { Republicanos:'Intrapartidário', adversario:'Adversário', aliado:'Aliado', observar:'Observar' };
-
-  tbody.innerHTML = lista.map(c => {
-    const redes = [];
-    if (c.ig)  redes.push(`<a href="https://instagram.com/${c.ig}" target="_blank" title="Instagram @${c.ig}" style="color:var(--cinza);font-size:18px;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#E1306C'" onmouseout="this.style.color='var(--cinza)'">📸</a>`);
-    if (c.fb)  redes.push(`<a href="https://facebook.com/${c.fb}" target="_blank" title="Facebook" style="color:var(--cinza);font-size:18px;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#1877F2'" onmouseout="this.style.color='var(--cinza)'">📘</a>`);
-    if (c.yt)  redes.push(`<a href="https://youtube.com/@${c.yt}" target="_blank" title="YouTube" style="color:var(--cinza);font-size:18px;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='#FF0000'" onmouseout="this.style.color='var(--cinza)'">▶️</a>`);
-    if (c.tt)  redes.push(`<a href="https://tiktok.com/@${c.tt}" target="_blank" title="TikTok" style="color:var(--cinza);font-size:18px;text-decoration:none;transition:color 0.2s;" onmouseover="this.style.color='var(--branco)'" onmouseout="this.style.color='var(--cinza)'">🎵</a>`);
-    const segStr = c.seg_ig ? Number(c.seg_ig).toLocaleString('pt-BR') : '—';
-    const cor = relacaoCor[c.relacao] || 'azul';
-    const label = relacaoLabel[c.relacao] || c.relacao;
-    return `<tr style="border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.15s;" onmouseover="this.style.background='var(--bg3)'" onmouseout="this.style.background=''">
-      <td style="padding:14px 16px;">
-        <div style="font-size:13px;font-weight:700;color:var(--branco);">${c.nome}</div>
-        ${c.obs ? `<div style="font-size:11px;color:var(--cinza2);margin-top:2px;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.obs}</div>` : ''}
-      </td>
-      <td style="padding:14px 16px;font-size:13px;color:var(--cinza);">${c.partido||'—'}</td>
-      <td style="padding:14px 16px;text-align:center;">
-        <div style="display:flex;gap:10px;justify-content:center;align-items:center;">${redes.length ? redes.join('') : '<span style="color:var(--cinza2);font-size:12px;">—</span>'}</div>
-      </td>
-      <td style="padding:14px 16px;text-align:right;font-family:var(--mono);font-size:13px;font-weight:700;color:var(--azul3);">${segStr}</td>
-      <td style="padding:14px 16px;text-align:center;"><span class="badge ${cor}" style="font-size:11px;">${label}</span></td>
-      <td style="padding:14px 16px;text-align:center;">
-        <div style="display:flex;gap:6px;justify-content:center;">
-          <button onclick="editarConcorrente('${c.id}')" style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:var(--fonte);font-weight:700;">✏️ Editar</button>
-          <button onclick="apagarConcorrente('${c.id}','${c.nome.replace(/'/g,"\\'")}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:var(--fonte);font-weight:700;">🗑️</button>
-        </div>
-      </td>
-    </tr>`;
+  wrap.innerHTML = lista.map(c => {
+    const cor = _relacaoCor[c.relacao]||'azul';
+    const label = _relacaoLabel[c.relacao]||c.relacao;
+    const redesIcons = [
+      c.ig ? `<span title="Instagram">📸</span>` : '',
+      c.fb ? `<span title="Facebook">📘</span>` : '',
+      c.yt ? `<span title="YouTube">▶️</span>` : '',
+      c.tt ? `<span title="TikTok">🎵</span>` : ''
+    ].filter(Boolean).join('');
+    return `<div class="conc-card" onclick="abrirConcorrente('${c.id}')">
+      <div class="conc-actions" onclick="event.stopPropagation()">
+        <button class="conc-act-btn" onclick="editarConcorrente('${c.id}')">✏️</button>
+        <button class="conc-act-btn del" onclick="apagarConcorrente('${c.id}','${c.nome.replace(/'/g,"\\'")}')">🗑️</button>
+      </div>
+      <div class="conc-avatar">${_avatarHtml(c)}</div>
+      <div style="font-size:14px;font-weight:800;color:var(--branco);margin-bottom:4px;line-height:1.3;">${c.nome}</div>
+      <div style="font-size:11px;color:var(--cinza);margin-bottom:8px;">${c.partido||'—'}</div>
+      <span class="badge ${cor}" style="font-size:10px;margin-bottom:8px;display:inline-flex;">${label}</span>
+      ${c.seg_ig ? `<div style="font-size:12px;color:var(--cinza);margin-bottom:6px;">📸 ${Number(c.seg_ig).toLocaleString('pt-BR')} seguidores</div>` : ''}
+      ${c.votos_2022 ? `<div style="font-size:12px;color:var(--azul3);font-family:var(--mono);font-weight:700;">🗳️ ${Number(c.votos_2022).toLocaleString('pt-BR')} votos (2022)</div>` : ''}
+      ${redesIcons ? `<div style="margin-top:8px;font-size:16px;display:flex;gap:6px;justify-content:center;">${redesIcons}</div>` : ''}
+    </div>`;
   }).join('');
 }
 
+// ── DETALHE DO CONCORRENTE ────────────────────────────────────────────────────
+function abrirConcorrente(id) {
+  const c = _concorrentesData.find(x => x.id === id);
+  if (!c) return;
+  _concorrenteAtual = c;
+
+  document.getElementById('det-conc-nome').textContent = c.nome;
+  document.getElementById('det-conc-partido').textContent = (c.partido||'—') + ' · Dep. Federal Bahia 2026';
+
+  const fotoEl = document.getElementById('det-conc-foto');
+  if (c.foto_url) {
+    fotoEl.innerHTML = `<img src="${c.foto_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=\\'font-size:32px;font-weight:800;\\'>${c.nome[0].toUpperCase()}</span>'">`;
+  } else {
+    fotoEl.innerHTML = `<span style="font-size:32px;font-weight:800;">${c.nome[0].toUpperCase()}</span>`;
+  }
+
+  const cor = _relacaoCor[c.relacao]||'azul';
+  const label = _relacaoLabel[c.relacao]||c.relacao;
+  document.getElementById('det-conc-badge').className = `badge ${cor}`;
+  document.getElementById('det-conc-badge').textContent = label;
+  document.getElementById('det-conc-seg').textContent = c.seg_ig ? `📸 ${Number(c.seg_ig).toLocaleString('pt-BR')} seguidores` : '';
+
+  const redes = [];
+  if (c.ig) redes.push(`<a href="https://instagram.com/${c.ig}" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(225,48,108,0.1);border:1px solid rgba(225,48,108,0.3);border-radius:8px;color:#E1306C;font-size:12px;font-weight:700;text-decoration:none;">📸 @${c.ig}</a>`);
+  if (c.fb) redes.push(`<a href="https://facebook.com/${c.fb}" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(24,119,242,0.1);border:1px solid rgba(24,119,242,0.3);border-radius:8px;color:#1877F2;font-size:12px;font-weight:700;text-decoration:none;">📘 ${c.fb}</a>`);
+  if (c.yt) redes.push(`<a href="https://youtube.com/@${c.yt}" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(255,0,0,0.08);border:1px solid rgba(255,0,0,0.25);border-radius:8px;color:#FF0000;font-size:12px;font-weight:700;text-decoration:none;">▶️ @${c.yt}</a>`);
+  if (c.tt) redes.push(`<a href="https://tiktok.com/@${c.tt}" target="_blank" style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:rgba(255,255,255,0.05);border:1px solid var(--borda);border-radius:8px;color:var(--branco);font-size:12px;font-weight:700;text-decoration:none;">🎵 @${c.tt}</a>`);
+  document.getElementById('det-conc-redes').innerHTML = redes.join('');
+
+  document.getElementById('det-votos-2022').textContent = c.votos_2022 ? Number(c.votos_2022).toLocaleString('pt-BR') : '—';
+  document.getElementById('det-el-votos').textContent = c.votos_2022 ? Number(c.votos_2022).toLocaleString('pt-BR') : '—';
+  document.getElementById('det-el-posicao').textContent = c.posicao_2022 || '—';
+  document.getElementById('det-el-resultado').textContent = c.resultado_2022 || '—';
+  document.getElementById('det-el-municipios').textContent = c.municipios_2022 || 'Nenhum dado cadastrado.';
+  document.getElementById('det-obs-texto').textContent = c.obs || 'Nenhuma observação cadastrada.';
+
+  // Redes cards
+  const redesCards = [];
+  if (c.ig) redesCards.push(`<a href="https://instagram.com/${c.ig}" target="_blank" class="panel" style="padding:20px;text-decoration:none;display:block;transition:border-color 0.2s;" onmouseover="this.style.borderColor='#E1306C'" onmouseout="this.style.borderColor=''"><div style="font-size:24px;margin-bottom:8px;">📸</div><div style="font-weight:700;color:var(--branco);font-size:14px;">Instagram</div><div style="color:#E1306C;font-size:12px;margin-top:4px;">@${c.ig}</div>${c.seg_ig?`<div style="font-size:20px;font-weight:800;font-family:var(--mono);color:var(--branco);margin-top:10px;">${Number(c.seg_ig).toLocaleString('pt-BR')}</div><div style="font-size:10px;color:var(--cinza);">seguidores</div>`:''}</a>`);
+  if (c.fb) redesCards.push(`<a href="https://facebook.com/${c.fb}" target="_blank" class="panel" style="padding:20px;text-decoration:none;display:block;" onmouseover="this.style.borderColor='#1877F2'" onmouseout="this.style.borderColor=''"><div style="font-size:24px;margin-bottom:8px;">📘</div><div style="font-weight:700;color:var(--branco);font-size:14px;">Facebook</div><div style="color:#1877F2;font-size:12px;margin-top:4px;">${c.fb}</div></a>`);
+  if (c.yt) redesCards.push(`<a href="https://youtube.com/@${c.yt}" target="_blank" class="panel" style="padding:20px;text-decoration:none;display:block;" onmouseover="this.style.borderColor='#FF0000'" onmouseout="this.style.borderColor=''"><div style="font-size:24px;margin-bottom:8px;">▶️</div><div style="font-weight:700;color:var(--branco);font-size:14px;">YouTube</div><div style="color:#FF0000;font-size:12px;margin-top:4px;">@${c.yt}</div></a>`);
+  if (c.tt) redesCards.push(`<a href="https://tiktok.com/@${c.tt}" target="_blank" class="panel" style="padding:20px;text-decoration:none;display:block;" onmouseover="this.style.borderColor='var(--branco)'" onmouseout="this.style.borderColor=''"><div style="font-size:24px;margin-bottom:8px;">🎵</div><div style="font-weight:700;color:var(--branco);font-size:14px;">TikTok</div><div style="color:var(--cinza);font-size:12px;margin-top:4px;">@${c.tt}</div></a>`);
+  document.getElementById('det-redes-cards').innerHTML = redesCards.length ? redesCards.join('') : '<div style="color:var(--cinza2);font-size:13px;">Nenhuma rede social cadastrada.</div>';
+
+  trocarAbaConc('noticias', document.querySelector('.det-tab'));
+  showPage('concorrente-detalhe', null);
+  carregarNoticias(c.nome);
+}
+
+function editarConcorrenteAtual() {
+  if (_concorrenteAtual) editarConcorrente(_concorrenteAtual.id);
+}
+
+function trocarAbaConc(aba, el) {
+  document.querySelectorAll('.det-aba').forEach(a => a.style.display = 'none');
+  document.querySelectorAll('.det-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('aba-' + aba).style.display = 'block';
+  if (el) el.classList.add('active');
+}
+
+async function carregarNoticias(nome) {
+  const lista = document.getElementById('det-noticias-lista');
+  if (!lista) return;
+  lista.innerHTML = '<div style="text-align:center;padding:30px;color:var(--cinza2);font-size:13px;">Buscando notícias...</div>';
+  try {
+    const q = encodeURIComponent(`${nome} Bahia deputado 2026`);
+    const url = `https://news.google.com/rss/search?q=${q}&hl=pt-BR&gl=BR&ceid=BR:pt-419`;
+    const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxy);
+    const data = await res.json();
+    const parser = new DOMParser();
+    const xml = parser.parseFromString(data.contents, 'text/xml');
+    const items = Array.from(xml.querySelectorAll('item')).slice(0, 10);
+    if (!items.length) { lista.innerHTML = '<div style="text-align:center;padding:30px;color:var(--cinza2);font-size:13px;">Nenhuma notícia encontrada.</div>'; return; }
+    lista.innerHTML = items.map(item => {
+      const title = item.querySelector('title')?.textContent || '';
+      const link  = item.querySelector('link')?.textContent || '#';
+      const pub   = item.querySelector('pubDate')?.textContent || '';
+      const src   = item.querySelector('source')?.textContent || '';
+      const date  = pub ? new Date(pub).toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'}) : '';
+      return `<a href="${link}" target="_blank" style="display:block;padding:14px 16px;background:var(--bg3);border-radius:10px;border:1px solid var(--borda);text-decoration:none;transition:border-color 0.2s;" onmouseover="this.style.borderColor='var(--azul2)'" onmouseout="this.style.borderColor='var(--borda)'">
+        <div style="font-size:13px;font-weight:700;color:var(--branco);line-height:1.4;margin-bottom:6px;">${title}</div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          ${src?`<span style="font-size:11px;color:var(--azul3);">${src}</span>`:''}
+          ${date?`<span style="font-size:11px;color:var(--cinza2);">${date}</span>`:''}
+        </div>
+      </a>`;
+    }).join('');
+  } catch(e) {
+    lista.innerHTML = '<div style="text-align:center;padding:30px;color:var(--cinza2);font-size:13px;">Não foi possível carregar notícias.</div>';
+  }
+}
+
+// ── AUTOCOMPLETE TSE + WIKIPEDIA ─────────────────────────────────────────────
+let _acTimer = null;
+
+function iniciarAutocomplete() {
+  const input = document.getElementById('conc-nome');
+  if (!input || input.dataset.ac) return;
+  input.dataset.ac = '1';
+  input.setAttribute('autocomplete','off');
+
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'position:relative;';
+  input.parentNode.insertBefore(wrap, input);
+  wrap.appendChild(input);
+
+  const box = document.createElement('div');
+  box.className = 'autocomplete-box';
+  box.style.display = 'none';
+  wrap.appendChild(box);
+
+  input.addEventListener('input', () => {
+    clearTimeout(_acTimer);
+    const q = input.value.trim();
+    if (q.length < 3) { box.style.display = 'none'; return; }
+    _acTimer = setTimeout(() => buscarCandidatosTSE(q, box, input), 400);
+  });
+
+  document.addEventListener('click', e => { if (!wrap.contains(e.target)) box.style.display = 'none'; });
+}
+
+async function buscarCandidatosTSE(q, box, input) {
+  box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Buscando...</div>';
+  box.style.display = 'block';
+  try {
+    const url = `https://divulgacandcontas.tse.jus.br/divulga/rest/v1/candidatura/listar/2022/BA/6/${encodeURIComponent(q)}/candidatos`;
+    const res = await fetch(url);
+    const data = await res.json();
+    const candidatos = (data.candidatos || []).slice(0, 8);
+    if (!candidatos.length) { box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Nenhum candidato encontrado.</div>'; return; }
+    box.innerHTML = candidatos.map(c => {
+      const nome = c.nomeUrna || c.nome || '';
+      const partido = c.partido?.sigla || '';
+      const foto = c.fotoUrl || '';
+      const votos = c.totalVotos ? Number(c.totalVotos).toLocaleString('pt-BR') : '';
+      return `<div class="autocomplete-item" onclick="selecionarCandidatoTSE(${JSON.stringify({nome,partido,foto,votos,sq:c.sequencialCandidato||''}).replace(/"/g,'&quot;')})">
+        ${foto ? `<img src="${foto}" onerror="this.style.display='none'">` : `<div class="ac-init">${nome[0]||'?'}</div>`}
+        <div>
+          <div style="font-weight:700;">${nome}</div>
+          <div style="font-size:11px;color:var(--cinza2);">${partido}${votos?' · '+votos+' votos (2022)':''}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Erro ao buscar. Preencha manualmente.</div>';
+  }
+}
+
+function selecionarCandidatoTSE(c) {
+  document.getElementById('conc-nome').value = c.nome;
+  document.getElementById('conc-partido').value = c.partido;
+  if (c.foto) document.getElementById('conc-foto').value = c.foto;
+  if (c.votos) document.getElementById('conc-votos22').value = c.votos.replace(/\./g,'');
+  previewFoto();
+  document.querySelector('.autocomplete-box').style.display = 'none';
+}
+
+function previewFoto() {
+  const url = document.getElementById('conc-foto')?.value;
+  const nome = document.getElementById('conc-nome')?.value || '?';
+  const preview = document.getElementById('conc-foto-preview');
+  if (!preview) return;
+  if (url) {
+    preview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML='<span style=\\'font-size:22px;font-weight:800;\\'>${nome[0].toUpperCase()}</span>'">`;
+  } else {
+    preview.innerHTML = `<span style="font-size:22px;font-weight:800;">${nome[0]?.toUpperCase()||'?'}</span>`;
+  }
+}
+
+// ── MODAL CONCORRENTE ────────────────────────────────────────────────────────
 function abrirModalConcorrente() {
   document.getElementById('modal-conc-title').textContent = 'Adicionar Concorrente';
   document.getElementById('conc-edit-id').value = '';
-  ['conc-nome','conc-partido','conc-ig','conc-fb','conc-yt','conc-tt','conc-obs'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
-  document.getElementById('conc-seg-ig').value = '';
+  ['conc-nome','conc-partido','conc-ig','conc-fb','conc-yt','conc-tt','conc-obs','conc-foto','conc-posicao22','conc-municipios22'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  ['conc-seg-ig','conc-votos22'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   document.getElementById('conc-relacao').value = 'Republicanos';
+  document.getElementById('conc-resultado22').value = '';
+  document.getElementById('conc-foto-preview').innerHTML = '<span style="font-size:22px;font-weight:800;">?</span>';
   document.getElementById('conc-feedback').style.display = 'none';
   document.getElementById('modal-concorrente').classList.add('show');
+  setTimeout(iniciarAutocomplete, 100);
 }
 
 function fecharModalConcorrente() {
@@ -2841,26 +3137,38 @@ function editarConcorrente(id) {
   document.getElementById('conc-yt').value = c.yt || '';
   document.getElementById('conc-tt').value = c.tt || '';
   document.getElementById('conc-obs').value = c.obs || '';
+  document.getElementById('conc-foto').value = c.foto_url || '';
+  document.getElementById('conc-votos22').value = c.votos_2022 || '';
+  document.getElementById('conc-posicao22').value = c.posicao_2022 || '';
+  document.getElementById('conc-resultado22').value = c.resultado_2022 || '';
+  document.getElementById('conc-municipios22').value = c.municipios_2022 || '';
+  previewFoto();
   document.getElementById('conc-feedback').style.display = 'none';
   document.getElementById('modal-concorrente').classList.add('show');
+  setTimeout(iniciarAutocomplete, 100);
 }
 
 async function salvarConcorrente() {
   const nome = document.getElementById('conc-nome').value.trim();
-  const partido = document.getElementById('conc-partido').value.trim();
   if (!nome) { mostrarFeedbackConc('Informe o nome do candidato.', false); return; }
   const btn = document.getElementById('conc-btn-salvar');
   btn.disabled = true; btn.textContent = 'Salvando...';
   const payload = {
-    nome, partido,
-    relacao: document.getElementById('conc-relacao').value,
-    seg_ig: parseInt(document.getElementById('conc-seg-ig').value) || 0,
-    ig: document.getElementById('conc-ig').value.trim().replace('@',''),
-    fb: document.getElementById('conc-fb').value.trim(),
-    yt: document.getElementById('conc-yt').value.trim().replace('@',''),
-    tt: document.getElementById('conc-tt').value.trim().replace('@',''),
-    obs: document.getElementById('conc-obs').value.trim(),
-    updated_at: firebase.firestore.FieldValue.serverTimestamp()
+    nome,
+    partido:       document.getElementById('conc-partido').value.trim(),
+    relacao:       document.getElementById('conc-relacao').value,
+    seg_ig:        parseInt(document.getElementById('conc-seg-ig').value) || 0,
+    ig:            document.getElementById('conc-ig').value.trim().replace('@',''),
+    fb:            document.getElementById('conc-fb').value.trim(),
+    yt:            document.getElementById('conc-yt').value.trim().replace('@',''),
+    tt:            document.getElementById('conc-tt').value.trim().replace('@',''),
+    foto_url:      document.getElementById('conc-foto').value.trim(),
+    obs:           document.getElementById('conc-obs').value.trim(),
+    votos_2022:    parseInt(document.getElementById('conc-votos22').value) || 0,
+    posicao_2022:  document.getElementById('conc-posicao22').value.trim(),
+    resultado_2022:document.getElementById('conc-resultado22').value,
+    municipios_2022:document.getElementById('conc-municipios22').value.trim(),
+    updated_at:    firebase.firestore.FieldValue.serverTimestamp()
   };
   try {
     const editId = document.getElementById('conc-edit-id').value;
