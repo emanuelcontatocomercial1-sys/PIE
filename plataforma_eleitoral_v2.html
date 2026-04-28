@@ -3061,9 +3061,10 @@ async function buscarCandidatosTSE(q, box, input) {
   box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Buscando...</div>';
   box.style.display = 'block';
   try {
-    const url = `https://divulgacandcontas.tse.jus.br/divulga/rest/v1/candidatura/listar/2022/BA/6/${encodeURIComponent(q)}/candidatos`;
-    const res = await fetch(url);
-    const data = await res.json();
+    const tseUrl = `https://divulgacandcontas.tse.jus.br/divulga/rest/v1/candidatura/listar/2022/BA/6/${encodeURIComponent(q)}/candidatos`;
+    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(tseUrl)}`);
+    const raw = await res.json();
+    const data = JSON.parse(raw.contents);
     const candidatos = (data.candidatos || []).slice(0, 8);
     if (!candidatos.length) { box.innerHTML = '<div style="padding:10px 14px;color:var(--cinza2);font-size:12px;">Nenhum candidato encontrado.</div>'; return; }
     box.innerHTML = candidatos.map(c => {
