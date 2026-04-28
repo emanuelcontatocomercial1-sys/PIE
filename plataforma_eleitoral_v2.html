@@ -3028,33 +3028,46 @@ async function carregarNoticias(nome) {
   }
 }
 
-// ── AUTOCOMPLETE TSE + WIKIPEDIA ─────────────────────────────────────────────
+// ── AUTOCOMPLETE TSE ─────────────────────────────────────────────────────────
 let _acTimer = null;
+let _acBox = null;
+
+function _getAcBox() {
+  if (!_acBox) {
+    _acBox = document.createElement('div');
+    _acBox.className = 'autocomplete-box';
+    _acBox.style.cssText = 'display:none;position:fixed;z-index:9999;';
+    document.body.appendChild(_acBox);
+  }
+  return _acBox;
+}
+
+function _posicionarAcBox(input) {
+  const r = input.getBoundingClientRect();
+  const box = _getAcBox();
+  box.style.left = r.left + 'px';
+  box.style.top = (r.bottom + 2) + 'px';
+  box.style.width = r.width + 'px';
+}
 
 function iniciarAutocomplete() {
   const input = document.getElementById('conc-nome');
   if (!input || input.dataset.ac) return;
   input.dataset.ac = '1';
   input.setAttribute('autocomplete','off');
-
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'position:relative;';
-  input.parentNode.insertBefore(wrap, input);
-  wrap.appendChild(input);
-
-  const box = document.createElement('div');
-  box.className = 'autocomplete-box';
-  box.style.display = 'none';
-  wrap.appendChild(box);
+  const box = _getAcBox();
 
   input.addEventListener('input', () => {
     clearTimeout(_acTimer);
     const q = input.value.trim();
     if (q.length < 4) { box.style.display = 'none'; return; }
+    _posicionarAcBox(input);
     _acTimer = setTimeout(() => buscarCandidatosTSE(q, box, input), 500);
   });
 
-  document.addEventListener('click', e => { if (!wrap.contains(e.target)) box.style.display = 'none'; });
+  document.addEventListener('click', e => {
+    if (e.target !== input && !box.contains(e.target)) box.style.display = 'none';
+  });
 }
 
 async function _fetchTSE(url) {
@@ -3104,7 +3117,7 @@ function selecionarCandidatoTSE(c) {
   if (c.foto) document.getElementById('conc-foto').value = c.foto;
   if (c.votos) document.getElementById('conc-votos22').value = c.votos.replace(/\./g,'');
   previewFoto();
-  document.querySelector('.autocomplete-box').style.display = 'none';
+  if (_acBox) _acBox.style.display = 'none';
 }
 
 function previewFoto() {
