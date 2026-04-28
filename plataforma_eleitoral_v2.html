@@ -1611,9 +1611,12 @@ const _fbApp2 = firebase.initializeApp(_fbConfig, 'secondary');
 const _auth2  = firebase.auth(_fbApp2);
 
 // ── AUTH STATE ──
+let _logoutTimer = null;
 _auth.onAuthStateChanged(async user => {
+  console.log('[AUTH]', user ? 'logado: ' + user.email : 'null — possível logout');
   if (user) {
-    if (_currentUser) return; // token renovado — usuário já está carregado, ignora re-chamada
+    if (_logoutTimer) { clearTimeout(_logoutTimer); _logoutTimer = null; }
+    if (_currentUser) return;
     try {
       const ref = _db.collection('usuarios').doc(user.uid);
       let docSnap = await ref.get();
@@ -1628,8 +1631,8 @@ _auth.onAuthStateChanged(async user => {
         docSnap = await ref.get();
       }
       const ud = docSnap.data();
-      if (ud.status !== 'ativo') {
-        const msg = ud.status === 'pendente'
+      if (ud?.status !== 'ativo') {
+        const msg = ud?.status === 'pendente'
           ? 'Conta aguardando aprovação do administrador.'
           : 'Conta desativada. Entre em contato com o administrador.';
         showLoginErr('login-err', msg);
@@ -1650,9 +1653,14 @@ _auth.onAuthStateChanged(async user => {
       showLoginErr('login-err', 'Erro ao carregar dados. Tente novamente.');
     }
   } else {
-    _currentUser = null;
-    document.getElementById('login-screen').style.display = 'flex';
-    document.getElementById('app').style.display = 'none';
+    // Aguarda 4s antes de deslogar — evita logout por estado transitório do Firebase
+    _logoutTimer = setTimeout(() => {
+      console.warn('[AUTH] Confirmado: sessão encerrada. Redirecionando para login.');
+      _logoutTimer = null;
+      _currentUser = null;
+      document.getElementById('login-screen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+    }, 4000);
   }
 });
 
