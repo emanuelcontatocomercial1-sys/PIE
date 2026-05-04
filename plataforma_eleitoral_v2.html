@@ -358,12 +358,50 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 .modal-close:hover{color:var(--branco);}
 .modal-body{padding:24px;}
 
+/* HAMBURGUER */
+.hamburger{
+  display:none;flex-direction:column;justify-content:center;gap:5px;
+  background:none;border:none;cursor:pointer;padding:6px 8px;border-radius:8px;
+  transition:background 0.2s;flex-shrink:0;
+}
+.hamburger:hover{background:var(--bg3);}
+.hamburger span{display:block;width:20px;height:2px;background:var(--branco);border-radius:2px;transition:all 0.25s;}
+
+/* OVERLAY SIDEBAR MOBILE */
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);
+  z-index:199;backdrop-filter:blur(2px);
+}
+.sidebar-overlay.open{display:block;}
+
 @media(max-width:900px){
-  .layout{grid-template-columns:1fr;}
-  .sidebar{display:none;}
-  .main{margin-left:0;}
-  .stats-grid{grid-template-columns:1fr 1fr;}
+  .hamburger{display:flex;}
+  .sidebar{
+    transform:translateX(-100%);
+    transition:transform 0.28s cubic-bezier(.4,0,.2,1);
+    z-index:200;
+  }
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;width:100%;}
+  .topbar{padding:0 14px;}
+  .topbar-date{display:none;}
+  .page{padding:16px 14px;}
+  .stats-grid{grid-template-columns:1fr 1fr;gap:10px;}
   .grid-2,.grid-3,.form-row{grid-template-columns:1fr;}
+  .modal{max-width:98vw;margin:8px;}
+  .modal-overlay{align-items:flex-end;padding:0;}
+  .modal{border-radius:20px 20px 0 0;max-height:92vh;width:100%;max-width:100%;}
+  .page-header{margin-bottom:18px;}
+  .page-title{font-size:18px;}
+  .panel-body{padding:14px;}
+  .btn{padding:9px 14px;font-size:12px;}
+  .form-row{gap:10px;}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr;}
+  .page{padding:12px 10px;}
+  .topbar{padding:0 10px;}
+  .stat-num{font-size:24px;}
 }
 </style>
 </head>
@@ -382,9 +420,9 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
     <!-- VIEW: Entrar -->
     <div class="login-view active" id="view-login">
-      <input class="login-input" type="email" id="login-email" placeholder="E-mail" autocomplete="email" onkeydown="if(event.key==='Enter')entrar()">
+      <input class="login-input" type="email" id="login-email" placeholder="E-mail" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')entrar()">
       <div class="pass-wrap">
-        <input class="login-input" type="password" id="login-pass" placeholder="Senha" onkeydown="if(event.key==='Enter')entrar()">
+        <input class="login-input" type="password" id="login-pass" placeholder="Senha" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')entrar()">
         <button class="pass-toggle" type="button" onclick="toggleSenha('login-pass','ptb1')" id="ptb1">👁</button>
       </div>
       <div style="text-align:right;margin:-4px 0 14px;">
@@ -399,10 +437,10 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
     <!-- VIEW: Criar Conta -->
     <div class="login-view" id="view-criar">
-      <input class="login-input" type="text" id="criar-nome" placeholder="Nome completo" autocomplete="name">
-      <input class="login-input" type="email" id="criar-email" placeholder="E-mail" autocomplete="email">
+      <input class="login-input" type="text" id="criar-nome" placeholder="Nome completo" autocomplete="name" autocapitalize="words">
+      <input class="login-input" type="email" id="criar-email" placeholder="E-mail" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false">
       <div class="pass-wrap">
-        <input class="login-input" type="password" id="criar-pass" placeholder="Senha (mín. 6 caracteres)" style="margin-bottom:0;padding-right:44px;">
+        <input class="login-input" type="password" id="criar-pass" placeholder="Senha (mín. 6 caracteres)" style="margin-bottom:0;padding-right:44px;" autocapitalize="none" autocorrect="off" spellcheck="false">
         <button class="pass-toggle" type="button" onclick="toggleSenha('criar-pass','ptb2')" id="ptb2">👁</button>
       </div>
       <div class="pass-wrap" style="margin-top:12px;">
@@ -432,6 +470,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 </div>
 
 <!-- ══════════════ APP ══════════════ -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 <div id="app">
   <div class="layout">
 
@@ -482,7 +521,12 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
     <!-- MAIN -->
     <main class="main">
       <div class="topbar">
-        <div class="topbar-title" id="topbar-title">Dashboard</div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button class="hamburger" id="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span><span></span><span></span>
+          </button>
+          <div class="topbar-title" id="topbar-title">Dashboard</div>
+        </div>
         <div class="topbar-right">
           <div class="status-dot"></div>
           <div class="topbar-date" id="topbar-date"></div>
@@ -1469,6 +1513,19 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 // ── LOGIN ──
 let _currentUser = null;
 
+function toggleSidebar(forceClose) {
+  const sidebar  = document.querySelector('.sidebar');
+  const overlay  = document.getElementById('sidebar-overlay');
+  const isOpen   = sidebar.classList.contains('open');
+  if (forceClose || isOpen) {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('open');
+  } else {
+    sidebar.classList.add('open');
+    overlay.classList.add('open');
+  }
+}
+
 function mostrarView(id) {
   document.querySelectorAll('.login-view').forEach(v => v.classList.remove('active'));
   document.getElementById(id).classList.add('active');
@@ -1499,10 +1556,11 @@ async function entrar() {
   } catch(e) {
     const msgs = {
       'auth/user-not-found':'E-mail não cadastrado.',
-      'auth/wrong-password':'Senha incorreta.',
+      'auth/wrong-password':'Senha incorreta. Verifique maiúsculas/minúsculas.',
       'auth/invalid-email':'E-mail inválido.',
-      'auth/too-many-requests':'Muitas tentativas. Aguarde e tente novamente.',
-      'auth/invalid-credential':'E-mail ou senha incorretos.'
+      'auth/too-many-requests':'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
+      'auth/invalid-credential':'E-mail ou senha incorretos. Verifique se não há letras maiúsculas indevidas.',
+      'auth/invalid-login-credentials':'E-mail ou senha incorretos. Verifique se não há letras maiúsculas indevidas.'
     };
     showLoginErr('login-err', msgs[e.code] || 'Erro ao entrar: ' + e.message);
   } finally {
@@ -1602,6 +1660,8 @@ function showPage(id, el) {
   document.getElementById('topbar-title').textContent = PAGE_TITLES[id] || id;
   window.scrollTo({top:0,behavior:'smooth'});
   if(id === 'config' && typeof carregarUsuarios === 'function') carregarUsuarios();
+  // fecha drawer no mobile ao navegar
+  if(window.innerWidth <= 900) toggleSidebar(true);
 }
 
 // ── PROJETOS ──
