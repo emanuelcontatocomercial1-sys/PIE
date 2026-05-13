@@ -3,39 +3,41 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
 <title>Plataforma de Inteligência Eleitoral — Talita Oliveira 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* Fundos — azul-marinho profundo */
-  --bg:#020912;--bg2:#050E1C;--bg3:#091526;--bg4:#0D1C30;--bg5:#12243A;
+  color-scheme:light;
+  /* Fundos — tema claro */
+  --bg:#f7f8fc;--bg2:#ffffff;--bg3:#f0f2f8;--bg4:#e8edf4;--bg5:#dde3ef;
 
-  /* Ciano — destaque principal */
-  --ciano:#0A7FA0;--ciano2:#0BA3CC;--ciano3:#33C6E8;
-  --ciano-glow:rgba(11,163,204,0.1);--ciano-borda:rgba(11,163,204,0.2);
+  /* Violeta — destaque principal */
+  --ciano:#6d28d9;--ciano2:#7c3aed;--ciano3:#8b5cf6;
+  --ciano-glow:rgba(124,58,237,0.08);--ciano-borda:rgba(124,58,237,0.2);
 
   /* Verde */
-  --verde:#047A58;--verde2:#059669;--verde3:#10C984;
-  --verde-glow:rgba(5,150,105,0.1);
+  --verde:#047857;--verde2:#059669;--verde3:#10b981;
+  --verde-glow:rgba(5,150,105,0.08);
 
   /* Vermelho */
-  --vermelho:#B91C1C;--vermelho2:#EF4444;
+  --vermelho:#b91c1c;--vermelho2:#ef4444;
 
   /* Amarelo */
-  --amarelo:#B45309;--amarelo2:#F59E0B;
+  --amarelo:#b45309;--amarelo2:#f59e0b;
 
   /* Azul (secundário, mantido para badges) */
-  --azul:#1D4ED8;--azul2:#2563EB;--azul3:#60A5FA;
-  --azul-glow:rgba(37,99,235,0.1);
+  --azul:#1d4ed8;--azul2:#2563eb;--azul3:#3b82f6;
+  --azul-glow:rgba(37,99,235,0.08);
 
   /* Roxo */
-  --roxo:#6D28D9;--roxo2:#8B5CF6;
+  --roxo:#6d28d9;--roxo2:#8b5cf6;
 
   /* Texto */
-  --branco:#DDE8F5;--cinza:#5E7899;--cinza2:#344D66;
+  --branco:#0f172a;--cinza:#64748b;--cinza2:#94a3b8;
 
   /* Bordas */
-  --borda:rgba(255,255,255,0.05);--borda2:rgba(255,255,255,0.09);
+  --borda:#e8ecf2;--borda2:#d1d9e6;
 
   /* Tipografia */
   --fonte:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
@@ -43,60 +45,67 @@
 
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
-body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-height:100vh;overflow-x:hidden;}
+body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;overflow-x:hidden;}
 
 /* LOGIN */
 #login-screen{
-  position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;
-  background:var(--bg);
-  background-image:
-    radial-gradient(ellipse 70% 60% at 15% 50%,rgba(11,163,204,0.06) 0%,transparent 60%),
-    radial-gradient(ellipse at 85% 20%,rgba(139,92,246,0.04) 0%,transparent 50%),
-    radial-gradient(ellipse at 50% 100%,rgba(5,150,105,0.03) 0%,transparent 50%);
+  position:fixed;inset:0;z-index:9999;display:flex;
+}
+.login-left{
+  width:42%;background:linear-gradient(155deg,#0d0820 0%,#160f2e 40%,#220d50 100%);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 50px;text-align:center;flex-shrink:0;
+}
+@media(min-width:800px){.login-left{display:flex;}}
+.login-right{
+  flex:1;background:#f7f8fc;display:flex;align-items:center;justify-content:center;
+  padding:30px 20px;overflow-y:auto;
 }
 .login-card{
-  background:var(--bg2);border:1px solid var(--borda2);border-radius:24px;
-  padding:52px 48px;width:440px;max-width:95vw;text-align:center;
-  box-shadow:0 40px 100px rgba(0,0,0,0.6),inset 0 1px 0 rgba(255,255,255,0.04);
+  background:#ffffff;border:1px solid #e8ecf2;border-radius:20px;
+  padding:40px 36px;width:400px;max-width:100%;text-align:center;
+  box-shadow:0 4px 32px rgba(0,0,0,0.08);
   position:relative;overflow:hidden;
 }
-.login-card::before{
-  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:160px;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(11,163,204,0.6),transparent);
-}
-.login-logo{margin-bottom:36px;}
+.login-brand-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#8b5cf6;margin-bottom:24px;}
+.login-brand-title{font-size:28px;font-weight:800;color:#e2e8f0;letter-spacing:-0.5px;margin-bottom:10px;line-height:1.2;}
+.login-brand-sub{font-size:13px;color:#7a8699;margin-bottom:40px;line-height:1.7;}
+.login-feat{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,0.06);text-align:left;}
+.login-feat:last-child{border-bottom:none;}
+.login-feat-icon{width:36px;height:36px;border-radius:9px;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#a78bfa;}
+.login-feat-text{font-size:13px;color:#bdc5d4;font-weight:500;line-height:1.4;}
+.login-logo{margin-bottom:28px;}
 .login-logo img{height:56px;width:auto;margin-bottom:16px;}
 .login-badge{
-  display:inline-block;background:rgba(11,163,204,0.08);border:1px solid rgba(11,163,204,0.22);
-  color:var(--ciano3);font-size:10px;font-weight:700;letter-spacing:2px;
+  display:inline-block;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.2);
+  color:var(--ciano2);font-size:10px;font-weight:700;letter-spacing:2px;
   text-transform:uppercase;padding:5px 16px;border-radius:20px;margin-bottom:14px;
 }
-.login-title{font-size:24px;font-weight:800;color:var(--branco);margin-bottom:4px;letter-spacing:-0.5px;}
-.login-sub{font-size:13px;color:var(--cinza);margin-bottom:36px;}
+.login-title{font-size:22px;font-weight:800;color:var(--branco);margin-bottom:4px;letter-spacing:-0.5px;}
+.login-sub{font-size:13px;color:var(--cinza);margin-bottom:28px;}
 .login-input{
-  width:100%;background:var(--bg3);border:1px solid var(--borda2);border-radius:12px;
-  padding:14px 18px;font-size:14px;color:var(--branco);font-family:var(--fonte);
+  width:100%;background:#f7f8fc;border:1px solid #e8ecf2;border-radius:10px;
+  padding:13px 16px;font-size:14px;color:#0f172a;font-family:var(--fonte);
   outline:none;transition:border-color 0.2s,box-shadow 0.2s;margin-bottom:12px;
 }
 .login-input:focus{border-color:var(--ciano2);box-shadow:0 0 0 3px var(--ciano-glow);}
-.login-input::placeholder{color:var(--cinza2);}
+.login-input::placeholder{color:#94a3b8;}
 .login-btn{
   width:100%;background:linear-gradient(135deg,var(--ciano) 0%,var(--ciano2) 100%);
-  color:#fff;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;
+  color:#fff;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;
   cursor:pointer;font-family:var(--fonte);transition:all 0.2s;margin-top:4px;
-  box-shadow:0 4px 20px rgba(11,163,204,0.25);
+  box-shadow:0 4px 20px rgba(124,58,237,0.25);
 }
-.login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(11,163,204,0.35);}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(124,58,237,0.35);}
 .login-err{font-size:12px;color:var(--vermelho2);margin-top:10px;display:none;}
 .crm-label{font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;}
-.crm-input{width:100%;background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--branco);font-family:var(--fonte);outline:none;transition:border-color 0.2s;}
-.crm-input:focus{border-color:var(--ciano2);}
+.crm-input{width:100%;background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--branco);font-family:var(--fonte);outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+.crm-input:focus{border-color:var(--ciano2);box-shadow:0 0 0 3px var(--ciano-glow);}
 .crm-input::placeholder{color:var(--cinza2);}
 .pass-wrap{position:relative;margin-bottom:12px;}
 .pass-wrap .login-input{margin-bottom:0;padding-right:44px;}
-.pass-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--cinza2);cursor:pointer;font-size:16px;line-height:1;padding:0;transition:color 0.2s;}
-.pass-toggle:hover{color:var(--branco);}
+.pass-toggle{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#94a3b8;cursor:pointer;padding:0;transition:color 0.2s;display:flex;align-items:center;}
+.pass-toggle:hover{color:#0f172a;}
 
 /* LOGIN MULTI-VIEW */
 .login-view{display:none;}
@@ -104,7 +113,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 .login-success{font-size:12px;color:var(--verde3);margin-top:10px;display:none;text-align:center;font-weight:600;padding:8px;border-radius:8px;background:var(--verde-glow);border:1px solid rgba(16,201,132,0.2);}
 
 /* SETTINGS */
-.settings-card{background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:24px;margin-bottom:20px;}
+.settings-card{background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .settings-section-title{font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--borda);}
 .usr-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--bg3);border-radius:10px;margin-bottom:8px;border:1px solid var(--borda);transition:border-color 0.2s;}
 .usr-row:hover{border-color:var(--borda2);}
@@ -120,38 +129,46 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
 /* SIDEBAR */
 .sidebar{
-  background:var(--bg2);border-right:1px solid var(--borda);
+  background:#160f2e;border-right:1px solid rgba(255,255,255,0.06);
   display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:240px;z-index:100;
   overflow-y:auto;
+  --branco:#e2e8f0;--cinza:#7a8699;--cinza2:#3f4f63;
+  --borda:rgba(255,255,255,0.07);--borda2:rgba(255,255,255,0.12);
+  --bg3:#231640;--bg4:#2d1f52;
+  --ciano2:#8b5cf6;--ciano3:#a78bfa;
+  --ciano-glow:rgba(139,92,246,0.14);--ciano-borda:rgba(139,92,246,0.28);
 }
-.sidebar-logo{padding:28px 20px 22px;border-bottom:1px solid var(--borda);}
+.sidebar-logo{padding:26px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.07);}
 .sidebar-logo img{height:44px;width:auto;margin-bottom:10px;display:block;}
-.sidebar-logo-name{font-size:13px;font-weight:800;color:var(--branco);line-height:1.3;letter-spacing:-0.2px;}
-.sidebar-logo-sub{font-size:10px;color:var(--cinza);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;}
+.sidebar-logo-name{font-size:13px;font-weight:800;color:#e2e8f0;line-height:1.3;letter-spacing:-0.2px;}
+.sidebar-logo-sub{font-size:10px;color:#7a8699;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;}
 .sidebar-section{padding:16px 12px 8px;}
-.sidebar-section-label{font-size:10px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:2px;padding:0 10px;margin-bottom:6px;}
+.sidebar-section-label{font-size:10px;font-weight:700;color:#3f4f63;text-transform:uppercase;letter-spacing:2px;padding:0 10px;margin-bottom:6px;}
 .nav-item{
   display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;
-  cursor:pointer;transition:all 0.18s;color:var(--cinza);font-size:13px;font-weight:600;margin-bottom:2px;
+  cursor:pointer;transition:all 0.18s;color:#7a8699;font-size:13px;font-weight:600;margin-bottom:2px;
 }
-.nav-item:hover{background:var(--bg3);color:var(--branco);}
-.nav-item.active{background:var(--ciano-glow);color:var(--ciano3);box-shadow:inset 0 0 0 1px var(--ciano-borda);}
-.nav-item .ni-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:#e2e8f0;}
+.nav-item.active{background:rgba(139,92,246,0.14);color:#a78bfa;box-shadow:inset 0 0 0 1px rgba(139,92,246,0.28);}
+.nav-item .ni-icon{width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.nav-item .ni-icon svg{width:16px;height:16px;}
 .nav-item .ni-badge{margin-left:auto;background:var(--vermelho);color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:10px;}
-.sidebar-bottom{margin-top:auto;padding:16px 12px;border-top:1px solid var(--borda);}
-.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:var(--bg3);}
-.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--ciano) 0%,var(--ciano2) 100%);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
-.user-name{font-size:12px;font-weight:700;color:var(--branco);}
-.user-role{font-size:10px;color:var(--cinza);}
-.btn-logout{margin-left:auto;background:none;border:none;color:var(--cinza2);cursor:pointer;font-size:16px;transition:color 0.2s;}
-.btn-logout:hover{color:var(--vermelho2);}
+.sidebar-bottom{margin-top:auto;padding:16px 12px;border-top:1px solid rgba(255,255,255,0.07);}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,0.05);}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6d28d9 0%,#8b5cf6 100%);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
+.user-name{font-size:12px;font-weight:700;color:#e2e8f0;}
+.user-role{font-size:10px;color:#7a8699;}
+.btn-logout{margin-left:auto;background:none;border:none;color:#3f4f63;cursor:pointer;display:flex;align-items:center;transition:color 0.2s;}
+.btn-logout:hover{color:#ef4444;}
+.btn-logout svg{width:16px;height:16px;}
 
 /* MAIN */
 .main{margin-left:240px;min-height:100vh;width:calc(100% - 240px);overflow-x:hidden;}
 .topbar{
-  background:rgba(5,14,28,0.85);backdrop-filter:blur(16px);
+  background:#ffffff;
   border-bottom:1px solid var(--borda);padding:0 32px;height:60px;
   display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:99;width:100%;
+  box-shadow:0 1px 0 rgba(0,0,0,0.04);
 }
 .topbar-title{font-size:15px;font-weight:800;color:var(--branco);letter-spacing:-0.2px;}
 .topbar-right{display:flex;align-items:center;gap:12px;}
@@ -171,22 +188,28 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 .stat-card{
   background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:22px;
   transition:all 0.25s;position:relative;overflow:hidden;
+  box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.03);
 }
-.stat-card::before{
-  content:'';position:absolute;inset:0;border-radius:16px;pointer-events:none;
-  background:radial-gradient(ellipse at top left,rgba(255,255,255,0.025) 0%,transparent 55%);
+.stat-card.azul  {border-top:3px solid var(--azul2);}
+.stat-card.verde {border-top:3px solid var(--verde2);}
+.stat-card.amarelo{border-top:3px solid var(--amarelo2);}
+.stat-card.roxo  {border-top:3px solid var(--ciano2);}
+.stat-card.vermelho{border-top:3px solid var(--vermelho2);}
+.stat-card:hover{border-color:var(--borda2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.09);}
+.stat-icon{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;margin-bottom:16px;
 }
-.stat-card.azul  {border-left:2px solid rgba(96,165,250,0.35);}
-.stat-card.verde {border-left:2px solid rgba(16,201,132,0.35);}
-.stat-card.amarelo{border-left:2px solid rgba(245,158,11,0.35);}
-.stat-card.roxo  {border-left:2px solid rgba(139,92,246,0.35);}
-.stat-card.vermelho{border-left:2px solid rgba(239,68,68,0.35);}
-.stat-card:hover{border-color:var(--borda2);transform:translateY(-2px);box-shadow:0 12px 32px rgba(0,0,0,0.35);}
-.stat-icon{font-size:22px;margin-bottom:14px;display:block;}
-.stat-num{font-size:30px;font-weight:800;color:var(--branco);font-family:var(--mono);line-height:1;}
-.stat-label{font-size:11px;color:var(--cinza);margin-top:5px;font-weight:600;letter-spacing:0.3px;}
+.stat-icon svg{width:20px;height:20px;}
+.stat-card.azul   .stat-icon{background:rgba(37,99,235,0.09);color:var(--azul2);}
+.stat-card.verde  .stat-icon{background:rgba(5,150,105,0.09);color:var(--verde2);}
+.stat-card.amarelo .stat-icon{background:rgba(245,158,11,0.09);color:var(--amarelo2);}
+.stat-card.roxo   .stat-icon{background:rgba(124,58,237,0.09);color:var(--ciano2);}
+.stat-card.vermelho .stat-icon{background:rgba(239,68,68,0.09);color:var(--vermelho2);}
+.stat-num{font-size:28px;font-weight:800;color:var(--branco);font-family:var(--mono);line-height:1;}
+.stat-label{font-size:12px;color:var(--cinza);margin-top:5px;font-weight:600;letter-spacing:0.2px;}
 .stat-delta{font-size:11px;margin-top:6px;font-weight:700;}
-.stat-delta.up{color:var(--verde3);}
+.stat-delta.up{color:var(--verde2);}
 .stat-delta.down{color:var(--vermelho2);}
 
 /* GRIDS */
@@ -194,7 +217,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
 
 /* PANEL */
-.panel{background:var(--bg2);border:1px solid var(--borda);border-radius:16px;overflow:hidden;}
+.panel{background:var(--bg2);border:1px solid var(--borda);border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .panel-header{padding:16px 20px;border-bottom:1px solid var(--borda);display:flex;align-items:center;justify-content:space-between;}
 .panel-title{font-size:13px;font-weight:700;color:var(--branco);letter-spacing:-0.1px;}
 .panel-body{padding:20px;}
@@ -335,23 +358,23 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 .det-tab.active{color:var(--ciano2)!important;border-bottom:2px solid var(--ciano)!important;}
 
 /* AUTOCOMPLETE */
-.autocomplete-box{position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--ciano-borda);border-radius:0 0 12px 12px;z-index:9999;max-height:220px;overflow-y:auto;box-shadow:0 12px 32px rgba(0,0,0,0.5);}
+.autocomplete-box{position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--borda2);border-radius:0 0 12px 12px;z-index:9999;max-height:220px;overflow-y:auto;box-shadow:0 8px 24px rgba(0,0,0,0.1);}
 .autocomplete-item{padding:10px 14px;cursor:pointer;font-size:13px;color:var(--branco);border-bottom:1px solid var(--borda);transition:background 0.15s;display:flex;align-items:center;gap:10px;}
 .autocomplete-item:hover{background:var(--bg3);}
 .autocomplete-item img{width:32px;height:32px;border-radius:50%;object-fit:cover;flex-shrink:0;}
 .autocomplete-item .ac-init{width:32px;height:32px;border-radius:50%;background:var(--ciano-glow);border:1px solid var(--ciano-borda);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;color:var(--ciano2);flex-shrink:0;}
 
 /* LOADING */
-#loading{display:none;position:fixed;inset:0;background:rgba(2,9,18,0.92);backdrop-filter:blur(4px);z-index:9998;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+#loading{display:none;position:fixed;inset:0;background:rgba(247,248,252,0.88);backdrop-filter:blur(6px);z-index:9998;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
 #loading.show{display:flex;}
-.spin{width:32px;height:32px;border:2px solid rgba(11,163,204,0.15);border-top-color:var(--ciano2);border-radius:50%;animation:spin 0.7s linear infinite;}
+.spin{width:32px;height:32px;border:2px solid rgba(124,58,237,0.15);border-top-color:var(--ciano2);border-radius:50%;animation:spin 0.7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 #loading p{color:var(--cinza);font-size:13px;}
 
 /* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);backdrop-filter:blur(6px);z-index:500;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.show{display:flex;}
-.modal{background:var(--bg2);border:1px solid var(--borda2);border-radius:20px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;}
+.modal{background:var(--bg2);border:1px solid var(--borda);border-radius:20px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
 .modal-header{padding:22px 24px;border-bottom:1px solid var(--borda);display:flex;align-items:center;justify-content:space-between;}
 .modal-title{font-size:15px;font-weight:800;color:var(--branco);letter-spacing:-0.2px;}
 .modal-close{background:none;border:none;color:var(--cinza);cursor:pointer;font-size:18px;transition:color 0.2s;}
@@ -365,11 +388,11 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
   transition:background 0.2s;flex-shrink:0;
 }
 .hamburger:hover{background:var(--bg3);}
-.hamburger span{display:block;width:20px;height:2px;background:var(--branco);border-radius:2px;transition:all 0.25s;}
+.hamburger span{display:block;width:20px;height:2px;background:var(--cinza);border-radius:2px;transition:all 0.25s;}
 
 /* OVERLAY SIDEBAR MOBILE */
 .sidebar-overlay{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);
+  display:none;position:fixed;inset:0;background:rgba(15,23,42,0.45);
   z-index:199;backdrop-filter:blur(2px);
 }
 .sidebar-overlay.open{display:block;}
@@ -411,7 +434,31 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
 <!-- ══════════════ LOGIN ══════════════ -->
 <div id="login-screen">
-  <div class="login-card" style="width:440px;max-width:95vw;">
+
+  <!-- Painel esquerdo — branding -->
+  <div class="login-left">
+    <div class="login-brand-eyebrow">PIE · Plataforma de Inteligência Eleitoral</div>
+    <div class="login-brand-title">Talita Oliveira<br>Bahia 2026</div>
+    <div class="login-brand-sub">Republicanos #1022 · Gestão eleitoral inteligente para os 417 municípios da Bahia.</div>
+    <div style="width:100%;max-width:300px;">
+      <div class="login-feat">
+        <div class="login-feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></div>
+        <div class="login-feat-text">Mapa eleitoral em tempo real com 417 municípios</div>
+      </div>
+      <div class="login-feat">
+        <div class="login-feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div class="login-feat-text">CRM de lideranças políticas por região</div>
+      </div>
+      <div class="login-feat">
+        <div class="login-feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+        <div class="login-feat-text">Monitoramento de concorrentes e tráfego digital</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Painel direito — formulário -->
+  <div class="login-right">
+  <div class="login-card">
     <div class="login-logo">
       <div class="login-badge">Plataforma de Inteligência Eleitoral</div>
       <div class="login-title">Talita Oliveira 2026</div>
@@ -423,7 +470,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
       <input class="login-input" type="email" id="login-email" placeholder="E-mail" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')entrar()">
       <div class="pass-wrap">
         <input class="login-input" type="password" id="login-pass" placeholder="Senha" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')entrar()">
-        <button class="pass-toggle" type="button" onclick="toggleSenha('login-pass','ptb1')" id="ptb1">👁</button>
+        <button class="pass-toggle" type="button" onclick="toggleSenha('login-pass','ptb1')" id="ptb1"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
       <div style="text-align:right;margin:-4px 0 14px;">
         <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);" onclick="mostrarView('view-esqueci')">Esqueci minha senha</button>
@@ -441,11 +488,11 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
       <input class="login-input" type="email" id="criar-email" placeholder="E-mail" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false">
       <div class="pass-wrap">
         <input class="login-input" type="password" id="criar-pass" placeholder="Senha (mín. 6 caracteres)" style="margin-bottom:0;padding-right:44px;" autocapitalize="none" autocorrect="off" spellcheck="false">
-        <button class="pass-toggle" type="button" onclick="toggleSenha('criar-pass','ptb2')" id="ptb2">👁</button>
+        <button class="pass-toggle" type="button" onclick="toggleSenha('criar-pass','ptb2')" id="ptb2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
       <div class="pass-wrap" style="margin-top:12px;">
         <input class="login-input" type="password" id="criar-confirm" placeholder="Confirmar senha" style="margin-bottom:0;padding-right:44px;" onkeydown="if(event.key==='Enter')criarConta()">
-        <button class="pass-toggle" type="button" onclick="toggleSenha('criar-confirm','ptb3')" id="ptb3">👁</button>
+        <button class="pass-toggle" type="button" onclick="toggleSenha('criar-confirm','ptb3')" id="ptb3"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
       <button class="login-btn" id="btn-criar" onclick="criarConta()" style="margin-top:16px;">Criar conta →</button>
       <div class="login-err" id="criar-err"></div>
@@ -466,7 +513,8 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
         <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);text-decoration:underline;" onclick="mostrarView('view-login')">← Voltar para o login</button>
       </div>
     </div>
-  </div>
+  </div><!-- /.login-card -->
+  </div><!-- /.login-right -->
 </div>
 
 <!-- ══════════════ APP ══════════════ -->
@@ -477,43 +525,65 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <div style="font-size:11px;font-weight:800;color:var(--azul3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">PIE · 2026</div>
+        <div style="font-size:10px;font-weight:800;color:#8b5cf6;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:6px;">PIE · 2026</div>
         <div class="sidebar-logo-name">Plataforma de Inteligência Eleitoral</div>
         <div class="sidebar-logo-sub">Talita Oliveira · Bahia</div>
       </div>
 
       <div class="sidebar-section">
         <div class="sidebar-section-label">Principal</div>
-        <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="ni-icon">📊</span>Dashboard</div>
-        <div class="nav-item" onclick="showPage('mapa',this)"><span class="ni-icon">🗺️</span>Mapa Eleitoral</div>
-        <div class="nav-item" onclick="showPage('metas',this)"><span class="ni-icon">🎯</span>Metas 2026</div>
-        <div class="nav-item" onclick="showPage('votos',this)"><span class="ni-icon">📍</span>Registrar Votos</div>
+        <div class="nav-item active" onclick="showPage('dashboard',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Dashboard
+        </div>
+        <div class="nav-item" onclick="showPage('mapa',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></span>Mapa Eleitoral
+        </div>
+        <div class="nav-item" onclick="showPage('metas',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>Metas 2026
+        </div>
+        <div class="nav-item" onclick="showPage('votos',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Registrar Votos
+        </div>
       </div>
 
       <div class="sidebar-section">
         <div class="sidebar-section-label">Campanha</div>
-        <div class="nav-item" onclick="showPage('projetos',this)"><span class="ni-icon">📋</span>Projetos<span class="ni-badge">3</span></div>
-        <div class="nav-item" onclick="showPage('crm',this)"><span class="ni-icon">👥</span>Lideranças</div>
-        <div class="nav-item" onclick="showPage('agenda',this)"><span class="ni-icon">📅</span>Agenda</div>
-        <div class="nav-item" onclick="showPage('monitoramento',this)"><span class="ni-icon">📡</span>Monitoramento</div>
+        <div class="nav-item" onclick="showPage('projetos',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span>Projetos<span class="ni-badge">3</span>
+        </div>
+        <div class="nav-item" onclick="showPage('crm',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Lideranças
+        </div>
+        <div class="nav-item" onclick="showPage('agenda',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>Agenda
+        </div>
+        <div class="nav-item" onclick="showPage('monitoramento',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></span>Monitoramento
+        </div>
       </div>
 
       <div class="sidebar-section">
         <div class="sidebar-section-label">Digital</div>
-        <div class="nav-item" onclick="showPage('trafego',this)"><span class="ni-icon">📈</span>Tráfego & Leads</div>
-        <div class="nav-item" onclick="showPage('ia',this)"><span class="ni-icon">🤖</span>IA Estratégica</div>
+        <div class="nav-item" onclick="showPage('trafego',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>Tráfego &amp; Leads
+        </div>
+        <div class="nav-item" onclick="showPage('ia',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>IA Estratégica
+        </div>
       </div>
 
       <div class="sidebar-section">
         <div class="sidebar-section-label">Sistema</div>
-        <div class="nav-item" onclick="showPage('config',this)"><span class="ni-icon">⚙️</span>Configurações</div>
+        <div class="nav-item" onclick="showPage('config',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/></svg></span>Configurações
+        </div>
       </div>
 
       <div class="sidebar-bottom">
         <div class="user-card">
           <div class="user-avatar" id="sidebar-avatar">?</div>
           <div><div class="user-name" id="sidebar-nome">Carregando...</div><div class="user-role" id="sidebar-cargo">—</div></div>
-          <button class="btn-logout" onclick="sair()" title="Sair">⏻</button>
+          <button class="btn-logout" onclick="sair()" title="Sair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
         </div>
       </div>
     </aside>
@@ -542,25 +612,25 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
         <div class="stats-grid">
           <div class="stat-card azul">
-            <span class="stat-icon">🗳️</span>
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
             <div class="stat-num">33.455</div>
             <div class="stat-label">Votos em 2022</div>
-            <div class="stat-delta up">↑ Base de partida</div>
+            <div class="stat-delta up">Base de partida</div>
           </div>
           <div class="stat-card verde">
-            <span class="stat-icon">🎯</span>
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
             <div class="stat-num">120.000</div>
             <div class="stat-label">Meta 2026</div>
             <div class="stat-delta up">+259% de crescimento</div>
           </div>
           <div class="stat-card amarelo">
-            <span class="stat-icon">📍</span>
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
             <div class="stat-num">414</div>
             <div class="stat-label">Municípios com votos</div>
-            <div class="stat-delta up">↑ 3 sem presença</div>
+            <div class="stat-delta up">3 ainda sem presença</div>
           </div>
           <div class="stat-card roxo">
-            <span class="stat-icon">📅</span>
+            <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
             <div class="stat-num" id="dias-counter">—</div>
             <div class="stat-label">Dias para a eleição</div>
             <div class="stat-delta">Outubro 2026</div>
@@ -648,7 +718,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
           <!-- Formulário -->
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title">📍 Lançar Votos</div>
+              <div class="panel-title">Lançar Votos</div>
             </div>
             <div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
               <div>
@@ -674,7 +744,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
                 style="background:var(--azul2);color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fonte);transition:all 0.2s;"
                 onmouseover="this.style.background='var(--azul3)'" onmouseout="this.style.background='var(--azul2)'"
                 id="btn-registrar">
-                📍 Registrar no Mapa
+                Registrar no Mapa
               </button>
               <div id="votos-feedback" style="display:none;font-size:13px;text-align:center;padding:10px;border-radius:8px;font-weight:600;"></div>
             </div>
@@ -684,7 +754,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
           <div style="display:flex;flex-direction:column;gap:16px;">
             <div class="panel">
               <div class="panel-header">
-                <div class="panel-title">⚡ Status do Banco de Dados</div>
+                <div class="panel-title">Status do Banco de Dados</div>
               </div>
               <div class="panel-body" style="display:flex;flex-direction:column;gap:12px;">
                 <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -715,7 +785,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
             <!-- Últimos registros -->
             <div class="panel">
               <div class="panel-header">
-                <div class="panel-title">🕐 Últimos Registros</div>
+                <div class="panel-title">Últimos Registros</div>
               </div>
               <div class="panel-body" id="votos-historico" style="display:flex;flex-direction:column;gap:8px;">
                 <div style="font-size:12px;color:var(--cinza2);">Nenhum registro ainda.</div>
@@ -728,19 +798,19 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
         <div style="margin-top:20px;">
           <div class="panel">
             <div class="panel-header">
-              <div class="panel-title">📐 Metodologia de Medição — Como interpretar os dados</div>
+              <div class="panel-title">Metodologia de Medição — Como interpretar os dados</div>
             </div>
             <div class="panel-body" style="display:flex;flex-direction:column;gap:20px;">
 
               <!-- Dado verificado vs projeção -->
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
                 <div style="background:var(--bg3);border:1px solid rgba(37,99,235,0.3);border-radius:12px;padding:16px;">
-                  <div style="font-size:11px;font-weight:700;color:var(--azul3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">✅ Dado Verificado</div>
+                  <div style="font-size:11px;font-weight:700;color:var(--azul3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Dado Verificado</div>
                   <div style="font-size:22px;font-weight:800;color:var(--branco);font-family:var(--mono);margin-bottom:6px;">33.455</div>
                   <div style="font-size:13px;color:var(--cinza);line-height:1.6;">Votos obtidos nas eleições de 2022, conforme resultado oficial do <strong style="color:var(--branco)">TSE</strong>. Único número 100% verificável desta plataforma.</div>
                 </div>
                 <div style="background:var(--bg3);border:1px solid rgba(245,158,11,0.3);border-radius:12px;padding:16px;">
-                  <div style="font-size:11px;font-weight:700;color:var(--amarelo2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">⚠️ Dado Declarado</div>
+                  <div style="font-size:11px;font-weight:700;color:var(--amarelo2);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Dado Declarado</div>
                   <div style="font-size:22px;font-weight:800;color:var(--branco);font-family:var(--mono);margin-bottom:6px;">Votos Atuais</div>
                   <div style="font-size:13px;color:var(--cinza);line-height:1.6;">Intenção de voto <strong style="color:var(--branco)">declarada pelas lideranças</strong>. Representa projeção qualificada — não é voto confirmado. Deve ser tratado como termômetro, não como resultado.</div>
                 </div>
@@ -748,22 +818,22 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
               <!-- Como evitar burla -->
               <div>
-                <div style="font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">🔒 Mecanismos contra Inflação de Números</div>
+                <div style="font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Mecanismos contra Inflação de Números</div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                   <div style="background:var(--bg3);border-radius:10px;padding:12px 14px;border:1px solid var(--borda);">
-                    <div style="font-size:13px;font-weight:700;color:var(--branco);margin-bottom:4px;">📊 Cruzamento com Pesquisa</div>
+                    <div style="font-size:13px;font-weight:700;color:var(--branco);margin-bottom:4px;">Cruzamento com Pesquisa</div>
                     <div style="font-size:12px;color:var(--cinza);line-height:1.5;">Pesquisa de campo periódica por amostragem valida se os números declarados fazem sentido na prática.</div>
                   </div>
                   <div style="background:var(--bg3);border-radius:10px;padding:12px 14px;border:1px solid var(--borda);">
-                    <div style="font-size:13px;font-weight:700;color:var(--branco);margin-bottom:4px;">🏟️ Evento como Prova</div>
+                    <div style="font-size:13px;font-weight:700;color:var(--branco);margin-bottom:4px;">Evento como Prova</div>
                     <div style="font-size:12px;color:var(--cinza);line-height:1.5;">Liderança organiza ato ou reunião — presença física vira evidência concreta do alcance real declarado.</div>
                   </div>
                   <div style="background:var(--bg3);border-radius:10px;padding:12px 14px;border:1px solid var(--borda);">
-                    <div style="font-size:13px;font-weight:700;color:var(--branco);margin-bottom:4px;">📈 Histórico de Evolução</div>
+                    <div style="font-size:13px;font-weight:700;color:var(--branco);margin-bottom:4px;">Histórico de Evolução</div>
                     <div style="font-size:12px;color:var(--cinza);line-height:1.5;">Saltos bruscos sem justificativa (ex: de 0 para 5.000 de um dia para o outro) são automaticamente sinalizados.</div>
                   </div>
                   <div style="background:var(--bg3);border-radius:10px;padding:12px 14px;border:1px solid var(--borda);">
-                    <div style="font-size:13px;font-weight:700;color:var(--branco);margin-bottom:4px;">📐 Meta Proporcional ao 2022</div>
+                    <div style="font-size:13px;font-weight:700;color:var(--branco);margin-bottom:4px;">Meta Proporcional ao 2022</div>
                     <div style="font-size:12px;color:var(--cinza);line-height:1.5;">Crescimento acima de 5x em relação a 2022 sem evento ou justificativa registrada levanta alerta automático.</div>
                   </div>
                 </div>
@@ -771,7 +841,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
               <!-- Premissa -->
               <div style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);border-radius:10px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;">
-                <div style="font-size:20px;flex-shrink:0;">💡</div>
+                <div style="flex-shrink:0;color:var(--azul2);margin-top:2px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
                 <div>
                   <div style="font-size:13px;font-weight:700;color:var(--branco);margin-bottom:4px;">Premissa de uso correto</div>
                   <div style="font-size:13px;color:var(--cinza);line-height:1.6;">
@@ -792,23 +862,23 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
           <div class="page-sub">De 33.455 para 120.000 votos — crescimento de 259%</div>
         </div>
         <div class="stats-grid">
-          <div class="stat-card azul"><span class="stat-icon">🏙️</span><div class="stat-num">45.000</div><div class="stat-label">Leste — Salvador + RMS</div></div>
-          <div class="stat-card verde"><span class="stat-icon">🌊</span><div class="stat-num">25.000</div><div class="stat-label">Sul</div></div>
-          <div class="stat-card amarelo"><span class="stat-icon">🌾</span><div class="stat-num">15.000</div><div class="stat-label">Centro-Leste — Feira</div></div>
-          <div class="stat-card roxo"><span class="stat-icon">🏔️</span><div class="stat-num">10.000</div><div class="stat-label">Extremo-Sul</div></div>
+          <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div class="stat-num">45.000</div><div class="stat-label">Leste — Salvador + RMS</div></div>
+          <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div class="stat-num">25.000</div><div class="stat-label">Sul</div></div>
+          <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div class="stat-num">15.000</div><div class="stat-label">Centro-Leste — Feira</div></div>
+          <div class="stat-card roxo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div class="stat-num">10.000</div><div class="stat-label">Extremo-Sul</div></div>
         </div>
         <div class="panel">
           <div class="panel-header"><div class="panel-title">Progresso por Região</div></div>
           <div class="panel-body">
-            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🏙️ Leste (Salvador + RMS)</span><span class="prog-val">0 / 45.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--azul2)"></div></div></div>
-            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🌊 Sul</span><span class="prog-val">0 / 25.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--verde2)"></div></div></div>
-            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🌾 Centro-Leste (Feira de Santana)</span><span class="prog-val">0 / 15.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--amarelo2)"></div></div></div>
-            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🏔️ Extremo-Sul</span><span class="prog-val">0 / 10.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--roxo2)"></div></div></div>
-            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🤠 Sudoeste (V. Conquista)</span><span class="prog-val">0 / 8.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--vermelho2)"></div></div></div>
-            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🌵 Norte</span><span class="prog-val">0 / 5.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
-            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🌿 Oeste (Barreiras)</span><span class="prog-val">0 / 5.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
-            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">⛰️ Centro-Norte</span><span class="prog-val">0 / 4.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
-            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🏜️ Nordeste</span><span class="prog-val">0 / 3.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Leste (Salvador + RMS)</span><span class="prog-val">0 / 45.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--azul2)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Sul</span><span class="prog-val">0 / 25.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--verde2)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Centro-Leste (Feira de Santana)</span><span class="prog-val">0 / 15.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--amarelo2)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Extremo-Sul</span><span class="prog-val">0 / 10.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--roxo2)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Sudoeste (V. Conquista)</span><span class="prog-val">0 / 8.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--vermelho2)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Norte</span><span class="prog-val">0 / 5.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Oeste (Barreiras)</span><span class="prog-val">0 / 5.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Centro-Norte</span><span class="prog-val">0 / 4.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Nordeste</span><span class="prog-val">0 / 3.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
           </div>
         </div>
       </div>
@@ -844,7 +914,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
           <div class="panel">
             <div class="panel-header">
               <div>
-                <div class="panel-title">🤖 IA Especialista</div>
+                <div class="panel-title">IA Especialista</div>
                 <div style="font-size:11px;color:var(--cinza);margin-top:2px;">Políticas Públicas · Ciência Política · Estratégia Eleitoral</div>
               </div>
             </div>
@@ -870,10 +940,10 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
         <!-- Stats rápidos -->
         <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
-          <div class="stat-card azul"><span class="stat-icon">👥</span><div class="stat-num" id="crm-total-lid">0</div><div class="stat-label">Total de Lideranças</div></div>
-          <div class="stat-card verde"><span class="stat-icon">🗳️</span><div class="stat-num" id="crm-total-votos">0</div><div class="stat-label">Votos Comprometidos</div></div>
-          <div class="stat-card amarelo"><span class="stat-icon">🏙️</span><div class="stat-num" id="crm-top-mun">—</div><div class="stat-label">Município mais forte</div></div>
-          <div class="stat-card roxo"><span class="stat-icon">✅</span><div class="stat-num" id="crm-confirmados">0</div><div class="stat-label">Confirmados</div></div>
+          <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="stat-num" id="crm-total-lid">0</div><div class="stat-label">Total de Lideranças</div></div>
+          <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="stat-num" id="crm-total-votos">0</div><div class="stat-label">Votos Comprometidos</div></div>
+          <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="stat-num" id="crm-top-mun">—</div><div class="stat-label">Município mais forte</div></div>
+          <div class="stat-card roxo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-num" id="crm-confirmados">0</div><div class="stat-label">Confirmados</div></div>
         </div>
 
         <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start;">
@@ -881,7 +951,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
           <!-- Tabela -->
           <div class="panel">
             <div class="panel-header" style="gap:10px;flex-wrap:wrap;">
-              <div class="panel-title">👥 Lideranças cadastradas</div>
+              <div class="panel-title">Lideranças cadastradas</div>
               <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;">
                 <select id="crm-filtro-mun" onchange="filtrarLiderancas()"
                   style="background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--cinza);font-family:var(--fonte);outline:none;">
@@ -1068,19 +1138,19 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
 
         <!-- Stats -->
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;">
-          <div class="stat-card azul"><span class="stat-icon">👥</span><div class="stat-num" id="mon-total">0</div><div class="stat-label">Total monitorados</div></div>
-          <div class="stat-card vermelho"><span class="stat-icon">🔵</span><div class="stat-num" id="mon-intrapartidario">0</div><div class="stat-label">Intrapartidários</div></div>
-          <div class="stat-card amarelo"><span class="stat-icon">⚠️</span><div class="stat-num" id="mon-adversario">0</div><div class="stat-label">Adversários</div></div>
-          <div class="stat-card verde"><span class="stat-icon">🤝</span><div class="stat-num" id="mon-aliado">0</div><div class="stat-label">Aliados</div></div>
+          <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="stat-num" id="mon-total">0</div><div class="stat-label">Total monitorados</div></div>
+          <div class="stat-card vermelho"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/></svg></div><div class="stat-num" id="mon-intrapartidario">0</div><div class="stat-label">Intrapartidários</div></div>
+          <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></div><div class="stat-num" id="mon-adversario">0</div><div class="stat-label">Adversários</div></div>
+          <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><div class="stat-num" id="mon-aliado">0</div><div class="stat-label">Aliados</div></div>
         </div>
 
         <!-- Filtros -->
         <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
           <button class="btn btn-outline mon-filtro active" onclick="filtrarConcorrentes('todos',this)" style="font-size:12px;padding:7px 14px;">Todos</button>
-          <button class="btn btn-outline mon-filtro" onclick="filtrarConcorrentes('Republicanos',this)" style="font-size:12px;padding:7px 14px;">🔵 Republicanos</button>
-          <button class="btn btn-outline mon-filtro" onclick="filtrarConcorrentes('adversario',this)" style="font-size:12px;padding:7px 14px;">🔴 Adversários</button>
-          <button class="btn btn-outline mon-filtro" onclick="filtrarConcorrentes('aliado',this)" style="font-size:12px;padding:7px 14px;">🤝 Aliados</button>
-          <input type="text" id="mon-busca" placeholder="🔍 Buscar por nome..." oninput="renderConcorrentes()"
+          <button class="btn btn-outline mon-filtro" onclick="filtrarConcorrentes('Republicanos',this)" style="font-size:12px;padding:7px 14px;">Republicanos</button>
+          <button class="btn btn-outline mon-filtro" onclick="filtrarConcorrentes('adversario',this)" style="font-size:12px;padding:7px 14px;">Adversários</button>
+          <button class="btn btn-outline mon-filtro" onclick="filtrarConcorrentes('aliado',this)" style="font-size:12px;padding:7px 14px;">Aliados</button>
+          <input type="text" id="mon-busca" placeholder="Buscar por nome..." oninput="renderConcorrentes()"
             style="background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:7px 14px;font-size:12px;color:var(--branco);font-family:var(--fonte);outline:none;margin-left:auto;width:220px;">
         </div>
 
@@ -1285,10 +1355,10 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
           <div class="page-sub">Métricas de performance digital da campanha</div>
         </div>
         <div class="stats-grid">
-          <div class="stat-card azul"><span class="stat-icon">👁️</span><div class="stat-num">0</div><div class="stat-label">Alcance total</div></div>
-          <div class="stat-card verde"><span class="stat-icon">🎯</span><div class="stat-num">0</div><div class="stat-label">Leads captados</div></div>
-          <div class="stat-card amarelo"><span class="stat-icon">💰</span><div class="stat-num">R$0</div><div class="stat-label">Investido em tráfego</div></div>
-          <div class="stat-card roxo"><span class="stat-icon">📊</span><div class="stat-num">0%</div><div class="stat-label">Taxa de conversão</div></div>
+          <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><div class="stat-num">0</div><div class="stat-label">Alcance total</div></div>
+          <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div><div class="stat-num">0</div><div class="stat-label">Leads captados</div></div>
+          <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div class="stat-num">R$0</div><div class="stat-label">Investido em tráfego</div></div>
+          <div class="stat-card roxo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div><div class="stat-num">0%</div><div class="stat-label">Taxa de conversão</div></div>
         </div>
         <div class="grid-2">
           <div class="panel">
@@ -1309,10 +1379,10 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
           <div class="panel">
             <div class="panel-header"><div class="panel-title">Funil de Conversão</div></div>
             <div class="panel-body">
-              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">👁️ Alcance</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--azul2)"></div></div></div>
-              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">👆 Cliques</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--verde2)"></div></div></div>
-              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">📋 Leads</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--amarelo2)"></div></div></div>
-              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">✅ Convertidos</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--roxo2)"></div></div></div>
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Alcance</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--azul2)"></div></div></div>
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Cliques</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--verde2)"></div></div></div>
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Leads</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--amarelo2)"></div></div></div>
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Convertidos</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--roxo2)"></div></div></div>
             </div>
           </div>
         </div>
@@ -1387,7 +1457,7 @@ body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-heigh
             </div>
 
             <div class="settings-card">
-              <div class="settings-section-title">🔒 Alterar Senha</div>
+              <div class="settings-section-title">Alterar Senha</div>
               <div style="display:flex;flex-direction:column;gap:12px;">
                 <div>
                   <label class="form-label">Nova senha</label>

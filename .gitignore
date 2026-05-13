@@ -1,0 +1,36 @@
+# ── Pastas de sistema / IDE ──
+.claude/
+obs-studio/
+desktop.ini
+Thumbs.db
+.DS_Store
+
+# ── Scripts locais ──
+.pie-deploy.ps1
+
+# ── Instaladores ──
+*.exe
+*.msi
+
+# ── Arquivos pessoais (documentos / fotos / arquivos compactados) ──
+*.pdf
+*.PDF
+*.zip
+*.rar
+*.7z
+
+# Imagens pessoais (WhatsApp, ChatGPT, fotos brutas)
+WhatsApp*.jpeg
+WhatsApp*.jpg
+WhatsApp*.png
+ChatGPT*.png
+ChatGPT*.jpg
+
+# IDs alfanuméricos típicos de fotos de câmera/celular
+[A-F0-9]*-[A-F0-9]*-[A-F0-9]*-[A-F0-9]*-[A-F0-9]*.jpg
+[A-F0-9]*-[A-F0-9]*-[A-F0-9]*-[A-F0-9]*-[A-F0-9]*.jpeg
+
+# ── Duplicatas de download ──
+*\ (1).html
+*\ (2).html
+*\ (1).pdf

@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plataforma de Inteligência Eleitoral — Talita Oliveira 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080C14;--bg2:#0E1420;--bg3:#141B2D;--bg4:#1A2236;
+  --azul:#1E40AF;--azul2:#2563EB;--azul3:#3B82F6;--azul-glow:rgba(37,99,235,0.15);
+  --verde:#059669;--verde2:#10B981;--verde-glow:rgba(5,150,105,0.15);
+  --vermelho:#DC2626;--vermelho2:#EF4444;
+  --amarelo:#D97706;--amarelo2:#F59E0B;
+  --roxo:#7C3AED;--roxo2:#8B5CF6;
+  --branco:#F8FAFC;--cinza:#94A3B8;--cinza2:#64748B;--borda:rgba(255,255,255,0.07);
+  --fonte:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--fonte);background:var(--bg);color:var(--branco);min-height:100vh;overflow-x:hidden;}
+
+/* ── LOGIN ── */
+#login-screen{
+  position:fixed;inset:0;background:var(--bg);z-index:9999;
+  display:flex;align-items:center;justify-content:center;
+  background-image:radial-gradient(ellipse at 20% 50%,rgba(37,99,235,0.08) 0%,transparent 60%),
+                   radial-gradient(ellipse at 80% 20%,rgba(124,58,237,0.06) 0%,transparent 50%);
+}
+.login-card{
+  background:var(--bg2);border:1px solid var(--borda);border-radius:20px;
+  padding:48px 44px;width:420px;text-align:center;
+  box-shadow:0 32px 80px rgba(0,0,0,0.5);
+}
+.login-logo{margin-bottom:32px;}
+.login-logo img{height:56px;width:auto;margin-bottom:16px;}
+.login-badge{
+  display:inline-block;background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);
+  color:var(--azul3);font-size:10px;font-weight:700;letter-spacing:2px;
+  text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:12px;
+}
+.login-title{font-size:22px;font-weight:800;color:var(--branco);margin-bottom:4px;}
+.login-sub{font-size:13px;color:var(--cinza);margin-bottom:32px;}
+.login-input{
+  width:100%;background:var(--bg3);border:1px solid var(--borda);border-radius:10px;
+  padding:13px 16px;font-size:14px;color:var(--branco);font-family:var(--fonte);
+  outline:none;transition:border-color 0.2s;margin-bottom:12px;
+}
+.login-input:focus{border-color:var(--azul2);}
+.login-input::placeholder{color:var(--cinza2);}
+.login-btn{
+  width:100%;background:var(--azul2);color:#fff;border:none;border-radius:10px;
+  padding:14px;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--fonte);
+  transition:all 0.2s;margin-top:4px;
+}
+.login-btn:hover{background:var(--azul3);transform:translateY(-1px);}
+.login-err{font-size:12px;color:var(--vermelho2);margin-top:10px;display:none;}
+
+/* ── APP LAYOUT ── */
+#app{display:none;min-height:100vh;}
+.layout{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  background:var(--bg2);border-right:1px solid var(--borda);
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:240px;z-index:100;
+  overflow-y:auto;
+}
+.sidebar-logo{padding:24px 20px 16px;border-bottom:1px solid var(--borda);}
+.sidebar-logo img{height:44px;width:auto;margin-bottom:10px;display:block;}
+.sidebar-logo-name{font-size:13px;font-weight:800;color:var(--branco);line-height:1.2;}
+.sidebar-logo-sub{font-size:10px;color:var(--cinza);letter-spacing:1px;text-transform:uppercase;margin-top:2px;}
+
+.sidebar-section{padding:16px 12px 8px;}
+.sidebar-section-label{font-size:10px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:1.5px;padding:0 8px;margin-bottom:6px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;
+  cursor:pointer;transition:all 0.2s;color:var(--cinza);font-size:13px;font-weight:600;
+  margin-bottom:2px;border:1px solid transparent;
+}
+.nav-item:hover{background:var(--bg3);color:var(--branco);}
+.nav-item.active{background:var(--azul-glow);border-color:rgba(37,99,235,0.3);color:var(--azul3);}
+.nav-item .ni-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0;}
+.nav-item .ni-badge{
+  margin-left:auto;background:var(--vermelho);color:#fff;
+  font-size:10px;font-weight:800;padding:2px 6px;border-radius:10px;
+}
+
+.sidebar-bottom{margin-top:auto;padding:16px 12px;border-top:1px solid var(--borda);}
+.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--bg3);}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--azul2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
+.user-name{font-size:12px;font-weight:700;color:var(--branco);}
+.user-role{font-size:10px;color:var(--cinza);}
+.btn-logout{margin-left:auto;background:none;border:none;color:var(--cinza2);cursor:pointer;font-size:16px;transition:color 0.2s;}
+.btn-logout:hover{color:var(--vermelho2);}
+
+/* ── MAIN ── */
+.main{margin-left:240px;min-height:100vh;}
+.topbar{
+  background:var(--bg2);border-bottom:1px solid var(--borda);
+  padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:99;
+}
+.topbar-title{font-size:16px;font-weight:800;color:var(--branco);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-date{font-size:12px;color:var(--cinza);font-family:var(--mono);}
+.status-dot{width:8px;height:8px;background:var(--verde2);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+
+/* ── PAGES ── */
+.page{display:none;padding:28px 32px;}
+.page.active{display:block;}
+.page-header{margin-bottom:28px;}
+.page-title{font-size:24px;font-weight:800;color:var(--branco);margin-bottom:4px;}
+.page-sub{font-size:14px;color:var(--cinza);}
+
+/* ── CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat-card{
+  background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:20px;
+  transition:all 0.2s;position:relative;overflow:hidden;
+}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-card.azul::before{background:var(--azul2);}
+.stat-card.verde::before{background:var(--verde2);}
+.stat-card.amarelo::before{background:var(--amarelo2);}
+.stat-card.roxo::before{background:var(--roxo2);}
+.stat-card:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-2px);}
+.stat-icon{font-size:24px;margin-bottom:12px;display:block;}
+.stat-num{font-size:30px;font-weight:800;color:var(--branco);font-family:var(--mono);line-height:1;}
+.stat-label{font-size:12px;color:var(--cinza);margin-top:4px;font-weight:600;}
+.stat-delta{font-size:11px;margin-top:6px;font-weight:700;}
+.stat-delta.up{color:var(--verde2);}
+.stat-delta.down{color:var(--vermelho2);}
+
+/* ── GRID 2 col ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+
+/* ── PANEL ── */
+.panel{background:var(--bg2);border:1px solid var(--borda);border-radius:14px;overflow:hidden;}
+.panel-header{padding:16px 20px;border-bottom:1px solid var(--borda);display:flex;align-items:center;justify-content:space-between;}
+.panel-title{font-size:14px;font-weight:700;color:var(--branco);}
+.panel-body{padding:20px;}
+.panel-action{font-size:12px;color:var(--azul3);cursor:pointer;font-weight:600;background:none;border:none;font-family:var(--fonte);}
+
+/* ── LISTA ── */
+.lista-item{
+  display:flex;align-items:center;gap:14px;padding:12px 0;
+  border-bottom:1px solid var(--borda);transition:all 0.2s;
+}
+.lista-item:last-child{border-bottom:none;padding-bottom:0;}
+.li-rank{font-family:var(--mono);font-size:11px;color:var(--cinza2);min-width:20px;text-align:right;}
+.li-info{flex:1;min-width:0;}
+.li-name{font-size:13px;font-weight:700;color:var(--branco);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.li-sub{font-size:11px;color:var(--cinza);}
+.li-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--azul3);}
+.li-bar-wrap{width:80px;background:var(--bg3);border-radius:4px;height:4px;}
+.li-bar{height:4px;border-radius:4px;background:var(--azul2);}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge.azul{background:rgba(37,99,235,0.15);color:var(--azul3);border:1px solid rgba(37,99,235,0.25);}
+.badge.verde{background:rgba(5,150,105,0.15);color:var(--verde2);border:1px solid rgba(5,150,105,0.25);}
+.badge.vermelho{background:rgba(220,38,38,0.15);color:var(--vermelho2);border:1px solid rgba(220,38,38,0.25);}
+.badge.amarelo{background:rgba(217,119,6,0.15);color:var(--amarelo2);border:1px solid rgba(217,119,6,0.25);}
+.badge.roxo{background:rgba(124,58,237,0.15);color:var(--roxo2);border:1px solid rgba(124,58,237,0.25);}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap{margin-bottom:16px;}
+.prog-label{display:flex;justify-content:space-between;margin-bottom:6px;}
+.prog-name{font-size:13px;color:var(--branco);font-weight:600;}
+.prog-val{font-size:12px;color:var(--cinza);font-family:var(--mono);}
+.prog-bar{height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+
+/* ── PROJETOS ── */
+.projeto-card{
+  background:var(--bg2);border:1px solid var(--borda);border-radius:14px;
+  padding:20px;margin-bottom:14px;transition:all 0.2s;cursor:pointer;
+}
+.projeto-card:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-1px);}
+.proj-header{display:flex;align-items:start;justify-content:space-between;margin-bottom:10px;}
+.proj-title{font-size:15px;font-weight:800;color:var(--branco);}
+.proj-local{font-size:12px;color:var(--cinza);margin-top:2px;}
+.proj-desc{font-size:13px;color:var(--cinza);line-height:1.6;margin-bottom:14px;}
+.proj-footer{display:flex;align-items:center;gap:10px;}
+.proj-prog-wrap{flex:1;height:4px;background:var(--bg3);border-radius:2px;}
+.proj-prog{height:100%;border-radius:2px;background:var(--verde2);}
+.proj-pct{font-size:12px;color:var(--verde2);font-weight:700;font-family:var(--mono);}
+
+/* ── IA CHAT ── */
+.chat-wrap{display:flex;flex-direction:column;height:500px;}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.chat-messages::-webkit-scrollbar{width:4px;}
+.chat-messages::-webkit-scrollbar-track{background:var(--bg3);}
+.chat-messages::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
+.msg{max-width:85%;padding:12px 16px;border-radius:12px;font-size:13px;line-height:1.6;}
+.msg.user{background:var(--azul2);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;}
+.msg.ai{background:var(--bg3);color:var(--branco);align-self:flex-start;border-bottom-left-radius:4px;border:1px solid var(--borda);}
+.msg.ai .msg-label{font-size:10px;color:var(--cinza);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.chat-input-wrap{padding:16px;border-top:1px solid var(--borda);display:flex;gap:10px;}
+.chat-input{
+  flex:1;background:var(--bg3);border:1px solid var(--borda);border-radius:10px;
+  padding:11px 14px;font-size:13px;color:var(--branco);font-family:var(--fonte);outline:none;
+  transition:border-color 0.2s;resize:none;
+}
+.chat-input:focus{border-color:var(--azul2);}
+.chat-input::placeholder{color:var(--cinza2);}
+.chat-send{
+  background:var(--azul2);color:#fff;border:none;border-radius:10px;
+  padding:11px 18px;cursor:pointer;font-size:16px;transition:all 0.2s;flex-shrink:0;
+}
+.chat-send:hover{background:var(--azul3);}
+.chat-send:disabled{background:var(--bg4);cursor:not-allowed;}
+.typing{display:flex;gap:4px;align-items:center;padding:4px 0;}
+.typing span{width:6px;height:6px;background:var(--cinza);border-radius:50%;animation:typing 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:0.2s;}
+.typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes typing{0%,100%{opacity:0.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}
+
+/* ── CRM ── */
+.crm-table{width:100%;border-collapse:collapse;}
+.crm-table th{padding:10px 14px;text-align:left;font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.8px;border-bottom:1px solid var(--borda);}
+.crm-table td{padding:12px 14px;font-size:13px;color:var(--branco);border-bottom:1px solid rgba(255,255,255,0.04);}
+.crm-table tr:hover td{background:var(--bg3);}
+.crm-avatar{width:28px;height:28px;border-radius:50%;background:var(--azul2);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;margin-right:8px;}
+
+/* ── FORMULÁRIOS ── */
+.form-group{margin-bottom:16px;}
+.form-label{font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;}
+.form-input,.form-select,.form-textarea{
+  width:100%;background:var(--bg3);border:1px solid var(--borda);border-radius:8px;
+  padding:10px 14px;font-size:13px;color:var(--branco);font-family:var(--fonte);outline:none;
+  transition:border-color 0.2s;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--azul2);}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--cinza2);}
+.form-textarea{resize:vertical;min-height:100px;}
+.form-select{appearance:none;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.btn{padding:10px 20px;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fonte);transition:all 0.2s;}
+.btn-primary{background:var(--azul2);color:#fff;}
+.btn-primary:hover{background:var(--azul3);}
+.btn-success{background:var(--verde);color:#fff;}
+.btn-success:hover{background:var(--verde2);}
+.btn-outline{background:transparent;color:var(--cinza);border:1px solid var(--borda);}
+.btn-outline:hover{border-color:var(--azul2);color:var(--azul3);}
+
+/* ── AGENDA ── */
+.agenda-item{
+  display:flex;gap:14px;padding:14px;background:var(--bg3);border-radius:10px;
+  margin-bottom:10px;border-left:3px solid var(--azul2);transition:all 0.2s;
+}
+.agenda-item.verde{border-left-color:var(--verde2);}
+.agenda-item.amarelo{border-left-color:var(--amarelo2);}
+.agenda-item.roxo{border-left-color:var(--roxo2);}
+.ag-date{text-align:center;min-width:44px;}
+.ag-day{font-size:22px;font-weight:800;color:var(--branco);font-family:var(--mono);line-height:1;}
+.ag-month{font-size:10px;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;}
+.ag-info{flex:1;}
+.ag-title{font-size:14px;font-weight:700;color:var(--branco);margin-bottom:3px;}
+.ag-local{font-size:12px;color:var(--cinza);}
+.ag-time{font-size:11px;color:var(--azul3);font-family:var(--mono);margin-top:4px;}
+
+/* ── MAPA IFRAME ── */
+.mapa-frame{width:100%;height:600px;border:none;border-radius:12px;background:var(--bg3);}
+
+/* ── TRÁFEGO ── */
+.metrica-card{
+  background:var(--bg2);border:1px solid var(--borda);border-radius:12px;padding:18px;
+  text-align:center;transition:all 0.2s;
+}
+.metrica-card:hover{border-color:rgba(255,255,255,0.1);}
+.metrica-num{font-size:28px;font-weight:800;font-family:var(--mono);line-height:1;margin-bottom:4px;}
+.metrica-label{font-size:11px;color:var(--cinza);font-weight:600;text-transform:uppercase;letter-spacing:0.8px;}
+.metrica-sub{font-size:12px;margin-top:6px;font-weight:700;}
+
+/* LOADING OVERLAY */
+#loading{display:none;position:fixed;inset:0;background:rgba(8,12,20,0.9);z-index:9998;align-items:center;justify-content:center;flex-direction:column;gap:12px;}
+#loading.show{display:flex;}
+.spin{width:36px;height:36px;border:3px solid rgba(37,99,235,0.2);border-top-color:var(--azul2);border-radius:50%;animation:spin 0.7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+#loading p{color:var(--cinza);font-size:13px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--borda);border-radius:16px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--borda);display:flex;align-items:center;justify-content:space-between;}
+.modal-title{font-size:16px;font-weight:800;color:var(--branco);}
+.modal-close{background:none;border:none;color:var(--cinza);cursor:pointer;font-size:18px;}
+.modal-body{padding:24px;}
+
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .main{margin-left:0;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .grid-2,.grid-3,.form-row{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="loading"><div class="spin"></div><p id="loading-text">Processando...</p></div>
+
+<!-- ══════════════ LOGIN ══════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-badge">Acesso Restrito</div>
+      <div class="login-title">Plataforma de Inteligência Eleitoral</div>
+      <div class="login-sub">Talita Oliveira 2026 · Republicanos #1022</div>
+    </div>
+    <input class="login-input" type="text" id="login-user" placeholder="Usuário" onkeydown="if(event.key==='Enter')entrar()">
+    <input class="login-input" type="password" id="login-pass" placeholder="Senha" onkeydown="if(event.key==='Enter')entrar()">
+    <button class="login-btn" onclick="entrar()">Entrar na plataforma →</button>
+    <div class="login-err" id="login-err">Usuário ou senha incorretos.</div>
+  </div>
+</div>
+
+<!-- ══════════════ APP ══════════════ -->
+<div id="app">
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div style="font-size:11px;font-weight:800;color:var(--azul3);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">PIE · 2026</div>
+        <div class="sidebar-logo-name">Plataforma de Inteligência Eleitoral</div>
+        <div class="sidebar-logo-sub">Talita Oliveira · Bahia</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Principal</div>
+        <div class="nav-item active" onclick="showPage('dashboard',this)"><span class="ni-icon">📊</span>Dashboard</div>
+        <div class="nav-item" onclick="showPage('mapa',this)"><span class="ni-icon">🗺️</span>Mapa Eleitoral</div>
+        <div class="nav-item" onclick="showPage('metas',this)"><span class="ni-icon">🎯</span>Metas 2026</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Campanha</div>
+        <div class="nav-item" onclick="showPage('projetos',this)"><span class="ni-icon">📋</span>Projetos<span class="ni-badge">3</span></div>
+        <div class="nav-item" onclick="showPage('crm',this)"><span class="ni-icon">👥</span>Lideranças</div>
+        <div class="nav-item" onclick="showPage('agenda',this)"><span class="ni-icon">📅</span>Agenda</div>
+        <div class="nav-item" onclick="showPage('monitoramento',this)"><span class="ni-icon">📡</span>Monitoramento</div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-label">Digital</div>
+        <div class="nav-item" onclick="showPage('trafego',this)"><span class="ni-icon">📈</span>Tráfego & Leads</div>
+        <div class="nav-item" onclick="showPage('ia',this)"><span class="ni-icon">🤖</span>IA Estratégica</div>
+      </div>
+
+      <div class="sidebar-bottom">
+        <div class="user-card">
+          <div class="user-avatar">E</div>
+          <div><div class="user-name">Emanuel Silva</div><div class="user-role">Assessor Digital</div></div>
+          <button class="btn-logout" onclick="sair()" title="Sair">⏻</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+        <div class="topbar-right">
+          <div class="status-dot"></div>
+          <div class="topbar-date" id="topbar-date"></div>
+        </div>
+      </div>
+
+      <!-- ══ DASHBOARD ══ -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div class="page-title">Visão Geral da Campanha</div>
+          <div class="page-sub">Atualizado em tempo real · Eleições 2026 · Bahia</div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card azul">
+            <span class="stat-icon">🗳️</span>
+            <div class="stat-num">33.455</div>
+            <div class="stat-label">Votos em 2022</div>
+            <div class="stat-delta up">↑ Base de partida</div>
+          </div>
+          <div class="stat-card verde">
+            <span class="stat-icon">🎯</span>
+            <div class="stat-num">120.000</div>
+            <div class="stat-label">Meta 2026</div>
+            <div class="stat-delta up">+259% de crescimento</div>
+          </div>
+          <div class="stat-card amarelo">
+            <span class="stat-icon">📍</span>
+            <div class="stat-num">414</div>
+            <div class="stat-label">Municípios com votos</div>
+            <div class="stat-delta up">↑ 3 sem presença</div>
+          </div>
+          <div class="stat-card roxo">
+            <span class="stat-icon">📅</span>
+            <div class="stat-num" id="dias-counter">—</div>
+            <div class="stat-label">Dias para a eleição</div>
+            <div class="stat-delta">Outubro 2026</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Metas por Região</div>
+              <button class="panel-action" onclick="showPage('metas',document.querySelector('[onclick*=metas]'))">Ver tudo →</button>
+            </div>
+            <div class="panel-body">
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Leste (Salvador + RMS)</span><span class="prog-val">0 / 45.000</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--azul2)"></div></div></div>
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Sul</span><span class="prog-val">0 / 25.000</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--verde2)"></div></div></div>
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Centro-Leste (Feira)</span><span class="prog-val">0 / 15.000</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--amarelo2)"></div></div></div>
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Extremo-Sul</span><span class="prog-val">0 / 10.000</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--roxo2)"></div></div></div>
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">Sudoeste (V. Conquista)</span><span class="prog-val">0 / 8.000</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--vermelho2)"></div></div></div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Top Municípios 2022</div>
+            </div>
+            <div class="panel-body">
+              <div class="lista-item"><div class="li-rank">1</div><div class="li-info"><div class="li-name">Salvador</div><div class="li-sub">Leste</div></div><div class="li-val">5.720</div><div class="li-bar-wrap"><div class="li-bar" style="width:100%"></div></div></div>
+              <div class="lista-item"><div class="li-rank">2</div><div class="li-info"><div class="li-name">Lauro de Freitas</div><div class="li-sub">Leste</div></div><div class="li-val">1.240</div><div class="li-bar-wrap"><div class="li-bar" style="width:22%"></div></div></div>
+              <div class="lista-item"><div class="li-rank">3</div><div class="li-info"><div class="li-name">Feira de Santana</div><div class="li-sub">Centro-Leste</div></div><div class="li-val">980</div><div class="li-bar-wrap"><div class="li-bar" style="width:17%"></div></div></div>
+              <div class="lista-item"><div class="li-rank">4</div><div class="li-info"><div class="li-name">Camaçari</div><div class="li-sub">Leste</div></div><div class="li-val">876</div><div class="li-bar-wrap"><div class="li-bar" style="width:15%"></div></div></div>
+              <div class="lista-item"><div class="li-rank">5</div><div class="li-info"><div class="li-name">Vitória da Conquista</div><div class="li-sub">Sudoeste</div></div><div class="li-val">654</div><div class="li-bar-wrap"><div class="li-bar" style="width:11%"></div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3">
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Projetos Ativos</div></div>
+            <div class="panel-body">
+              <div class="lista-item"><div class="li-info"><div class="li-name">Mototaxistas Salvador</div><div class="li-sub">Em andamento · 60%</div></div><span class="badge verde">Ativo</span></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">Saúde Bom Bom</div><div class="li-sub">Planejamento · 20%</div></div><span class="badge amarelo">Novo</span></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">Águias do Brasil</div><div class="li-sub">Digital · 80%</div></div><span class="badge azul">Digital</span></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Próximos Eventos</div></div>
+            <div class="panel-body">
+              <div class="lista-item"><div class="li-info"><div class="li-name">Reunião Mototaxistas</div><div class="li-sub">Salvador · 15h</div></div><span class="badge azul">Hoje</span></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">Visita Bom Jesus da Lapa</div><div class="li-sub">Oeste · 9h</div></div><span class="badge verde">Amanhã</span></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">Live Instagram</div><div class="li-sub">Digital · 20h</div></div><span class="badge roxo">Sáb</span></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Tráfego Digital</div></div>
+            <div class="panel-body">
+              <div class="lista-item"><div class="li-info"><div class="li-name">Leads captados</div></div><div class="li-val" style="color:var(--verde2)">0</div></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">Custo por lead</div></div><div class="li-val">R$—</div></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">Alcance total</div></div><div class="li-val">—</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ MAPA ══ -->
+      <div class="page" id="page-mapa">
+        <div class="page-header">
+          <div class="page-title">Mapa Eleitoral da Bahia</div>
+          <div class="page-sub">Distribuição de votos 2022 e metas 2026 por município</div>
+        </div>
+        <div class="panel">
+          <div class="panel-body" style="padding:0;">
+            <iframe class="mapa-frame" src="https://frabjous-cendol-30e7d1.netlify.app/" title="Mapa Eleitoral"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ METAS ══ -->
+      <div class="page" id="page-metas">
+        <div class="page-header">
+          <div class="page-title">Metas 2026 por Região</div>
+          <div class="page-sub">De 33.455 para 120.000 votos — crescimento de 259%</div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card azul"><span class="stat-icon">🏙️</span><div class="stat-num">45.000</div><div class="stat-label">Leste — Salvador + RMS</div></div>
+          <div class="stat-card verde"><span class="stat-icon">🌊</span><div class="stat-num">25.000</div><div class="stat-label">Sul</div></div>
+          <div class="stat-card amarelo"><span class="stat-icon">🌾</span><div class="stat-num">15.000</div><div class="stat-label">Centro-Leste — Feira</div></div>
+          <div class="stat-card roxo"><span class="stat-icon">🏔️</span><div class="stat-num">10.000</div><div class="stat-label">Extremo-Sul</div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Progresso por Região</div></div>
+          <div class="panel-body">
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🏙️ Leste (Salvador + RMS)</span><span class="prog-val">0 / 45.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--azul2)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🌊 Sul</span><span class="prog-val">0 / 25.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--verde2)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🌾 Centro-Leste (Feira de Santana)</span><span class="prog-val">0 / 15.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--amarelo2)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🏔️ Extremo-Sul</span><span class="prog-val">0 / 10.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--roxo2)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🤠 Sudoeste (V. Conquista)</span><span class="prog-val">0 / 8.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--vermelho2)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🌵 Norte</span><span class="prog-val">0 / 5.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🌿 Oeste (Barreiras)</span><span class="prog-val">0 / 5.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">⛰️ Centro-Norte</span><span class="prog-val">0 / 4.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
+            <div class="prog-wrap"><div class="prog-label"><span class="prog-name">🏜️ Nordeste</span><span class="prog-val">0 / 3.000 votos</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--cinza)"></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PROJETOS ══ -->
+      <div class="page" id="page-projetos">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
+          <div>
+            <div class="page-title">Projetos</div>
+            <div class="page-sub">Demandas, articulações e iniciativas da campanha</div>
+          </div>
+          <button class="btn btn-primary" onclick="abrirModalProjeto()">+ Novo projeto</button>
+        </div>
+
+        <div id="lista-projetos">
+          <div class="projeto-card" onclick="abrirProjeto('mototaxistas')">
+            <div class="proj-header">
+              <div><div class="proj-title">Mototaxistas de Salvador</div><div class="proj-local">📍 Salvador — Leste</div></div>
+              <span class="badge verde">Em andamento</span>
+            </div>
+            <div class="proj-desc">Articulação com a categoria dos mototaxistas de Salvador. Demandas principais: regularização da profissão, seguro de vida específico, e programa de capacitação. Reunião mensal com lideranças.</div>
+            <div class="proj-footer">
+              <div class="proj-prog-wrap"><div class="proj-prog" style="width:60%"></div></div>
+              <div class="proj-pct">60%</div>
+              <span class="badge azul" style="margin-left:8px">~800 votos potenciais</span>
+            </div>
+          </div>
+
+          <div class="projeto-card" onclick="abrirProjeto('bombom')">
+            <div class="proj-header">
+              <div><div class="proj-title">Saúde — Bom Bom</div><div class="proj-local">📍 Bom Bom — Interior</div></div>
+              <span class="badge amarelo">Planejamento</span>
+            </div>
+            <div class="proj-desc">Demanda levantada em reunião na última semana. Comunidade solicita melhoria no atendimento de saúde local — falta de médicos especialistas e medicamentos básicos no posto.</div>
+            <div class="proj-footer">
+              <div class="proj-prog-wrap"><div class="proj-prog" style="width:20%"></div></div>
+              <div class="proj-pct">20%</div>
+              <span class="badge amarelo" style="margin-left:8px">Novo</span>
+            </div>
+          </div>
+
+          <div class="projeto-card" onclick="abrirProjeto('aguias')">
+            <div class="proj-header">
+              <div><div class="proj-title">Águias do Brasil — Digital</div><div class="proj-local">📍 Digital — Bahia</div></div>
+              <span class="badge azul">Digital</span>
+            </div>
+            <div class="proj-desc">Frente digital da campanha. Gestão das redes sociais @aguiasdobrasil_bahia, produção de conteúdo conservador, mobilização de apoiadores e captação de leads.</div>
+            <div class="proj-footer">
+              <div class="proj-prog-wrap"><div class="proj-prog" style="width:80%"></div></div>
+              <div class="proj-pct">80%</div>
+              <span class="badge azul" style="margin-left:8px">Ativo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PROJETO DETALHE + IA ══ -->
+      <div class="page" id="page-projeto-detalhe">
+        <div class="page-header" style="display:flex;align-items:center;gap:12px;">
+          <button class="btn btn-outline" onclick="showPage('projetos',document.querySelector('[onclick*=projetos]'))">← Voltar</button>
+          <div><div class="page-title" id="proj-det-title">Projeto</div><div class="page-sub" id="proj-det-sub"></div></div>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div class="panel" style="margin-bottom:16px;">
+              <div class="panel-header"><div class="panel-title">Detalhes do Projeto</div></div>
+              <div class="panel-body" id="proj-det-body"></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">🤖 IA Especialista</div>
+                <div style="font-size:11px;color:var(--cinza);margin-top:2px;">Políticas Públicas · Ciência Política · Estratégia Eleitoral</div>
+              </div>
+            </div>
+            <div class="chat-wrap">
+              <div class="chat-messages" id="chat-proj-msgs">
+                <div class="msg ai"><div class="msg-label">IA Estratégica</div>Olá! Sou especialista em políticas públicas, ciência política e estratégia eleitoral. Estou aqui para ajudar a desenvolver este projeto. O que você gostaria de analisar?</div>
+              </div>
+              <div class="chat-input-wrap">
+                <textarea class="chat-input" id="chat-proj-input" placeholder="Faça uma pergunta sobre este projeto..." rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMsgProjeto();}"></textarea>
+                <button class="chat-send" id="chat-proj-btn" onclick="enviarMsgProjeto()">➤</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ CRM ══ -->
+      <div class="page" id="page-crm">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
+          <div><div class="page-title">Lideranças</div><div class="page-sub">CRM de apoiadores e articuladores por município</div></div>
+          <button class="btn btn-primary" onclick="abrirModalLideranca()">+ Nova liderança</button>
+        </div>
+        <div class="panel">
+          <div class="panel-body" style="padding:0 20px;">
+            <table class="crm-table">
+              <thead><tr><th>Nome</th><th>Município</th><th>Segmento</th><th>Votos Est.</th><th>Status</th><th>Contato</th></tr></thead>
+              <tbody id="crm-tbody">
+                <tr><td><span class="crm-avatar">J</span>João Mototaxista</td><td>Salvador</td><td>Transporte</td><td>~200</td><td><span class="badge verde">Confirmado</span></td><td>71 99999-9999</td></tr>
+                <tr><td><span class="crm-avatar">M</span>Maria Liderança</td><td>Feira de Santana</td><td>Saúde</td><td>~150</td><td><span class="badge azul">Negociando</span></td><td>75 98888-8888</td></tr>
+                <tr><td><span class="crm-avatar">C</span>Carlos Vereador</td><td>Lauro de Freitas</td><td>Político</td><td>~500</td><td><span class="badge amarelo">Prospecto</span></td><td>71 97777-7777</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ AGENDA ══ -->
+      <div class="page" id="page-agenda">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
+          <div><div class="page-title">Agenda</div><div class="page-sub">Eventos, visitas e compromissos da campanha</div></div>
+          <button class="btn btn-primary">+ Novo evento</button>
+        </div>
+        <div class="grid-2">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;">Próximos eventos</div>
+            <div class="agenda-item">
+              <div class="ag-date"><div class="ag-day" id="ag-d1"></div><div class="ag-month" id="ag-m1"></div></div>
+              <div class="ag-info"><div class="ag-title">Reunião com Mototaxistas</div><div class="ag-local">📍 Salvador — Sede da Categoria</div><div class="ag-time">15:00 · 2h de duração</div></div>
+              <span class="badge azul">Hoje</span>
+            </div>
+            <div class="agenda-item verde">
+              <div class="ag-date"><div class="ag-day" id="ag-d2"></div><div class="ag-month" id="ag-m2"></div></div>
+              <div class="ag-info"><div class="ag-title">Visita Bom Jesus da Lapa</div><div class="ag-local">📍 Oeste — Interior da Bahia</div><div class="ag-time">09:00 · Dia inteiro</div></div>
+              <span class="badge verde">Amanhã</span>
+            </div>
+            <div class="agenda-item amarelo">
+              <div class="ag-date"><div class="ag-day">19</div><div class="ag-month">ABR</div></div>
+              <div class="ag-info"><div class="ag-title">Live Instagram — Segurança</div><div class="ag-local">📱 Digital</div><div class="ag-time">20:00 · 1h</div></div>
+              <span class="badge amarelo">Sáb</span>
+            </div>
+            <div class="agenda-item roxo">
+              <div class="ag-date"><div class="ag-day">22</div><div class="ag-month">ABR</div></div>
+              <div class="ag-info"><div class="ag-title">Plenária Republicanos Bahia</div><div class="ag-local">📍 Salvador — Sede do Partido</div><div class="ag-time">14:00 · 3h</div></div>
+              <span class="badge roxo">Ter</span>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Adicionar Evento</div></div>
+            <div class="panel-body">
+              <div class="form-group"><label class="form-label">Título *</label><input class="form-input" type="text" placeholder="Ex: Reunião com lideranças"></div>
+              <div class="form-group"><label class="form-label">Data e hora *</label><input class="form-input" type="datetime-local"></div>
+              <div class="form-group"><label class="form-label">Local</label><input class="form-input" type="text" placeholder="Ex: Salvador — Pelourinho"></div>
+              <div class="form-group"><label class="form-label">Tipo</label>
+                <select class="form-select">
+                  <option>Visita ao município</option>
+                  <option>Reunião com liderança</option>
+                  <option>Evento de campanha</option>
+                  <option>Digital / Live</option>
+                  <option>Reunião interna</option>
+                </select>
+              </div>
+              <div class="form-group"><label class="form-label">Observações</label><textarea class="form-textarea" placeholder="Detalhes do evento..."></textarea></div>
+              <button class="btn btn-primary" style="width:100%">Salvar evento</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ MONITORAMENTO ══ -->
+      <div class="page" id="page-monitoramento">
+        <div class="page-header">
+          <div class="page-title">Monitoramento</div>
+          <div class="page-sub">Adversários, pautas e cenário político na Bahia</div>
+        </div>
+        <div class="grid-3">
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Adversários</div></div>
+            <div class="panel-body">
+              <div class="lista-item"><div class="li-info"><div class="li-name">ACM Neto</div><div class="li-sub">DEM/União — Governador</div></div><span class="badge vermelho">Monitorar</span></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">Jerônimo Rodrigues</div><div class="li-sub">PT — Governador atual</div></div><span class="badge vermelho">Monitorar</span></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">Otto Alencar</div><div class="li-sub">PSD — Senador</div></div><span class="badge amarelo">Observar</span></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Pautas Quentes</div></div>
+            <div class="panel-body">
+              <div class="lista-item"><div class="li-info"><div class="li-name">Segurança pública</div><div class="li-sub">Alta relevância no interior</div></div><span class="badge verde">Oportunidade</span></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">Saúde no sertão</div><div class="li-sub">Demanda crescente</div></div><span class="badge verde">Oportunidade</span></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">Reforma tributária</div><div class="li-sub">Impacto no agro baiano</div></div><span class="badge azul">Relevante</span></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Redes Sociais</div></div>
+            <div class="panel-body">
+              <div class="lista-item"><div class="li-info"><div class="li-name">@aguiasdobrasil_bahia</div><div class="li-sub">Instagram</div></div><span class="badge azul">Ativo</span></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">@intercessoresdobrasil</div><div class="li-sub">Instagram</div></div><span class="badge azul">Ativo</span></div>
+              <div class="lista-item"><div class="li-info"><div class="li-name">Talita Oliveira Oficial</div><div class="li-sub">Facebook</div></div><span class="badge verde">Crescendo</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TRÁFEGO ══ -->
+      <div class="page" id="page-trafego">
+        <div class="page-header">
+          <div class="page-title">Tráfego & Conversão de Leads</div>
+          <div class="page-sub">Métricas de performance digital da campanha</div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card azul"><span class="stat-icon">👁️</span><div class="stat-num">0</div><div class="stat-label">Alcance total</div></div>
+          <div class="stat-card verde"><span class="stat-icon">🎯</span><div class="stat-num">0</div><div class="stat-label">Leads captados</div></div>
+          <div class="stat-card amarelo"><span class="stat-icon">💰</span><div class="stat-num">R$0</div><div class="stat-label">Investido em tráfego</div></div>
+          <div class="stat-card roxo"><span class="stat-icon">📊</span><div class="stat-num">0%</div><div class="stat-label">Taxa de conversão</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Registrar Campanha</div></div>
+            <div class="panel-body">
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Plataforma</label><select class="form-select"><option>Meta Ads (Instagram/Facebook)</option><option>Google Ads</option><option>TikTok Ads</option><option>YouTube Ads</option></select></div>
+                <div class="form-group"><label class="form-label">Objetivo</label><select class="form-select"><option>Captação de leads</option><option>Alcance / Reconhecimento</option><option>Engajamento</option><option>Conversão</option></select></div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label class="form-label">Investimento (R$)</label><input class="form-input" type="number" placeholder="0,00"></div>
+                <div class="form-group"><label class="form-label">Leads gerados</label><input class="form-input" type="number" placeholder="0"></div>
+              </div>
+              <div class="form-group"><label class="form-label">Público-alvo</label><input class="form-input" type="text" placeholder="Ex: Mulheres 25-50 anos, Salvador e RMS"></div>
+              <button class="btn btn-primary" style="width:100%">Registrar campanha</button>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Funil de Conversão</div></div>
+            <div class="panel-body">
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">👁️ Alcance</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--azul2)"></div></div></div>
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">👆 Cliques</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--verde2)"></div></div></div>
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">📋 Leads</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--amarelo2)"></div></div></div>
+              <div class="prog-wrap"><div class="prog-label"><span class="prog-name">✅ Convertidos</span><span class="prog-val">0</span></div><div class="prog-bar"><div class="prog-fill" style="width:0%;background:var(--roxo2)"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ IA ESTRATÉGICA ══ -->
+      <div class="page" id="page-ia">
+        <div class="page-header">
+          <div class="page-title">IA Estratégica</div>
+          <div class="page-sub">Especialista em Políticas Públicas · Ciência Política · Publicidade Eleitoral · Estratégia de Campanha</div>
+        </div>
+        <div class="panel" style="max-width:800px;margin:0 auto;">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">🤖 Consultora Eleitoral IA</div>
+              <div style="font-size:11px;color:var(--cinza);margin-top:2px;">Especializada na realidade política da Bahia e na campanha de Talita Oliveira</div>
+            </div>
+            <button class="panel-action" onclick="limparChat()">Limpar conversa</button>
+          </div>
+          <div class="chat-wrap" style="height:560px;">
+            <div class="chat-messages" id="chat-ia-msgs">
+              <div class="msg ai">
+                <div class="msg-label">IA Estratégica · Consultora Eleitoral</div>
+                Olá, Emanuel! Estou pronta para apoiar a campanha de Talita Oliveira. Sou especialista em:<br><br>
+                🏛️ <strong>Políticas Públicas</strong> — análise de demandas e viabilidade<br>
+                🗳️ <strong>Ciência Política</strong> — cenário eleitoral baiano<br>
+                📢 <strong>Publicidade Eleitoral</strong> — comunicação e posicionamento<br>
+                🎯 <strong>Estratégia de Campanha</strong> — territórios, lideranças, prioridades<br><br>
+                Como posso ajudar hoje?
+              </div>
+            </div>
+            <div class="chat-input-wrap">
+              <textarea class="chat-input" id="chat-ia-input" placeholder="Ex: Como transformar a demanda dos mototaxistas em proposta legislativa? Como abordar a pauta de saúde em Bom Bom?" rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMsgIA();}"></textarea>
+              <button class="chat-send" id="chat-ia-btn" onclick="enviarMsgIA()">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- MODAL PROJETO -->
+<div class="modal-overlay" id="modal-projeto">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Novo Projeto</div>
+      <button class="modal-close" onclick="fecharModal('modal-projeto')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Nome do projeto *</label><input class="form-input" type="text" placeholder="Ex: Agricultores de Vitória da Conquista"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Município / Região</label><input class="form-input" type="text" placeholder="Ex: Vitória da Conquista"></div>
+        <div class="form-group"><label class="form-label">Status</label><select class="form-select"><option>Planejamento</option><option>Em andamento</option><option>Concluído</option><option>Pausado</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Descrição e demandas</label><textarea class="form-textarea" placeholder="Descreva o projeto, as demandas da comunidade e as ações planejadas..."></textarea></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Votos potenciais</label><input class="form-input" type="text" placeholder="Ex: ~500"></div>
+        <div class="form-group"><label class="form-label">Progresso (%)</label><input class="form-input" type="number" min="0" max="100" placeholder="0"></div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-primary" style="flex:1">Salvar projeto</button>
+        <button class="btn btn-outline" onclick="fecharModal('modal-projeto')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL LIDERANÇA -->
+<div class="modal-overlay" id="modal-lideranca">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Nova Liderança</div>
+      <button class="modal-close" onclick="fecharModal('modal-lideranca')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Nome *</label><input class="form-input" type="text" placeholder="Nome completo"></div>
+        <div class="form-group"><label class="form-label">WhatsApp *</label><input class="form-input" type="tel" placeholder="71 99999-9999"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Município</label><input class="form-input" type="text" placeholder="Ex: Salvador"></div>
+        <div class="form-group"><label class="form-label">Segmento</label><input class="form-input" type="text" placeholder="Ex: Transporte, Saúde, Religioso..."></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Votos estimados</label><input class="form-input" type="text" placeholder="Ex: ~200"></div>
+        <div class="form-group"><label class="form-label">Status</label><select class="form-select"><option>Prospecto</option><option>Negociando</option><option>Confirmado</option><option>Parceiro</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Observações</label><textarea class="form-textarea" placeholder="Notas sobre esta liderança..."></textarea></div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-primary" style="flex:1">Salvar liderança</button>
+        <button class="btn btn-outline" onclick="fecharModal('modal-lideranca')">Cancelar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── LOGIN ──
+const USUARIOS = {'emanuel':'talita2026','admin':'pie2026'};
+
+function entrar() {
+  const u = document.getElementById('login-user').value.trim().toLowerCase();
+  const p = document.getElementById('login-pass').value;
+  if(USUARIOS[u] && USUARIOS[u] === p) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  } else {
+    const err = document.getElementById('login-err');
+    err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', 3000);
+  }
+}
+
+function sair() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+}
+
+// ── INIT ──
+function initApp() {
+  const d = new Date();
+  const dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const meses = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  document.getElementById('topbar-date').textContent = `${dias[d.getDay()]}, ${d.getDate()} ${meses[d.getMonth()]} ${d.getFullYear()}`;
+
+  // Dias para eleição (Outubro 2026)
+  const eleicao = new Date('2026-10-04');
+  const dias_restantes = Math.ceil((eleicao - d) / (1000*60*60*24));
+  document.getElementById('dias-counter').textContent = dias_restantes.toLocaleString('pt-BR');
+
+  // Agenda datas
+  const amanha = new Date(d); amanha.setDate(d.getDate()+1);
+  document.getElementById('ag-d1').textContent = d.getDate();
+  document.getElementById('ag-m1').textContent = meses[d.getMonth()].toUpperCase();
+  document.getElementById('ag-d2').textContent = amanha.getDate();
+  document.getElementById('ag-m2').textContent = meses[amanha.getMonth()].toUpperCase();
+}
+
+// ── NAVEGAÇÃO ──
+const PAGE_TITLES = {
+  dashboard:'Dashboard',mapa:'Mapa Eleitoral',metas:'Metas 2026',
+  projetos:'Projetos',crm:'Lideranças',agenda:'Agenda',
+  monitoramento:'Monitoramento',trafego:'Tráfego & Leads',
+  ia:'IA Estratégica','projeto-detalhe':'Projeto'
+};
+
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(el) el.classList.add('active');
+  document.getElementById('topbar-title').textContent = PAGE_TITLES[id] || id;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── PROJETOS ──
+const PROJETOS_DATA = {
+  mototaxistas: {
+    title:'Mototaxistas de Salvador',
+    sub:'Salvador — Leste · ~800 votos potenciais',
+    status:'Em andamento',
+    pct:60,
+    body:`
+      <div style="margin-bottom:14px;"><span class="badge verde">Em andamento · 60%</span></div>
+      <div style="font-size:13px;color:var(--cinza);line-height:1.7;margin-bottom:16px;">
+        Articulação com a categoria dos mototaxistas de Salvador. Reuniões mensais com lideranças da categoria para levantar demandas e construir propostas legislativas.
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Demandas levantadas</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;">✅ Regularização da profissão</div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;">⏳ Seguro de vida específico para mototaxistas</div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;">⏳ Programa de capacitação e certificação</div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;">🔲 Linha de crédito para compra de moto</div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Próximos passos</div>
+      <div style="font-size:13px;color:var(--cinza);line-height:1.6;">Reunião marcada esta semana. Elaborar proposta formal de PL para regularização.</div>
+    `
+  },
+  bombom: {
+    title:'Saúde — Bom Bom',
+    sub:'Bom Bom — Interior · Demanda nova',
+    status:'Planejamento',
+    pct:20,
+    body:`
+      <div style="margin-bottom:14px;"><span class="badge amarelo">Planejamento · 20%</span></div>
+      <div style="font-size:13px;color:var(--cinza);line-height:1.7;margin-bottom:16px;">
+        Demanda levantada em reunião na última semana. A comunidade de Bom Bom relatou sérios problemas no atendimento de saúde local.
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Problemas relatados</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;">🔴 Falta de médicos especialistas</div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;">🔴 Medicamentos básicos em falta no posto</div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;">🔴 Distância até hospital de referência</div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Status</div>
+      <div style="font-size:13px;color:var(--cinza);line-height:1.6;">Ainda em fase de levantamento. Use a IA ao lado para analisar viabilidade e construir propostas.</div>
+    `
+  },
+  aguias: {
+    title:'Águias do Brasil — Digital',
+    sub:'Digital — Toda a Bahia',
+    status:'Digital',
+    pct:80,
+    body:`
+      <div style="margin-bottom:14px;"><span class="badge azul">Digital · 80%</span></div>
+      <div style="font-size:13px;color:var(--cinza);line-height:1.7;margin-bottom:16px;">
+        Frente digital da campanha. Gestão das redes sociais, produção de conteúdo conservador e mobilização de apoiadores em toda a Bahia.
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Canais ativos</div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;">✅ @aguiasdobrasil_bahia — Instagram</div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;">✅ @intercessoresdobrasil — Instagram</div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;">⏳ Canal YouTube em construção</div>
+        <div style="background:var(--bg3);border-radius:8px;padding:10px 14px;font-size:13px;">⏳ Grupo de WhatsApp das lideranças</div>
+      </div>
+    `
+  }
+};
+
+function abrirProjeto(id) {
+  const p = PROJETOS_DATA[id];
+  if(!p) return;
+  document.getElementById('proj-det-title').textContent = p.title;
+  document.getElementById('proj-det-sub').textContent = p.sub;
+  document.getElementById('proj-det-body').innerHTML = p.body;
+  // Reset chat
+  document.getElementById('chat-proj-msgs').innerHTML = `
+    <div class="msg ai">
+      <div class="msg-label">IA Estratégica</div>
+      Analisando o projeto <strong>${p.title}</strong>. Posso ajudar com análise de políticas públicas, viabilidade legislativa, comunicação eleitoral e estratégia de articulação. O que você precisa?
+    </div>`;
+  showPage('projeto-detalhe', null);
+}
+
+// ── MODAIS ──
+function abrirModalProjeto(){document.getElementById('modal-projeto').classList.add('show');}
+function abrirModalLideranca(){document.getElementById('modal-lideranca').classList.add('show');}
+function fecharModal(id){document.getElementById(id).classList.remove('show');}
+
+// ── CHAT IA (Claude API) ──
+const SYSTEM_PROMPT = `Você é uma consultora especialista em:
+- Políticas públicas brasileiras (saúde, transporte, segurança, educação, agronegócio)
+- Ciência política e eleições no Brasil, especialmente na Bahia
+- Publicidade eleitoral e comunicação de campanha
+- Estratégia eleitoral para deputados federais
+- Legislação eleitoral e propostas de lei
+
+Você está assessorando a campanha de Talita Oliveira, pré-candidata a deputada federal pela Bahia (Republicanos #1022) nas eleições de 2026. A meta é ir de 33.455 votos em 2022 para 120.000 votos em 2026. O posicionamento é conservador, com foco em mulheres baianas, evangélicos, interior da Bahia e segmentos populares.
+
+Responda sempre de forma direta, prática e estratégica. Use linguagem clara. Quando for pertinente, cite exemplos reais de políticas públicas bem-sucedidas no Brasil. Sugira ações concretas que a campanha pode tomar.`;
+
+let chatIAHistory = [];
+let chatProjHistory = [];
+
+async function enviarMsgIA() {
+  const input = document.getElementById('chat-ia-input');
+  const btn = document.getElementById('chat-ia-btn');
+  const msg = input.value.trim();
+  if(!msg) return;
+
+  addMsg('chat-ia-msgs', msg, 'user');
+  chatIAHistory.push({role:'user', content:msg});
+  input.value = '';
+  btn.disabled = true;
+
+  const typing = addTyping('chat-ia-msgs');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system: SYSTEM_PROMPT,
+        messages: chatIAHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Erro ao processar resposta.';
+    typing.remove();
+    addMsg('chat-ia-msgs', reply, 'ai');
+    chatIAHistory.push({role:'assistant', content:reply});
+  } catch(e) {
+    typing.remove();
+    addMsg('chat-ia-msgs', 'Erro de conexão. Tente novamente.', 'ai');
+  }
+  btn.disabled = false;
+}
+
+async function enviarMsgProjeto() {
+  const input = document.getElementById('chat-proj-input');
+  const btn = document.getElementById('chat-proj-btn');
+  const msg = input.value.trim();
+  if(!msg) return;
+
+  const projTitle = document.getElementById('proj-det-title').textContent;
+  addMsg('chat-proj-msgs', msg, 'user');
+  chatProjHistory.push({role:'user', content:msg});
+  input.value = '';
+  btn.disabled = true;
+
+  const typing = addTyping('chat-proj-msgs');
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system: SYSTEM_PROMPT + `\n\nContexto atual: Estamos analisando especificamente o projeto "${projTitle}". Foque suas respostas neste projeto.`,
+        messages: chatProjHistory
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Erro ao processar resposta.';
+    typing.remove();
+    addMsg('chat-proj-msgs', reply, 'ai');
+    chatProjHistory.push({role:'assistant', content:reply});
+  } catch(e) {
+    typing.remove();
+    addMsg('chat-proj-msgs', 'Erro de conexão. Tente novamente.', 'ai');
+  }
+  btn.disabled = false;
+}
+
+function addMsg(containerId, text, type) {
+  const container = document.getElementById(containerId);
+  const div = document.createElement('div');
+  div.className = `msg ${type}`;
+  if(type === 'ai') div.innerHTML = `<div class="msg-label">IA Estratégica</div>${text.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}`;
+  else div.textContent = text;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return div;
+}
+
+function addTyping(containerId) {
+  const container = document.getElementById(containerId);
+  const div = document.createElement('div');
+  div.className = 'msg ai';
+  div.innerHTML = '<div class="msg-label">IA Estratégica</div><div class="typing"><span></span><span></span><span></span></div>';
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+  return div;
+}
+
+function limparChat() {
+  chatIAHistory = [];
+  document.getElementById('chat-ia-msgs').innerHTML = `
+    <div class="msg ai">
+      <div class="msg-label">IA Estratégica · Consultora Eleitoral</div>
+      Conversa reiniciada. Como posso ajudar?
+    </div>`;
+}
+
+// Enter no login
+document.addEventListener('keydown', e => {
+  if(e.key==='Enter' && document.getElementById('login-screen').style.display !== 'none') entrar();
+});
+</script>
+</body>
+</html>
