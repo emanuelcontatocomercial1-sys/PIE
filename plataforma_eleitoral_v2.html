@@ -197,12 +197,13 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 .tree-root{display:flex;justify-content:center;padding:20px 8px 8px;overflow-x:auto;}
 .tree-node{display:flex;flex-direction:column;align-items:center;padding:0 12px;position:relative;}
 .tree-bubble{
-  width:48px;height:48px;border-radius:50%;
-  background:linear-gradient(135deg,#6d28d9,#7c3aed);color:#fff;
-  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;
+  width:44px;height:44px;border-radius:50%;
+  background:linear-gradient(135deg,#059669,#10b981);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;
   border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.18);position:relative;z-index:2;
 }
 .tree-bubble.root{background:linear-gradient(135deg,#0f172a,#1e293b);width:64px;height:64px;font-size:20px;}
+.tree-bubble.lider{background:linear-gradient(135deg,#6d28d9,#7c3aed);width:52px;height:52px;font-size:17px;}
 .tree-label{
   font-size:11px;font-weight:600;color:var(--branco);margin-top:6px;text-align:center;
   max-width:96px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
@@ -1073,7 +1074,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         <!-- Stats globais -->
         <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
           <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="16.5"/></svg></div><div class="stat-num" id="rede-raizes">0</div><div class="stat-label">Lideranças raiz</div></div>
-          <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-num" id="rede-total-pessoas">0</div><div class="stat-label">Pessoas na rede</div></div>
+          <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-num" id="rede-total-pessoas">0</div><div class="stat-label">Leads cadastrados</div></div>
           <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="stat-num" id="rede-profundidade">0</div><div class="stat-label">Profundidade máx.</div></div>
           <div class="stat-card roxo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="stat-num" id="rede-total-votos">0</div><div class="stat-label">Votos da rede</div></div>
         </div>
@@ -2253,6 +2254,11 @@ function gerarLinkCode() {
   for (let i = 0; i < 6; i++) c += chars[Math.floor(Math.random() * chars.length)];
   return c;
 }
+// Tipo derivado: parent_id presente => lead. Ausente => liderança. Campo `tipo` é metadado.
+function tipoDe(l) {
+  if (l && l.parent_id) return 'lead';
+  return 'lideranca';
+}
 function urlLinkAfiliado(code) {
   return location.origin + location.pathname + '#/cadastro/' + code;
 }
@@ -2326,6 +2332,7 @@ async function salvarCadastroPublico() {
       nome, telefone, municipio, bairro,
       regiao: (typeof REGIOES_MAP !== 'undefined' && REGIOES_MAP[municipio]) || '',
       parent_id, link_code: gerarLinkCode(),
+      tipo: 'lead',
       status: 'Prospecto', votos_comprometidos: 0,
       segmento: '', obs: '',
       created_via: 'afiliado',
@@ -2391,10 +2398,13 @@ function renderArvore(lider) {
     const fs = filhosDe(n.id);
     const inicial = (n.nome||'?')[0].toUpperCase();
     const sub = filhosDe(n.id).length;
+    const isLider = tipoDe(n) === 'lideranca';
+    const klass = isRoot ? 'root' : (isLider ? 'lider' : '');
+    const tag   = isLider ? 'liderança' : 'lead';
     return `
       <div class="tree-node">
-        <div class="tree-bubble${isRoot?' root':''}" onclick="abrirDetalheLideranca('${n.id}')" style="cursor:pointer;" title="${n.nome}">${inicial}</div>
-        <div class="tree-label">${n.nome.split(' ')[0]}<small>${sub?sub+' indic.':'—'}</small></div>
+        <div class="tree-bubble ${klass}" onclick="abrirDetalheLideranca('${n.id}')" style="cursor:pointer;" title="${n.nome} (${tag})">${inicial}</div>
+        <div class="tree-label">${n.nome.split(' ')[0]}<small>${sub?sub+' indic.':tag}</small></div>
         ${fs.length ? `<div class="tree-children">${fs.map(c => nodeHtml(c)).join('')}</div>` : ''}
       </div>`;
   }
@@ -2413,14 +2423,18 @@ function renderListaRede(lider) {
   }
   cont.innerHTML = desc.map(d => {
     const lv = nivel(d.id);
+    const isLider = tipoDe(d) === 'lideranca';
+    const tagBg   = isLider ? 'rgba(124,58,237,0.15)' : 'rgba(5,150,105,0.15)';
+    const tagCol  = isLider ? '#8b5cf6' : '#10b981';
+    const tagTxt  = isLider ? 'liderança' : 'lead';
     return `
       <div class="ld-list-item" onclick="abrirDetalheLideranca('${d.id}')" style="cursor:pointer;padding-left:${12 + lv*14}px;">
-        <span class="ld-list-bullet"></span>
+        <span class="ld-list-bullet" style="background:${tagCol};"></span>
         <div style="flex:1;min-width:0;">
           <div style="font-weight:600;color:var(--branco);font-size:13px;">${d.nome||'—'} <small style="color:var(--cinza2);font-weight:400;">· nível ${lv}</small></div>
           <div style="font-size:11px;color:var(--cinza2);">${d.municipio||'—'}${d.bairro?' · '+d.bairro:''}</div>
         </div>
-        <div style="font-size:11px;color:var(--cinza);">${d.created_via==='afiliado'?'🔗':'👤'}</div>
+        <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:${tagBg};color:${tagCol};">${tagTxt}</span>
       </div>`;
   }).join('');
 }
@@ -2454,14 +2468,14 @@ function renderPaginaRede() {
   const grid = document.getElementById('rede-cards');
   if (!grid) return;
   const busca = (document.getElementById('rede-busca')?.value || '').toLowerCase().trim();
-  // Raízes = quem não tem parent_id
+  // Raízes = lideranças (sem parent_id)
   const raizes = _liderancasData.filter(l => !l.parent_id);
   const raizesFiltradas = busca
     ? raizes.filter(l => (l.nome||'').toLowerCase().includes(busca) || (l.municipio||'').toLowerCase().includes(busca))
     : raizes;
 
-  // Stats globais
-  const totalPessoas = _liderancasData.length;
+  // Stats globais: leads = quem tem parent_id (entrou pela rede)
+  const totalLeads = _liderancasData.filter(l => l.parent_id).length;
   let maxProfundidade = 0;
   function profundidade(id, lvl=0) {
     const fs = filhosDe(id);
@@ -2473,7 +2487,7 @@ function renderPaginaRede() {
 
   const el = id => document.getElementById(id);
   if (el('rede-raizes'))        el('rede-raizes').textContent        = raizes.length;
-  if (el('rede-total-pessoas')) el('rede-total-pessoas').textContent = totalPessoas;
+  if (el('rede-total-pessoas')) el('rede-total-pessoas').textContent = totalLeads;
   if (el('rede-profundidade'))  el('rede-profundidade').textContent  = maxProfundidade;
   if (el('rede-total-votos'))   el('rede-total-votos').textContent   = totalVotos.toLocaleString('pt-BR');
 
@@ -3067,12 +3081,14 @@ _db.collection('liderancas').orderBy('updated_at','desc').onSnapshot(snapshot =>
 }
 
 function atualizarStatsCRM() {
-  const total = _liderancasData.length;
-  const totalVotos = _liderancasData.reduce((s,l) => s+(l.votos_comprometidos||0), 0);
-  const confirmados = _liderancasData.filter(l => l.status==='Confirmado').length;
+  // Stats da CRM consideram só lideranças, não leads cadastrados via link
+  const lideres = _liderancasData.filter(l => tipoDe(l) === 'lideranca');
+  const total = lideres.length;
+  const totalVotos = lideres.reduce((s,l) => s+(l.votos_comprometidos||0), 0);
+  const confirmados = lideres.filter(l => l.status==='Confirmado').length;
 
   const munCount = {};
-  _liderancasData.forEach(l => { if(l.municipio) munCount[l.municipio] = (munCount[l.municipio]||0) + (l.votos_comprometidos||0); });
+  lideres.forEach(l => { if(l.municipio) munCount[l.municipio] = (munCount[l.municipio]||0) + (l.votos_comprometidos||0); });
   const topMun = Object.entries(munCount).sort((a,b)=>b[1]-a[1])[0];
 
   const el = id => document.getElementById(id);
@@ -3084,7 +3100,7 @@ function atualizarStatsCRM() {
   // Ranking
   const ranking = el('crm-ranking');
   if(ranking) {
-    const top = [..._liderancasData].sort((a,b)=>(b.votos_comprometidos||0)-(a.votos_comprometidos||0)).slice(0,6);
+    const top = [...lideres].sort((a,b)=>(b.votos_comprometidos||0)-(a.votos_comprometidos||0)).slice(0,6);
     if(top.length===0){ ranking.innerHTML='<div style="font-size:12px;color:var(--cinza2);">Sem dados ainda.</div>'; return; }
     ranking.innerHTML = top.map((l,i) => `
       <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--borda);">
@@ -3102,7 +3118,8 @@ function atualizarFiltroMun() {
   const sel = document.getElementById('crm-filtro-mun');
   if(!sel) return;
   const atual = sel.value;
-  const municipios = [...new Set(_liderancasData.map(l=>l.municipio).filter(Boolean))].sort();
+  const lideres = _liderancasData.filter(l => tipoDe(l) === 'lideranca');
+  const municipios = [...new Set(lideres.map(l=>l.municipio).filter(Boolean))].sort();
   sel.innerHTML = '<option value="">Todos os municípios</option>' + municipios.map(m=>`<option value="${m}"${m===atual?' selected':''}>${m}</option>`).join('');
 }
 
@@ -3119,12 +3136,14 @@ function filtrarLiderancas() {
 function renderCRM() {
   const tbody = document.getElementById('crm-tbody');
   if(!tbody) return;
-  if(_liderancasFiltradas.length===0){
+  // Tabela CRM mostra só lideranças (não leads cadastrados via link)
+  const visiveis = _liderancasFiltradas.filter(l => tipoDe(l) === 'lideranca');
+  if(visiveis.length===0){
     tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--cinza2);padding:24px;font-size:13px;">Nenhuma liderança encontrada.</td></tr>';
     return;
   }
   const statusColor = { 'Confirmado':'verde','Negociando':'azul','Prospecto':'amarelo' };
-  tbody.innerHTML = _liderancasFiltradas.map(l => {
+  tbody.innerHTML = visiveis.map(l => {
     const diretas = filhosDe(l.id).length;
     const rede    = descendentesDe(l.id).length;
     return `
@@ -3229,6 +3248,7 @@ async function salvarLideranca() {
       payload.created_at = firebase.firestore.FieldValue.serverTimestamp();
       payload.link_code   = gerarLinkCode();
       payload.parent_id   = null;
+      payload.tipo        = 'lideranca';
       payload.created_via = 'manual';
       await _db.collection('liderancas').add(payload);
       mostrarFeedbackCRM(`✅ ${nome} cadastrado!`, true);
