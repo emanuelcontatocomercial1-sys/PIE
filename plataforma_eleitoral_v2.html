@@ -2003,6 +2003,17 @@ const _auth = firebase.auth(_fbApp);
 const _fbApp2 = firebase.initializeApp(_fbConfig, 'secondary');
 const _auth2  = firebase.auth(_fbApp2);
 
+// ── LISTENERS FIRESTORE (anexados após autenticação) ──
+let _listenersIniciados = false;
+function iniciarListenersFirestore() {
+  if (_listenersIniciados) return;
+  _listenersIniciados = true;
+  try { iniciarListener_municipios();   } catch(e){ console.error('[listeners] municipios:',   e); }
+  try { iniciarListener_liderancas();   } catch(e){ console.error('[listeners] liderancas:',   e); }
+  try { iniciarListener_concorrentes(); } catch(e){ console.error('[listeners] concorrentes:', e); }
+  try { iniciarListener_eventos();      } catch(e){ console.error('[listeners] eventos:',      e); }
+}
+
 // ── CAPA DO LOGIN (personalizável pelo admin) ──
 const _CAPA_KEY = 'pie_login_cover_url';
 const _CAPA_MAX_W = 900;     // largura máxima após compressão
@@ -2143,6 +2154,7 @@ _auth.onAuthStateChanged(async user => {
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       initApp();
+      iniciarListenersFirestore();
       atualizarSidebarUser();
       const adminPanel = document.getElementById('cfg-admin-panel');
       if (adminPanel) adminPanel.style.display = ud.role === 'admin' ? 'block' : 'none';
@@ -2393,6 +2405,7 @@ const MUNICIPIOS_BA = [
 })();
 
 // Listener em tempo real para status do painel
+function iniciarListener_municipios() {
 _db.collection('municipios').onSnapshot(snapshot => {
   const count = snapshot.size;
   const total = snapshot.docs.reduce((s,d) => s + (d.data().votos_atual||0), 0);
@@ -2446,9 +2459,11 @@ _db.collection('municipios').onSnapshot(snapshot => {
     }
   }
 }, err => {
+  console.error('[votos] Firestore error:', err);
   const badge = document.getElementById('fb-status-badge');
   if(badge){ badge.textContent='Erro de conexão'; badge.style.color='var(--vermelho2)'; }
 });
+}
 
 async function registrarVotos() {
   const nome   = document.getElementById('votos-municipio').value.trim();
@@ -2529,6 +2544,7 @@ for(const [reg, cidades] of Object.entries(_REGIOES_DADOS)) {
 let _liderancasData = [];
 let _liderancasFiltradas = [];
 
+function iniciarListener_liderancas() {
 _db.collection('liderancas').orderBy('updated_at','desc').onSnapshot(snapshot => {
   _liderancasData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
   _liderancasFiltradas = [..._liderancasData];
@@ -2536,6 +2552,7 @@ _db.collection('liderancas').orderBy('updated_at','desc').onSnapshot(snapshot =>
   atualizarStatsCRM();
   atualizarFiltroMun();
 }, err => console.error('CRM Firestore error:', err));
+}
 
 function atualizarStatsCRM() {
   const total = _liderancasData.length;
@@ -3162,11 +3179,13 @@ let _concorrentesData = [];
 let _monFiltro = 'todos';
 let _concorrenteAtual = null;
 
+function iniciarListener_concorrentes() {
 _db.collection('concorrentes').orderBy('nome').onSnapshot(snap => {
   _concorrentesData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   renderConcorrentes();
   atualizarStatsMon();
 }, err => console.error('Monitoramento error:', err));
+}
 
 function atualizarStatsMon() {
   const el = id => document.getElementById(id);
@@ -3582,10 +3601,12 @@ const _TIPO_COR = {
 const _MESES_AG = ['JAN','FEV','MAR','ABR','MAI','JUN','JUL','AGO','SET','OUT','NOV','DEZ'];
 let _eventosData = [];
 
+function iniciarListener_eventos() {
 _db.collection('eventos').orderBy('data_ts').onSnapshot(snap => {
   _eventosData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
   renderAgenda();
 }, err => console.error('Agenda error:', err));
+}
 
 function renderAgenda() {
   const agora = new Date();
