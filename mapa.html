@@ -331,8 +331,8 @@
 <script>
 
 // ── Firebase ──────────────────────────────────────────────────────────────────
-// Usa o mesmo nome de app que o painel ('plataforma') pra compartilhar a
-// persistência de auth via IndexedDB (chave: apiKey + appName)
+// Estratégia: tenta reusar a instância já autenticada do painel pai (mesma
+// origem). Se não estiver disponível (mapa aberto isolado), inicializa próprio.
 const firebaseConfig = {
   apiKey: "AIzaSyDmJFXVO3BQFU8NmbYPEkOTvhJrrgcrPVU",
   authDomain: "pie--campanha.firebaseapp.com",
@@ -341,9 +341,23 @@ const firebaseConfig = {
   messagingSenderId: "385341562231",
   appId: "1:385341562231:web:64c50e760acc1fa6179572"
 };
-const _mapaApp = firebase.initializeApp(firebaseConfig, 'plataforma');
-const db   = firebase.firestore(_mapaApp);
-const auth = firebase.auth(_mapaApp);
+
+let db = null, auth = null, _usandoPainel = false;
+try {
+  if (window.parent && window.parent !== window && window.parent._db && window.parent._auth) {
+    db = window.parent._db;
+    auth = window.parent._auth;
+    _usandoPainel = true;
+    console.log('[mapa] reusando Firestore/Auth do painel (já autenticado)');
+  }
+} catch(e) { console.warn('[mapa] sem acesso ao painel pai:', e.message); }
+
+if (!db) {
+  const _mapaApp = firebase.initializeApp(firebaseConfig, 'plataforma-mapa');
+  db   = firebase.firestore(_mapaApp);
+  auth = firebase.auth(_mapaApp);
+  console.log('[mapa] inicializando Firebase próprio (mapa isolado)');
+}
 
 // Dados do Firestore: { "Salvador": 6500, "Feira de Santana": 1800, ... }
 let VOTES_ATUAL = {};
@@ -727,18 +741,24 @@ function iniciarListenerMapa() {
   });
 }
 
-// Anexa o listener somente após a autenticação ser confirmada
-// (a iframe usa o mesmo nome de app pra herdar a sessão do painel via IndexedDB)
-auth.onAuthStateChanged(user => {
-  console.log('[mapa] auth state:', user ? user.email : 'null');
-  if (user) {
-    iniciarListenerMapa();
-  } else {
-    setLiveStatus(false);
-    // Fallback: tenta auth anônima caso a sessão do painel não esteja persistida
-    auth.signInAnonymously().catch(e => console.warn('[mapa] anon fail:', e.code));
-  }
-});
+// Se já está reusando a instância do painel, ela já está autenticada — anexa direto.
+// Caso contrário, espera o auth confirmar (ou tenta anônimo como último recurso).
+if (_usandoPainel && auth.currentUser) {
+  console.log('[mapa] auth herdado:', auth.currentUser.email);
+  iniciarListenerMapa();
+} else {
+  auth.onAuthStateChanged(user => {
+    console.log('[mapa] auth state:', user ? user.email : 'null');
+    if (user) {
+      iniciarListenerMapa();
+    } else {
+      setLiveStatus(false);
+      if (!_usandoPainel) {
+        auth.signInAnonymously().catch(e => console.warn('[mapa] anon fail:', e.code));
+      }
+    }
+  });
+}
 
 function setLiveStatus(ok) {
   const dot=document.getElementById('live-dot');
