@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
 <title>Plataforma de Inteligência Eleitoral — Talita Oliveira 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:light;
@@ -40,7 +40,9 @@
   --borda:#e8ecf2;--borda2:#d1d9e6;
 
   /* Tipografia */
-  --fonte:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;--display:'Bebas Neue',Impact,sans-serif;
+  --fonte:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+  --display:'Bebas Neue',Impact,sans-serif;
+  --serif:'Playfair Display',Georgia,serif;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -148,43 +150,57 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 #app{display:none;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}
 
-/* SIDEBAR */
+/* SIDEBAR — estilo editorial minimalista */
 .sidebar{
-  background:#160f2e;border-right:1px solid rgba(255,255,255,0.06);
-  display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:240px;z-index:100;
-  overflow-y:auto;
-  --branco:#e2e8f0;--cinza:#7a8699;--cinza2:#3f4f63;
-  --borda:rgba(255,255,255,0.07);--borda2:rgba(255,255,255,0.12);
-  --bg3:#231640;--bg4:#2d1f52;
-  --ciano2:#8b5cf6;--ciano3:#a78bfa;
-  --ciano-glow:rgba(139,92,246,0.14);--ciano-borda:rgba(139,92,246,0.28);
+  background:#fafaf7;border-right:1px solid #e6e2d8;
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:220px;z-index:100;
+  overflow-y:auto;padding:0;
 }
-.sidebar-logo{padding:26px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.07);}
-.sidebar-logo img{height:44px;width:auto;margin-bottom:10px;display:block;}
-.sidebar-logo-name{font-size:13px;font-weight:800;color:#e2e8f0;line-height:1.3;letter-spacing:-0.2px;}
-.sidebar-logo-sub{font-size:10px;color:#7a8699;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;}
-.sidebar-section{padding:16px 12px 8px;}
-.sidebar-section-label{font-size:10px;font-weight:700;color:#3f4f63;text-transform:uppercase;letter-spacing:2px;padding:0 10px;margin-bottom:6px;}
+.sidebar-logo{padding:34px 24px 22px;border-bottom:1px solid #e6e2d8;}
+.sidebar-logo img{display:none;}
+.sidebar-logo .pre-title{display:none;}
+.sidebar-logo-name{
+  font-family:var(--serif);font-size:22px;font-weight:500;font-style:italic;
+  color:#1a1a1a;line-height:1.1;letter-spacing:-0.5px;
+}
+.sidebar-logo-sub{
+  font-family:var(--fonte);font-size:11px;font-weight:400;color:#888;
+  margin-top:8px;letter-spacing:0.2px;text-transform:none;
+}
+.sidebar-section{padding:14px 0 0;}
+.sidebar-section + .sidebar-section{padding-top:12px;}
+.sidebar-section-label{display:none;}
 .nav-item{
-  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;
-  cursor:pointer;transition:all 0.18s;color:#7a8699;font-size:13px;font-weight:600;margin-bottom:2px;
+  display:block;padding:7px 24px;color:#5a5a5a;font-size:14px;font-weight:400;
+  cursor:pointer;transition:color 0.15s;font-family:var(--fonte);position:relative;
+  line-height:1.4;
 }
-.nav-item:hover{background:rgba(255,255,255,0.05);color:#e2e8f0;}
-.nav-item.active{background:rgba(139,92,246,0.14);color:#a78bfa;box-shadow:inset 0 0 0 1px rgba(139,92,246,0.28);}
-.nav-item .ni-icon{width:18px;height:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.nav-item .ni-icon svg{width:16px;height:16px;}
-.nav-item .ni-badge{margin-left:auto;background:var(--vermelho);color:#fff;font-size:10px;font-weight:800;padding:2px 6px;border-radius:10px;}
-.sidebar-bottom{margin-top:auto;padding:16px 12px;border-top:1px solid rgba(255,255,255,0.07);}
-.user-card{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,0.05);}
-.user-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#6d28d9 0%,#8b5cf6 100%);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0;}
-.user-name{font-size:12px;font-weight:700;color:#e2e8f0;}
-.user-role{font-size:10px;color:#7a8699;}
-.btn-logout{margin-left:auto;background:none;border:none;color:#3f4f63;cursor:pointer;display:flex;align-items:center;transition:color 0.2s;}
-.btn-logout:hover{color:#ef4444;}
-.btn-logout svg{width:16px;height:16px;}
+.nav-item:hover{color:#1a1a1a;background:none;}
+.nav-item.active{color:#1a1a1a;font-weight:500;background:none;box-shadow:none;}
+.nav-item.active::after{
+  content:"";position:absolute;left:24px;bottom:1px;width:28px;height:1px;background:#1a1a1a;
+}
+.nav-item .ni-icon{display:none;}
+.nav-item .ni-badge{
+  margin-left:6px;background:none;color:#999;font-size:12px;font-weight:400;padding:0;border-radius:0;font-family:var(--mono);
+}
+.nav-item .ni-badge::before{content:"(";}
+.nav-item .ni-badge::after{content:")";}
+.sidebar-bottom{margin-top:auto;padding:18px 24px 22px;border-top:1px solid #e6e2d8;}
+.user-card{display:flex;align-items:flex-end;gap:8px;background:none;padding:0;border-radius:0;}
+.user-avatar{display:none;}
+.user-card > div:not(.user-avatar){flex:1;min-width:0;}
+.user-name{
+  font-family:var(--serif);font-size:14px;font-weight:500;font-style:italic;color:#1a1a1a;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.user-role{font-family:var(--fonte);font-size:11px;color:#888;margin-top:2px;}
+.btn-logout{margin-left:auto;background:none;border:none;color:#999;cursor:pointer;display:flex;align-items:center;transition:color 0.2s;padding:0;}
+.btn-logout:hover{color:#1a1a1a;}
+.btn-logout svg{width:14px;height:14px;}
 
 /* MAIN */
-.main{margin-left:240px;min-height:100vh;width:calc(100% - 240px);overflow-x:hidden;}
+.main{margin-left:220px;min-height:100vh;width:calc(100% - 220px);overflow-x:hidden;}
 .topbar{
   background:#ffffff;
   border-bottom:1px solid var(--borda);padding:0 32px;height:60px;
@@ -535,9 +551,8 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <div style="font-size:10px;font-weight:800;color:#8b5cf6;letter-spacing:2.5px;text-transform:uppercase;margin-bottom:6px;">PIE · 2026</div>
-        <div class="sidebar-logo-name">Plataforma de Inteligência Eleitoral</div>
-        <div class="sidebar-logo-sub">Talita Oliveira · Bahia</div>
+        <div class="sidebar-logo-name">Plataforma<br>Eleitoral</div>
+        <div class="sidebar-logo-sub">Talita Oliveira · Bahia 2026</div>
       </div>
 
       <div class="sidebar-section">
@@ -546,13 +561,13 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
           <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></span>Dashboard
         </div>
         <div class="nav-item" onclick="showPage('mapa',this)">
-          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></span>Mapa Eleitoral
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></span>Mapa
         </div>
         <div class="nav-item" onclick="showPage('metas',this)">
-          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>Metas 2026
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></span>Metas
         </div>
         <div class="nav-item" onclick="showPage('votos',this)">
-          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Registrar Votos
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></span>Votos
         </div>
       </div>
 
@@ -575,10 +590,10 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
       <div class="sidebar-section">
         <div class="sidebar-section-label">Digital</div>
         <div class="nav-item" onclick="showPage('trafego',this)">
-          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>Tráfego &amp; Leads
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></span>Tráfego
         </div>
         <div class="nav-item" onclick="showPage('ia',this)">
-          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>IA Estratégica
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>IA
         </div>
       </div>
 
