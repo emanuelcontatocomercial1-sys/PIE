@@ -52,37 +52,37 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   position:fixed;inset:0;z-index:9999;display:flex;
 }
 .login-cover{
-  width:52%;background:#1a1a1a center/cover no-repeat;
+  width:36%;max-width:440px;background:#1a1a1a center/cover no-repeat;
   display:none;position:relative;flex-shrink:0;
 }
 .login-cover::after{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,0) 50%,rgba(0,0,0,0.78) 100%);
+  background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,0.72) 100%);
   pointer-events:none;
 }
 .login-cover-fallback{
   position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  background:#111;color:#3a3a3a;font-family:var(--display);font-size:120px;letter-spacing:6px;
+  background:#111;color:#3a3a3a;font-family:var(--display);font-size:80px;letter-spacing:4px;
   opacity:0.5;
 }
 .login-cover-overlay{
-  position:absolute;left:48px;right:48px;bottom:44px;z-index:2;color:#fff;
+  position:absolute;left:28px;right:28px;bottom:28px;z-index:2;color:#fff;
 }
 .login-cover-name{
-  font-family:var(--display);font-size:64px;line-height:0.95;letter-spacing:2px;
-  text-transform:uppercase;margin:0 0 10px;text-shadow:0 2px 18px rgba(0,0,0,0.5);
+  font-family:var(--display);font-size:34px;line-height:0.95;letter-spacing:1.5px;
+  text-transform:uppercase;margin:0 0 8px;text-shadow:0 2px 14px rgba(0,0,0,0.5);
 }
 .login-cover-tag{
-  display:inline-flex;align-items:center;gap:10px;font-family:var(--display);
-  font-size:22px;letter-spacing:3px;padding:6px 14px;background:rgba(255,255,255,0.12);
+  display:inline-flex;align-items:center;gap:8px;font-family:var(--display);
+  font-size:16px;letter-spacing:2px;padding:4px 10px;background:rgba(255,255,255,0.12);
   backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
   border:1px solid rgba(255,255,255,0.2);border-radius:4px;
 }
 .login-cover-tag b{font-weight:400;color:#fde047;}
 .login-cover-sub{
-  display:block;font-family:var(--fonte);font-size:12px;font-weight:500;
-  letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.7);
-  margin-top:14px;
+  display:block;font-family:var(--fonte);font-size:10px;font-weight:500;
+  letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.65);
+  margin-top:10px;
 }
 @media(min-width:900px){.login-cover{display:block;}}
 .login-right{
@@ -1490,13 +1490,13 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
             <div class="settings-card">
               <div class="settings-section-title">🖼️ Foto de capa do login</div>
               <div style="font-size:12px;color:var(--cinza);margin-bottom:14px;line-height:1.5;">
-                A imagem aparece na tela de login para todos os usuários. Cole a URL pública (Instagram, Imgur, GitHub, etc.) ou deixe vazio para usar o padrão.
+                Envie a foto (PNG ou JPG). A imagem é otimizada automaticamente e aparece na tela de login para todos os usuários.
               </div>
-              <div id="cfg-capa-preview" style="width:100%;height:160px;border-radius:10px;background:#1a1a1a center/cover no-repeat;border:1px solid var(--borda);margin-bottom:12px;display:flex;align-items:center;justify-content:center;color:var(--cinza2);font-size:12px;">Sem foto definida</div>
+              <div id="cfg-capa-preview" style="width:100%;height:120px;border-radius:10px;background:#1a1a1a center/cover no-repeat;border:1px solid var(--borda);margin-bottom:12px;display:flex;align-items:center;justify-content:center;color:var(--cinza2);font-size:12px;">Sem foto definida</div>
               <div style="display:flex;flex-direction:column;gap:10px;">
-                <input type="url" id="cfg-capa-url" class="form-input" placeholder="https://exemplo.com/foto.jpg">
+                <input type="file" id="cfg-capa-file" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="processarArquivoCapa(this)">
                 <div style="display:flex;gap:10px;">
-                  <button onclick="salvarCapaLogin()" class="btn btn-primary" style="flex:1;">Salvar capa</button>
+                  <button onclick="document.getElementById('cfg-capa-file').click()" class="btn btn-primary" style="flex:1;">Escolher foto (PNG/JPG)</button>
                   <button onclick="removerCapaLogin()" class="btn btn-outline">Remover</button>
                 </div>
                 <div id="cfg-capa-feedback" style="display:none;font-size:12px;padding:10px;border-radius:8px;text-align:center;font-weight:600;"></div>
@@ -2005,17 +2005,26 @@ const _auth2  = firebase.auth(_fbApp2);
 
 // ── CAPA DO LOGIN (personalizável pelo admin) ──
 const _CAPA_KEY = 'pie_login_cover_url';
+const _CAPA_MAX_W = 900;     // largura máxima após compressão
+const _CAPA_QUALITY = 0.82;  // qualidade JPEG
+
 function aplicarCapaLogin(url) {
   const cover = document.getElementById('login-cover');
   const fallback = document.getElementById('login-cover-fallback');
   if (!cover) return;
-  if (url && url.trim()) {
-    cover.style.backgroundImage = `url("${url.trim().replace(/"/g,'%22')}")`;
+  if (url) {
+    cover.style.backgroundImage = `url("${url.replace(/"/g,'%22')}")`;
     if (fallback) fallback.style.display = 'none';
   } else {
     cover.style.backgroundImage = '';
     if (fallback) fallback.style.display = 'flex';
   }
+}
+function atualizarPreviewCapa(url) {
+  const preview = document.getElementById('cfg-capa-preview');
+  if (!preview) return;
+  if (url) { preview.style.backgroundImage = `url("${url.replace(/"/g,'%22')}")`; preview.textContent = ''; }
+  else     { preview.style.backgroundImage = ''; preview.textContent = 'Sem foto definida'; }
 }
 // Aplica imediatamente do cache local
 try { aplicarCapaLogin(localStorage.getItem(_CAPA_KEY) || ''); } catch(_) {}
@@ -2025,44 +2034,79 @@ async function sincronizarCapaLogin() {
     const snap = await _db.collection('config').doc('login').get();
     const url = snap.exists ? (snap.data().cover_url || '') : '';
     aplicarCapaLogin(url);
+    atualizarPreviewCapa(url);
     try { url ? localStorage.setItem(_CAPA_KEY, url) : localStorage.removeItem(_CAPA_KEY); } catch(_) {}
-    // Atualiza preview/input no painel admin se já estiver montado
-    const input = document.getElementById('cfg-capa-url');
-    const preview = document.getElementById('cfg-capa-preview');
-    if (input) input.value = url;
-    if (preview) {
-      if (url) { preview.style.backgroundImage = `url("${url.replace(/"/g,'%22')}")`; preview.textContent = ''; }
-      else     { preview.style.backgroundImage = ''; preview.textContent = 'Sem foto definida'; }
-    }
   } catch (e) { console.warn('[capa] falha ao sincronizar:', e.message); }
 }
 
-async function salvarCapaLogin() {
+function comprimirImagem(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        let w = img.naturalWidth, h = img.naturalHeight;
+        if (w > _CAPA_MAX_W) { h = Math.round(h * (_CAPA_MAX_W / w)); w = _CAPA_MAX_W; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', _CAPA_QUALITY));
+      };
+      img.onerror = () => reject(new Error('Arquivo não é uma imagem válida.'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('Falha ao ler arquivo.'));
+    reader.readAsDataURL(file);
+  });
+}
+
+async function processarArquivoCapa(input) {
   if (!_currentUser || _currentUser.role !== 'admin') return;
-  const url = (document.getElementById('cfg-capa-url').value || '').trim();
-  if (url && !/^https?:\/\//i.test(url)) {
-    feedbackCfg('cfg-capa-feedback','URL inválida — use http(s)://...',false); return;
+  const file = input.files && input.files[0];
+  input.value = '';
+  if (!file) return;
+  if (!/^image\/(png|jpe?g|webp)$/i.test(file.type)) {
+    feedbackCfg('cfg-capa-feedback','Formato inválido — use PNG, JPG ou WEBP.',false); return;
   }
+  if (file.size > 8 * 1024 * 1024) {
+    feedbackCfg('cfg-capa-feedback','Arquivo grande demais (máx 8 MB).',false); return;
+  }
+  const btn = document.querySelector('#cfg-admin-panel button.btn-primary');
   try {
+    feedbackCfg('cfg-capa-feedback','Otimizando imagem...',true);
+    const dataUrl = await comprimirImagem(file);
+    if (dataUrl.length > 900 * 1024) {
+      feedbackCfg('cfg-capa-feedback','Imagem ainda grande após compressão — escolha outra.',false); return;
+    }
     await _db.collection('config').doc('login').set({
-      cover_url: url,
+      cover_url: dataUrl,
       updated_at: firebase.firestore.FieldValue.serverTimestamp(),
       updated_by: _currentUser.uid
     }, { merge: true });
-    aplicarCapaLogin(url);
-    try { url ? localStorage.setItem(_CAPA_KEY, url) : localStorage.removeItem(_CAPA_KEY); } catch(_) {}
-    const preview = document.getElementById('cfg-capa-preview');
-    if (preview) {
-      if (url) { preview.style.backgroundImage = `url("${url.replace(/"/g,'%22')}")`; preview.textContent = ''; }
-      else     { preview.style.backgroundImage = ''; preview.textContent = 'Sem foto definida'; }
-    }
-    feedbackCfg('cfg-capa-feedback','✅ Capa atualizada com sucesso!',true);
-  } catch(e) { feedbackCfg('cfg-capa-feedback','❌ Erro: '+e.message,false); }
+    aplicarCapaLogin(dataUrl);
+    atualizarPreviewCapa(dataUrl);
+    try { localStorage.setItem(_CAPA_KEY, dataUrl); } catch(_) {}
+    feedbackCfg('cfg-capa-feedback','✅ Capa atualizada!',true);
+  } catch(e) {
+    feedbackCfg('cfg-capa-feedback','❌ '+e.message,false);
+  }
 }
 
 async function removerCapaLogin() {
-  document.getElementById('cfg-capa-url').value = '';
-  await salvarCapaLogin();
+  if (!_currentUser || _currentUser.role !== 'admin') return;
+  try {
+    await _db.collection('config').doc('login').set({
+      cover_url: '',
+      updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+      updated_by: _currentUser.uid
+    }, { merge: true });
+    aplicarCapaLogin('');
+    atualizarPreviewCapa('');
+    try { localStorage.removeItem(_CAPA_KEY); } catch(_) {}
+    feedbackCfg('cfg-capa-feedback','Capa removida.',true);
+  } catch(e) { feedbackCfg('cfg-capa-feedback','❌ '+e.message,false); }
 }
 
 // ── AUTH STATE ──
