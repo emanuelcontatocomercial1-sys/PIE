@@ -2629,14 +2629,14 @@ function renderPaginaRede() {
   const grid = document.getElementById('rede-cards');
   if (!grid) return;
   const busca = (document.getElementById('rede-busca')?.value || '').toLowerCase().trim();
-  // Raízes = lideranças (sem parent_id)
-  const raizes = _liderancasData.filter(l => !l.parent_id);
+  // Raízes = só lideranças (não leads soltos que também têm parent_id null)
+  const raizes = _liderancasData.filter(l => !l.parent_id && tipoDe(l) === 'lideranca');
   const raizesFiltradas = busca
     ? raizes.filter(l => (l.nome||'').toLowerCase().includes(busca) || (l.municipio||'').toLowerCase().includes(busca))
     : raizes;
 
-  // Stats globais: leads = quem tem parent_id (entrou pela rede)
-  const totalLeads = _liderancasData.filter(l => l.parent_id).length;
+  // Stats globais: total de leads (vinculados + soltos)
+  const totalLeads = _liderancasData.filter(l => tipoDe(l) === 'lead').length;
   let maxProfundidade = 0;
   function profundidade(id, lvl=0) {
     const fs = filhosDe(id);
