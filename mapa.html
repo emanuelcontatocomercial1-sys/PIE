@@ -326,6 +326,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script>
 
@@ -695,26 +696,39 @@ function renderActivityLog() {
 }
 
 // ── Firebase onSnapshot ───────────────────────────────────────────────────────
-db.collection('municipios').onSnapshot(snapshot => {
-  snapshot.docChanges().forEach(change => {
-    const data = change.doc.data();
-    if(!data.nome) return;
-    if(change.type==='added'||change.type==='modified') {
-      VOTES_ATUAL[data.nome] = data.votos_atual || 0;
-      if(change.type==='modified') {
-        activityLog.unshift({ nome:data.nome, votos:data.votos_atual, ts:Date.now() });
-        if(activityLog.length>10) activityLog.pop();
-        renderActivityLog();
+let _mapaListenerAtivo = false;
+function iniciarListenerMapa() {
+  if (_mapaListenerAtivo) return;
+  _mapaListenerAtivo = true;
+  db.collection('municipios').onSnapshot(snapshot => {
+    snapshot.docChanges().forEach(change => {
+      const data = change.doc.data();
+      if(!data.nome) return;
+      if(change.type==='added'||change.type==='modified') {
+        VOTES_ATUAL[data.nome] = data.votos_atual || 0;
+        if(change.type==='modified') {
+          activityLog.unshift({ nome:data.nome, votos:data.votos_atual, ts:Date.now() });
+          if(activityLog.length>10) activityLog.pop();
+          renderActivityLog();
+        }
+      } else if(change.type==='removed') {
+        delete VOTES_ATUAL[data.nome];
       }
-    } else if(change.type==='removed') {
-      delete VOTES_ATUAL[data.nome];
-    }
+    });
+    atualizarStats();
+    setLiveStatus(true);
+  }, err => {
+    console.error('[mapa] Firestore error:', err);
+    setLiveStatus(false);
+    _mapaListenerAtivo = false; // permite reanexar após próximo evento de auth
   });
-  atualizarStats();
-  setLiveStatus(true);
-}, err => {
-  console.error('Firestore error:', err);
-  setLiveStatus(false);
+}
+
+// Anexa o listener somente após a autenticação ser confirmada (a iframe herda
+// o estado de auth do domínio do app via persistência LOCAL)
+firebase.auth().onAuthStateChanged(user => {
+  if (user) iniciarListenerMapa();
+  else      setLiveStatus(false);
 });
 
 function setLiveStatus(ok) {
