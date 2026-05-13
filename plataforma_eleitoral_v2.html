@@ -229,6 +229,27 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   width:8px;height:8px;border-radius:50%;background:var(--ciano2);flex-shrink:0;
 }
 
+/* Cards da página Rede */
+.rede-card{
+  background:var(--bg2);border:1px solid var(--borda);border-radius:14px;padding:18px;
+  cursor:pointer;transition:transform 0.15s,box-shadow 0.15s,border-color 0.15s;
+  display:flex;flex-direction:column;gap:10px;
+}
+.rede-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.08);border-color:var(--ciano-borda);}
+.rede-card-head{display:flex;align-items:center;gap:12px;}
+.rede-card-bub{
+  width:42px;height:42px;border-radius:50%;
+  background:linear-gradient(135deg,#6d28d9,#7c3aed);
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:16px;flex-shrink:0;
+}
+.rede-card-name{font-size:15px;font-weight:700;color:var(--branco);line-height:1.2;}
+.rede-card-mun{font-size:11px;color:var(--cinza2);margin-top:2px;}
+.rede-card-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-top:8px;border-top:1px solid var(--borda);}
+.rede-card-stat{text-align:center;}
+.rede-card-stat-num{font-size:18px;font-weight:800;color:var(--ciano2);font-family:var(--mono);}
+.rede-card-stat-lbl{font-size:9px;color:var(--cinza2);text-transform:uppercase;letter-spacing:0.5px;margin-top:1px;}
+
 /* SETTINGS */
 .settings-card{background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .settings-section-title{font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--borda);}
@@ -691,6 +712,9 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         <div class="nav-item" onclick="showPage('crm',this)">
           <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Lideranças
         </div>
+        <div class="nav-item" onclick="showPage('rede',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="12" cy="19" r="2.5"/><circle cx="18" cy="12" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="16.5"/><line x1="8.5" y1="12" x2="15.5" y2="12"/></svg></span>Rede
+        </div>
         <div class="nav-item" onclick="showPage('agenda',this)">
           <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>Agenda
         </div>
@@ -1032,6 +1056,31 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 
         <div id="lista-projetos">
           <div style="font-size:13px;color:var(--cinza2);text-align:center;padding:32px;background:var(--bg3);border-radius:14px;">Carregando projetos...</div>
+        </div>
+      </div>
+
+      <!-- ══ REDE DE INDICAÇÕES (visão geral MLM) ══ -->
+      <div class="page" id="page-rede">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div class="page-title">Rede de Indicações</div>
+            <div class="page-sub">Visão da rede de cadastros por liderança — clique em uma raiz pra ver a árvore completa</div>
+          </div>
+          <input type="text" id="rede-busca" placeholder="Buscar liderança..." oninput="renderPaginaRede()"
+            style="background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:8px 14px;font-size:13px;color:var(--branco);font-family:var(--fonte);outline:none;width:240px;">
+        </div>
+
+        <!-- Stats globais -->
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+          <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="16.5"/></svg></div><div class="stat-num" id="rede-raizes">0</div><div class="stat-label">Lideranças raiz</div></div>
+          <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-num" id="rede-total-pessoas">0</div><div class="stat-label">Pessoas na rede</div></div>
+          <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="stat-num" id="rede-profundidade">0</div><div class="stat-label">Profundidade máx.</div></div>
+          <div class="stat-card roxo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="stat-num" id="rede-total-votos">0</div><div class="stat-label">Votos da rede</div></div>
+        </div>
+
+        <!-- Grid de cards de raízes -->
+        <div id="rede-cards" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;">
+          <div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--cinza2);font-size:13px;">Carregando...</div>
         </div>
       </div>
 
@@ -1924,6 +1973,7 @@ const PAGE_TITLES = {
   ia:'IA Estratégica','projeto-detalhe':'Projeto',
   'concorrente-detalhe':'Perfil do Concorrente',
   'lideranca-detalhe':'Rede da Liderança',
+  rede:'Rede de Indicações',
   config:'Configurações',votos:'Registrar Votos'
 };
 
@@ -1935,6 +1985,7 @@ function showPage(id, el) {
   document.getElementById('topbar-title').textContent = PAGE_TITLES[id] || id;
   window.scrollTo({top:0,behavior:'smooth'});
   if(id === 'config' && typeof carregarUsuarios === 'function') carregarUsuarios();
+  if(id === 'rede' && typeof renderPaginaRede === 'function') renderPaginaRede();
   // fecha drawer no mobile ao navegar
   if(window.innerWidth <= 900) toggleSidebar(true);
 }
@@ -2396,6 +2447,62 @@ function editarLiderancaAtual() {
   if (!_liderancaAtual) return;
   showPage('crm', document.querySelector('[onclick*=crm]'));
   setTimeout(() => editarLideranca(_liderancaAtual.id), 100);
+}
+
+// ── Página "Rede de Indicações" (visão geral) ──
+function renderPaginaRede() {
+  const grid = document.getElementById('rede-cards');
+  if (!grid) return;
+  const busca = (document.getElementById('rede-busca')?.value || '').toLowerCase().trim();
+  // Raízes = quem não tem parent_id
+  const raizes = _liderancasData.filter(l => !l.parent_id);
+  const raizesFiltradas = busca
+    ? raizes.filter(l => (l.nome||'').toLowerCase().includes(busca) || (l.municipio||'').toLowerCase().includes(busca))
+    : raizes;
+
+  // Stats globais
+  const totalPessoas = _liderancasData.length;
+  let maxProfundidade = 0;
+  function profundidade(id, lvl=0) {
+    const fs = filhosDe(id);
+    if (!fs.length) return lvl;
+    return Math.max(...fs.map(c => profundidade(c.id, lvl+1)));
+  }
+  raizes.forEach(r => { maxProfundidade = Math.max(maxProfundidade, profundidade(r.id)); });
+  const totalVotos = _liderancasData.reduce((s,l) => s + (l.votos_comprometidos||0), 0);
+
+  const el = id => document.getElementById(id);
+  if (el('rede-raizes'))        el('rede-raizes').textContent        = raizes.length;
+  if (el('rede-total-pessoas')) el('rede-total-pessoas').textContent = totalPessoas;
+  if (el('rede-profundidade'))  el('rede-profundidade').textContent  = maxProfundidade;
+  if (el('rede-total-votos'))   el('rede-total-votos').textContent   = totalVotos.toLocaleString('pt-BR');
+
+  if (raizesFiltradas.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--cinza2);font-size:13px;">Nenhuma liderança encontrada. Cadastre lideranças em "Lideranças" pra começar a montar a rede.</div>';
+    return;
+  }
+
+  grid.innerHTML = raizesFiltradas.map(r => {
+    const diretas = filhosDe(r.id).length;
+    const total   = descendentesDe(r.id).length;
+    const votos   = descendentesDe(r.id).reduce((s,d) => s + (d.votos_comprometidos||0), 0) + (r.votos_comprometidos||0);
+    const inicial = (r.nome||'?')[0].toUpperCase();
+    return `
+      <div class="rede-card" onclick="abrirDetalheLideranca('${r.id}')">
+        <div class="rede-card-head">
+          <div class="rede-card-bub">${inicial}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="rede-card-name">${r.nome||'—'}</div>
+            <div class="rede-card-mun">${r.municipio||'—'}${r.bairro?' · '+r.bairro:''}</div>
+          </div>
+        </div>
+        <div class="rede-card-stats">
+          <div class="rede-card-stat"><div class="rede-card-stat-num">${diretas}</div><div class="rede-card-stat-lbl">Diretas</div></div>
+          <div class="rede-card-stat"><div class="rede-card-stat-num">${total}</div><div class="rede-card-stat-lbl">Total rede</div></div>
+          <div class="rede-card-stat"><div class="rede-card-stat-num">${votos.toLocaleString('pt-BR')}</div><div class="rede-card-stat-lbl">Votos</div></div>
+        </div>
+      </div>`;
+  }).join('');
 }
 
 // ── CAPA DO LOGIN (personalizável pelo admin) ──
@@ -2943,6 +3050,19 @@ _db.collection('liderancas').orderBy('updated_at','desc').onSnapshot(snapshot =>
   renderCRM();
   atualizarStatsCRM();
   atualizarFiltroMun();
+  // Atualiza visualizações de rede em tempo real
+  if (typeof renderPaginaRede === 'function' && document.getElementById('page-rede')?.classList.contains('active')) {
+    renderPaginaRede();
+  }
+  if (_liderancaAtual && document.getElementById('page-lideranca-detalhe')?.classList.contains('active')) {
+    const atualizado = _liderancasData.find(l => l.id === _liderancaAtual.id);
+    if (atualizado) {
+      _liderancaAtual = atualizado;
+      renderEstatisticasRede(atualizado);
+      renderArvore(atualizado);
+      renderListaRede(atualizado);
+    }
+  }
 }, err => console.error('CRM Firestore error:', err));
 }
 
