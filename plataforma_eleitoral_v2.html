@@ -2423,18 +2423,19 @@ function tipoDe(l) {
 function urlLinkAfiliado(code) {
   return location.origin + location.pathname + '#/cadastro/' + code;
 }
-function descendentesDe(id, todos = _liderancasData) {
+function descendentesDe(id) {
   const out = [];
-  const stack = todos.filter(l => l.parent_id === id);
+  const stack = [...(_filhosPorParent.get(id) || [])];
   while (stack.length) {
     const cur = stack.shift();
     out.push(cur);
-    stack.push(...todos.filter(l => l.parent_id === cur.id));
+    const filhos = _filhosPorParent.get(cur.id);
+    if (filhos) stack.push(...filhos);
   }
   return out;
 }
-function filhosDe(id, todos = _liderancasData) {
-  return todos.filter(l => l.parent_id === id);
+function filhosDe(id) {
+  return _filhosPorParent.get(id) || [];
 }
 
 // ── Hash router (#/cadastro/<code>) ──
@@ -2512,7 +2513,7 @@ async function salvarCadastroPublico() {
 // ── Detalhe da liderança ──
 let _liderancaAtual = null;
 function abrirDetalheLideranca(id) {
-  const l = _liderancasData.find(x => x.id === id);
+  const l = _lidPorId.get(id);
   if (!l) return;
   _liderancaAtual = l;
   document.getElementById('ld-nome').textContent     = l.nome || '—';
@@ -2578,7 +2579,7 @@ function renderListaRede(lider) {
   if (!desc.length) { cont.innerHTML = '<div style="text-align:center;color:var(--cinza2);font-size:13px;padding:24px;">Lista vazia.</div>'; return; }
   // Nível de cada um
   function nivel(id, lvl=0) {
-    const l = _liderancasData.find(x=>x.id===id);
+    const l = _lidPorId.get(id);
     if (!l || !l.parent_id || l.parent_id === lider.id) return lvl + (l && l.parent_id === lider.id ? 1 : 0);
     return nivel(l.parent_id, lvl+1);
   }
@@ -2629,14 +2630,14 @@ function renderPaginaRede() {
   const grid = document.getElementById('rede-cards');
   if (!grid) return;
   const busca = (document.getElementById('rede-busca')?.value || '').toLowerCase().trim();
-  // Raízes = só lideranças (não leads soltos que também têm parent_id null)
-  const raizes = _liderancasData.filter(l => !l.parent_id && tipoDe(l) === 'lideranca');
+  // Raízes = lideranças sem pai (cache _lideres)
+  const raizes = _lideres.filter(l => !l.parent_id);
   const raizesFiltradas = busca
     ? raizes.filter(l => (l.nome||'').toLowerCase().includes(busca) || (l.municipio||'').toLowerCase().includes(busca))
     : raizes;
 
-  // Stats globais: total de leads (vinculados + soltos)
-  const totalLeads = _liderancasData.filter(l => tipoDe(l) === 'lead').length;
+  // Stats globais: total de leads (cache)
+  const totalLeads = _leads.length;
   let maxProfundidade = 0;
   function profundidade(id, lvl=0) {
     const fs = filhosDe(id);
@@ -2644,7 +2645,7 @@ function renderPaginaRede() {
     return Math.max(...fs.map(c => profundidade(c.id, lvl+1)));
   }
   raizes.forEach(r => { maxProfundidade = Math.max(maxProfundidade, profundidade(r.id)); });
-  const totalVotos = _liderancasData.reduce((s,l) => s + (l.votos_comprometidos||0), 0);
+  const totalVotos = _lideres.reduce((s,l) => s + (l.votos_comprometidos||0), 0);
 
   const el = id => document.getElementById(id);
   if (el('rede-raizes'))        el('rede-raizes').textContent        = raizes.length;
@@ -2687,13 +2688,17 @@ const _LEADS_POR_PAGINA = 50;
 function renderLeads() {
   const tbody = document.getElementById('leads-tbody');
   if (!tbody) return;
-  const leads = _liderancasData.filter(l => tipoDe(l) === 'lead');
+  const leads = _leads;
 
   // Stats
-  const hoje = new Date(); hoje.setHours(0,0,0,0);
-  const cadHoje = leads.filter(l => l.created_at?.toDate && l.created_at.toDate() >= hoje).length;
-  const vinc = leads.filter(l => l.parent_id).length;
-  const muns = new Set(leads.map(l => l.municipio).filter(Boolean));
+  const hojeSec = Math.floor(new Date().setHours(0,0,0,0) / 1000);
+  let cadHoje = 0, vinc = 0;
+  const muns = new Set();
+  for (const l of leads) {
+    if (l.created_at && l.created_at.seconds >= hojeSec) cadHoje++;
+    if (l.parent_id) vinc++;
+    if (l.municipio) muns.add(l.municipio);
+  }
   const el = id => document.getElementById(id);
   if (el('leads-total'))       el('leads-total').textContent       = leads.length;
   if (el('leads-municipios'))  el('leads-municipios').textContent  = muns.size;
@@ -2727,7 +2732,7 @@ function renderLeads() {
     tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--cinza2);padding:24px;font-size:13px;">Nenhum lead encontrado. Use "+ Novo lead" ou "Importar planilha" pra começar.</td></tr>';
   } else {
     tbody.innerHTML = pagina.map(l => {
-      const pai = l.parent_id ? _liderancasData.find(x => x.id === l.parent_id) : null;
+      const pai = l.parent_id ? _lidPorId.get(l.parent_id) : null;
       const origem = l.created_via === 'afiliado' ? '<span style="color:#10b981;">🔗 link</span>'
                    : l.created_via === 'planilha' ? '<span style="color:#f59e0b;">📥 planilha</span>'
                    : '<span style="color:var(--cinza2);">👤 manual</span>';
@@ -2777,7 +2782,7 @@ function abrirNovoLead() {
 }
 
 function editarLead(id) {
-  const l = _liderancasData.find(x => x.id === id);
+  const l = _lidPorId.get(id);
   if (!l) return;
   abrirNovoLead();
   document.getElementById('lead-edit-id').value = id;
@@ -3533,10 +3538,33 @@ for(const [reg, cidades] of Object.entries(_REGIOES_DADOS)) {
 let _liderancasData = [];
 let _liderancasFiltradas = [];
 
+// Caches construídos a cada snapshot pra evitar O(N²) com 30k+ docs
+let _lidPorId = new Map();
+let _filhosPorParent = new Map();
+let _lideres = [];
+let _leads = [];
+function reconstruirCaches() {
+  _lidPorId = new Map();
+  _filhosPorParent = new Map();
+  _lideres = [];
+  _leads = [];
+  for (const l of _liderancasData) {
+    _lidPorId.set(l.id, l);
+    if (tipoDe(l) === 'lideranca') _lideres.push(l);
+    else _leads.push(l);
+    if (l.parent_id) {
+      const arr = _filhosPorParent.get(l.parent_id) || [];
+      arr.push(l);
+      _filhosPorParent.set(l.parent_id, arr);
+    }
+  }
+}
+
 function iniciarListener_liderancas() {
 _db.collection('liderancas').orderBy('updated_at','desc').onSnapshot(snapshot => {
   _liderancasData = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
   _liderancasFiltradas = [..._liderancasData];
+  reconstruirCaches();
   renderCRM();
   atualizarStatsCRM();
   atualizarFiltroMun();
@@ -3548,7 +3576,7 @@ _db.collection('liderancas').orderBy('updated_at','desc').onSnapshot(snapshot =>
     renderLeads();
   }
   if (_liderancaAtual && document.getElementById('page-lideranca-detalhe')?.classList.contains('active')) {
-    const atualizado = _liderancasData.find(l => l.id === _liderancaAtual.id);
+    const atualizado = _lidPorId.get(_liderancaAtual.id);
     if (atualizado) {
       _liderancaAtual = atualizado;
       renderEstatisticasRede(atualizado);
@@ -3560,8 +3588,8 @@ _db.collection('liderancas').orderBy('updated_at','desc').onSnapshot(snapshot =>
 }
 
 function atualizarStatsCRM() {
-  // Stats da CRM consideram só lideranças, não leads cadastrados via link
-  const lideres = _liderancasData.filter(l => tipoDe(l) === 'lideranca');
+  // Stats da CRM consideram só lideranças (cache)
+  const lideres = _lideres;
   const total = lideres.length;
   const totalVotos = lideres.reduce((s,l) => s+(l.votos_comprometidos||0), 0);
   const confirmados = lideres.filter(l => l.status==='Confirmado').length;
@@ -3597,26 +3625,21 @@ function atualizarFiltroMun() {
   const sel = document.getElementById('crm-filtro-mun');
   if(!sel) return;
   const atual = sel.value;
-  const lideres = _liderancasData.filter(l => tipoDe(l) === 'lideranca');
-  const municipios = [...new Set(lideres.map(l=>l.municipio).filter(Boolean))].sort();
+  const municipios = [...new Set(_lideres.map(l=>l.municipio).filter(Boolean))].sort();
   sel.innerHTML = '<option value="">Todos os municípios</option>' + municipios.map(m=>`<option value="${m}"${m===atual?' selected':''}>${m}</option>`).join('');
 }
 
-function filtrarLiderancas() {
-  const mun    = document.getElementById('crm-filtro-mun')?.value    || '';
-  const status = document.getElementById('crm-filtro-status')?.value || '';
-  _liderancasFiltradas = _liderancasData.filter(l =>
-    (!mun    || l.municipio===mun) &&
-    (!status || l.status===status)
-  );
-  renderCRM();
-}
+function filtrarLiderancas() { renderCRM(); }
 
 function renderCRM() {
   const tbody = document.getElementById('crm-tbody');
   if(!tbody) return;
-  // Tabela CRM mostra só lideranças (não leads cadastrados via link)
-  const visiveis = _liderancasFiltradas.filter(l => tipoDe(l) === 'lideranca');
+  // Tabela CRM mostra só lideranças (cache _lideres) — aplica filtros se houver
+  const filtroMun = document.getElementById('crm-filtro-mun')?.value || '';
+  const filtroSt  = document.getElementById('crm-filtro-status')?.value || '';
+  let visiveis = _lideres;
+  if (filtroMun) visiveis = visiveis.filter(l => l.municipio === filtroMun);
+  if (filtroSt)  visiveis = visiveis.filter(l => l.status === filtroSt);
   if(visiveis.length===0){
     tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--cinza2);padding:24px;font-size:13px;">Nenhuma liderança encontrada.</td></tr>';
     return;
@@ -3669,7 +3692,7 @@ function limparFormLideranca() {
 }
 
 function editarLideranca(id) {
-  const l = _liderancasData.find(x=>x.id===id);
+  const l = _lidPorId.get(id);
   if(!l) return;
   document.getElementById('crm-edit-id').value   = id;
   document.getElementById('crm-nome').value       = l.nome||'';
