@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
 <title>Plataforma de Inteligência Eleitoral — Talita Oliveira 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;600&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:light;
@@ -40,7 +40,7 @@
   --borda:#e8ecf2;--borda2:#d1d9e6;
 
   /* Tipografia */
-  --fonte:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+  --fonte:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;--display:'Bebas Neue',Impact,sans-serif;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -51,12 +51,40 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 #login-screen{
   position:fixed;inset:0;z-index:9999;display:flex;
 }
-.login-left{
-  width:42%;background:linear-gradient(155deg,#0d0820 0%,#160f2e 40%,#220d50 100%);
-  display:none;flex-direction:column;align-items:center;justify-content:center;
-  padding:60px 50px;text-align:center;flex-shrink:0;
+.login-cover{
+  width:52%;background:#1a1a1a center/cover no-repeat;
+  display:none;position:relative;flex-shrink:0;
 }
-@media(min-width:800px){.login-left{display:flex;}}
+.login-cover::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 50%,rgba(0,0,0,0.78) 100%);
+  pointer-events:none;
+}
+.login-cover-fallback{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:#111;color:#3a3a3a;font-family:var(--display);font-size:120px;letter-spacing:6px;
+  opacity:0.5;
+}
+.login-cover-overlay{
+  position:absolute;left:48px;right:48px;bottom:44px;z-index:2;color:#fff;
+}
+.login-cover-name{
+  font-family:var(--display);font-size:64px;line-height:0.95;letter-spacing:2px;
+  text-transform:uppercase;margin:0 0 10px;text-shadow:0 2px 18px rgba(0,0,0,0.5);
+}
+.login-cover-tag{
+  display:inline-flex;align-items:center;gap:10px;font-family:var(--display);
+  font-size:22px;letter-spacing:3px;padding:6px 14px;background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  border:1px solid rgba(255,255,255,0.2);border-radius:4px;
+}
+.login-cover-tag b{font-weight:400;color:#fde047;}
+.login-cover-sub{
+  display:block;font-family:var(--fonte);font-size:12px;font-weight:500;
+  letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.7);
+  margin-top:14px;
+}
+@media(min-width:900px){.login-cover{display:block;}}
 .login-right{
   flex:1;background:#f7f8fc;display:flex;align-items:center;justify-content:center;
   padding:30px 20px;overflow-y:auto;
@@ -67,13 +95,6 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   box-shadow:0 4px 32px rgba(0,0,0,0.08);
   position:relative;overflow:hidden;
 }
-.login-brand-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#8b5cf6;margin-bottom:24px;}
-.login-brand-title{font-size:28px;font-weight:800;color:#e2e8f0;letter-spacing:-0.5px;margin-bottom:10px;line-height:1.2;}
-.login-brand-sub{font-size:13px;color:#7a8699;margin-bottom:40px;line-height:1.7;}
-.login-feat{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,0.06);text-align:left;}
-.login-feat:last-child{border-bottom:none;}
-.login-feat-icon{width:36px;height:36px;border-radius:9px;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#a78bfa;}
-.login-feat-text{font-size:13px;color:#bdc5d4;font-weight:500;line-height:1.4;}
 .login-logo{margin-bottom:28px;}
 .login-logo img{height:56px;width:auto;margin-bottom:16px;}
 .login-badge{
@@ -435,24 +456,13 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 <!-- ══════════════ LOGIN ══════════════ -->
 <div id="login-screen">
 
-  <!-- Painel esquerdo — branding -->
-  <div class="login-left">
-    <div class="login-brand-eyebrow">PIE · Plataforma de Inteligência Eleitoral</div>
-    <div class="login-brand-title">Talita Oliveira<br>Bahia 2026</div>
-    <div class="login-brand-sub">Republicanos #1022 · Gestão eleitoral inteligente para os 417 municípios da Bahia.</div>
-    <div style="width:100%;max-width:300px;">
-      <div class="login-feat">
-        <div class="login-feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></div>
-        <div class="login-feat-text">Mapa eleitoral em tempo real com 417 municípios</div>
-      </div>
-      <div class="login-feat">
-        <div class="login-feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
-        <div class="login-feat-text">CRM de lideranças políticas por região</div>
-      </div>
-      <div class="login-feat">
-        <div class="login-feat-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
-        <div class="login-feat-text">Monitoramento de concorrentes e tráfego digital</div>
-      </div>
+  <!-- Painel esquerdo — capa personalizável (admin) -->
+  <div class="login-cover" id="login-cover">
+    <div class="login-cover-fallback" id="login-cover-fallback">TO</div>
+    <div class="login-cover-overlay">
+      <h1 class="login-cover-name">Talita Oliveira</h1>
+      <span class="login-cover-tag"><b>1022</b> · Bahia 2026</span>
+      <span class="login-cover-sub">Republicanos · Plataforma de Inteligência Eleitoral</span>
     </div>
   </div>
 
@@ -1475,6 +1485,24 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 
           <!-- Gerenciar Usuários — só admin vê -->
           <div id="cfg-admin-panel" style="display:none;">
+
+            <!-- Personalizar capa do login (admin) -->
+            <div class="settings-card">
+              <div class="settings-section-title">🖼️ Foto de capa do login</div>
+              <div style="font-size:12px;color:var(--cinza);margin-bottom:14px;line-height:1.5;">
+                A imagem aparece na tela de login para todos os usuários. Cole a URL pública (Instagram, Imgur, GitHub, etc.) ou deixe vazio para usar o padrão.
+              </div>
+              <div id="cfg-capa-preview" style="width:100%;height:160px;border-radius:10px;background:#1a1a1a center/cover no-repeat;border:1px solid var(--borda);margin-bottom:12px;display:flex;align-items:center;justify-content:center;color:var(--cinza2);font-size:12px;">Sem foto definida</div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <input type="url" id="cfg-capa-url" class="form-input" placeholder="https://exemplo.com/foto.jpg">
+                <div style="display:flex;gap:10px;">
+                  <button onclick="salvarCapaLogin()" class="btn btn-primary" style="flex:1;">Salvar capa</button>
+                  <button onclick="removerCapaLogin()" class="btn btn-outline">Remover</button>
+                </div>
+                <div id="cfg-capa-feedback" style="display:none;font-size:12px;padding:10px;border-radius:8px;text-align:center;font-weight:600;"></div>
+              </div>
+            </div>
+
             <div class="settings-card">
               <div class="settings-section-title">👥 Gerenciar Usuários</div>
               <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
@@ -1975,6 +2003,68 @@ const _auth = firebase.auth(_fbApp);
 const _fbApp2 = firebase.initializeApp(_fbConfig, 'secondary');
 const _auth2  = firebase.auth(_fbApp2);
 
+// ── CAPA DO LOGIN (personalizável pelo admin) ──
+const _CAPA_KEY = 'pie_login_cover_url';
+function aplicarCapaLogin(url) {
+  const cover = document.getElementById('login-cover');
+  const fallback = document.getElementById('login-cover-fallback');
+  if (!cover) return;
+  if (url && url.trim()) {
+    cover.style.backgroundImage = `url("${url.trim().replace(/"/g,'%22')}")`;
+    if (fallback) fallback.style.display = 'none';
+  } else {
+    cover.style.backgroundImage = '';
+    if (fallback) fallback.style.display = 'flex';
+  }
+}
+// Aplica imediatamente do cache local
+try { aplicarCapaLogin(localStorage.getItem(_CAPA_KEY) || ''); } catch(_) {}
+
+async function sincronizarCapaLogin() {
+  try {
+    const snap = await _db.collection('config').doc('login').get();
+    const url = snap.exists ? (snap.data().cover_url || '') : '';
+    aplicarCapaLogin(url);
+    try { url ? localStorage.setItem(_CAPA_KEY, url) : localStorage.removeItem(_CAPA_KEY); } catch(_) {}
+    // Atualiza preview/input no painel admin se já estiver montado
+    const input = document.getElementById('cfg-capa-url');
+    const preview = document.getElementById('cfg-capa-preview');
+    if (input) input.value = url;
+    if (preview) {
+      if (url) { preview.style.backgroundImage = `url("${url.replace(/"/g,'%22')}")`; preview.textContent = ''; }
+      else     { preview.style.backgroundImage = ''; preview.textContent = 'Sem foto definida'; }
+    }
+  } catch (e) { console.warn('[capa] falha ao sincronizar:', e.message); }
+}
+
+async function salvarCapaLogin() {
+  if (!_currentUser || _currentUser.role !== 'admin') return;
+  const url = (document.getElementById('cfg-capa-url').value || '').trim();
+  if (url && !/^https?:\/\//i.test(url)) {
+    feedbackCfg('cfg-capa-feedback','URL inválida — use http(s)://...',false); return;
+  }
+  try {
+    await _db.collection('config').doc('login').set({
+      cover_url: url,
+      updated_at: firebase.firestore.FieldValue.serverTimestamp(),
+      updated_by: _currentUser.uid
+    }, { merge: true });
+    aplicarCapaLogin(url);
+    try { url ? localStorage.setItem(_CAPA_KEY, url) : localStorage.removeItem(_CAPA_KEY); } catch(_) {}
+    const preview = document.getElementById('cfg-capa-preview');
+    if (preview) {
+      if (url) { preview.style.backgroundImage = `url("${url.replace(/"/g,'%22')}")`; preview.textContent = ''; }
+      else     { preview.style.backgroundImage = ''; preview.textContent = 'Sem foto definida'; }
+    }
+    feedbackCfg('cfg-capa-feedback','✅ Capa atualizada com sucesso!',true);
+  } catch(e) { feedbackCfg('cfg-capa-feedback','❌ Erro: '+e.message,false); }
+}
+
+async function removerCapaLogin() {
+  document.getElementById('cfg-capa-url').value = '';
+  await salvarCapaLogin();
+}
+
 // ── AUTH STATE ──
 let _logoutTimer = null;
 _auth.onAuthStateChanged(async user => {
@@ -2012,6 +2102,7 @@ _auth.onAuthStateChanged(async user => {
       atualizarSidebarUser();
       const adminPanel = document.getElementById('cfg-admin-panel');
       if (adminPanel) adminPanel.style.display = ud.role === 'admin' ? 'block' : 'none';
+      sincronizarCapaLogin();
     } catch(e) {
       console.error('Auth error:', e);
       // Não desloga em erros transitórios — só mostra mensagem e tenta recarregar
