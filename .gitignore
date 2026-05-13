@@ -34,3 +34,9 @@ ChatGPT*.jpg
 *\ (1).html
 *\ (2).html
 *\ (1).pdf
+
+# ── Dados pessoais (planilhas com PII de eleitores) ──
+*.csv
+*.xlsx
+*.xls
+_tmp_*
