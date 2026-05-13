@@ -331,6 +331,8 @@
 <script>
 
 // ── Firebase ──────────────────────────────────────────────────────────────────
+// Usa o mesmo nome de app que o painel ('plataforma') pra compartilhar a
+// persistência de auth via IndexedDB (chave: apiKey + appName)
 const firebaseConfig = {
   apiKey: "AIzaSyDmJFXVO3BQFU8NmbYPEkOTvhJrrgcrPVU",
   authDomain: "pie--campanha.firebaseapp.com",
@@ -339,8 +341,9 @@ const firebaseConfig = {
   messagingSenderId: "385341562231",
   appId: "1:385341562231:web:64c50e760acc1fa6179572"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+const _mapaApp = firebase.initializeApp(firebaseConfig, 'plataforma');
+const db   = firebase.firestore(_mapaApp);
+const auth = firebase.auth(_mapaApp);
 
 // Dados do Firestore: { "Salvador": 6500, "Feira de Santana": 1800, ... }
 let VOTES_ATUAL = {};
@@ -724,11 +727,17 @@ function iniciarListenerMapa() {
   });
 }
 
-// Anexa o listener somente após a autenticação ser confirmada (a iframe herda
-// o estado de auth do domínio do app via persistência LOCAL)
-firebase.auth().onAuthStateChanged(user => {
-  if (user) iniciarListenerMapa();
-  else      setLiveStatus(false);
+// Anexa o listener somente após a autenticação ser confirmada
+// (a iframe usa o mesmo nome de app pra herdar a sessão do painel via IndexedDB)
+auth.onAuthStateChanged(user => {
+  console.log('[mapa] auth state:', user ? user.email : 'null');
+  if (user) {
+    iniciarListenerMapa();
+  } else {
+    setLiveStatus(false);
+    // Fallback: tenta auth anônima caso a sessão do painel não esteja persistida
+    auth.signInAnonymously().catch(e => console.warn('[mapa] anon fail:', e.code));
+  }
 });
 
 function setLiveStatus(ok) {
