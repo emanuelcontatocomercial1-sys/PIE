@@ -280,8 +280,8 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   color:#1a1a1a;line-height:1.1;letter-spacing:-0.5px;
 }
 .sidebar-logo-sub{
-  font-family:var(--fonte);font-size:11px;font-weight:400;color:#888;
-  margin-top:8px;letter-spacing:0.2px;text-transform:none;
+  font-family:var(--fonte);font-size:11px;font-weight:500;color:#7c3aed;
+  margin-top:10px;letter-spacing:0.4px;text-transform:none;
 }
 .sidebar-section{padding:14px 0 0;}
 .sidebar-section + .sidebar-section{padding-top:12px;}
@@ -291,17 +291,18 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   cursor:pointer;transition:color 0.15s;font-family:var(--fonte);position:relative;
   line-height:1.4;
 }
-.nav-item:hover{color:#1a1a1a;background:none;}
-.nav-item.active{color:#1a1a1a;font-weight:500;background:none;box-shadow:none;}
+.nav-item:hover{color:#7c3aed;background:none;}
+.nav-item.active{color:#7c3aed;font-weight:600;background:none;box-shadow:none;}
 .nav-item.active::after{
-  content:"";position:absolute;left:24px;bottom:1px;width:28px;height:1px;background:#1a1a1a;
+  content:"";position:absolute;left:24px;bottom:0px;width:32px;height:2px;background:#7c3aed;border-radius:2px;
 }
 .nav-item .ni-icon{display:none;}
 .nav-item .ni-badge{
-  margin-left:6px;background:none;color:#999;font-size:12px;font-weight:400;padding:0;border-radius:0;font-family:var(--mono);
+  margin-left:6px;background:rgba(124,58,237,0.12);color:#7c3aed;font-size:10px;font-weight:700;
+  padding:2px 7px;border-radius:10px;font-family:var(--fonte);
 }
-.nav-item .ni-badge::before{content:"(";}
-.nav-item .ni-badge::after{content:")";}
+.nav-item .ni-badge::before{content:"";}
+.nav-item .ni-badge::after{content:"";}
 .sidebar-bottom{margin-top:auto;padding:18px 24px 22px;border-top:1px solid #e6e2d8;}
 .user-card{display:flex;align-items:flex-end;gap:8px;background:none;padding:0;border-radius:0;}
 .user-avatar{display:none;}
