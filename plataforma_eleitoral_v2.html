@@ -716,6 +716,9 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         <div class="nav-item" onclick="showPage('rede',this)">
           <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="12" cy="19" r="2.5"/><circle cx="18" cy="12" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="16.5"/><line x1="8.5" y1="12" x2="15.5" y2="12"/></svg></span>Rede
         </div>
+        <div class="nav-item" onclick="showPage('leads',this)">
+          <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M4 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span>Leads
+        </div>
         <div class="nav-item" onclick="showPage('agenda',this)">
           <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>Agenda
         </div>
@@ -1057,6 +1060,61 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 
         <div id="lista-projetos">
           <div style="font-size:13px;color:var(--cinza2);text-align:center;padding:32px;background:var(--bg3);border-radius:14px;">Carregando projetos...</div>
+        </div>
+      </div>
+
+      <!-- ══ LEADS / MUNÍCIPES ══ -->
+      <div class="page" id="page-leads">
+        <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div class="page-title">Leads / Munícipes</div>
+            <div class="page-sub">Apoiadores cadastrados — manualmente, via link de afiliado ou importados de planilha</div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline" onclick="abrirImportPlanilha()" style="font-size:12px;">📥 Importar planilha</button>
+            <button class="btn btn-primary" onclick="abrirNovoLead()" style="font-size:12px;">+ Novo lead</button>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+          <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-num" id="leads-total">0</div><div class="stat-label">Total de leads</div></div>
+          <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><div class="stat-num" id="leads-municipios">0</div><div class="stat-label">Municípios</div></div>
+          <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-num" id="leads-hoje">0</div><div class="stat-label">Cadastrados hoje</div></div>
+          <div class="stat-card roxo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div><div class="stat-num" id="leads-vinculados">0</div><div class="stat-label">Vinculados</div></div>
+        </div>
+
+        <!-- Filtros + tabela -->
+        <div class="panel">
+          <div class="panel-header" style="gap:10px;flex-wrap:wrap;">
+            <div class="panel-title">Lista de leads</div>
+            <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap;">
+              <input type="text" id="leads-busca" placeholder="Buscar nome ou telefone..." oninput="renderLeads()"
+                style="background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:7px 12px;font-size:12px;color:var(--branco);font-family:var(--fonte);outline:none;width:200px;">
+              <select id="leads-filtro-mun" onchange="renderLeads()"
+                style="background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--cinza);font-family:var(--fonte);outline:none;">
+                <option value="">Todos os municípios</option>
+              </select>
+              <select id="leads-filtro-vinculo" onchange="renderLeads()"
+                style="background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--cinza);font-family:var(--fonte);outline:none;">
+                <option value="">Todos</option>
+                <option value="vinculado">Vinculados a liderança</option>
+                <option value="solto">Sem vínculo</option>
+              </select>
+            </div>
+          </div>
+          <div class="panel-body" style="padding:0;">
+            <table class="crm-table" style="width:100%">
+              <thead><tr>
+                <th>Nome</th><th>Município / Bairro</th><th>Telefone</th>
+                <th>Indicado por</th><th>Origem</th><th>Cadastro</th><th></th>
+              </tr></thead>
+              <tbody id="leads-tbody">
+                <tr><td colspan="7" style="text-align:center;color:var(--cinza2);padding:24px;font-size:13px;">Carregando...</td></tr>
+              </tbody>
+            </table>
+            <div id="leads-paginacao" style="padding:12px;border-top:1px solid var(--borda);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--cinza);"></div>
+          </div>
         </div>
       </div>
 
@@ -1805,6 +1863,103 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 </div>
 
 <!-- MODAL LIDERANÇA -->
+<!-- MODAL NOVO LEAD -->
+<div class="modal-overlay" id="modal-lead">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Novo Lead / Munícipe</div>
+      <button class="modal-close" onclick="fecharModal('modal-lead')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="lead-edit-id">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Nome *</label><input class="form-input" type="text" id="lead-nome" placeholder="Nome completo"></div>
+        <div class="form-group"><label class="form-label">Telefone / WhatsApp</label><input class="form-input" type="tel" id="lead-telefone" placeholder="71 99999-9999"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Município *</label><input class="form-input" type="text" id="lead-municipio" placeholder="Ex: Salvador" list="municipios-list"></div>
+        <div class="form-group"><label class="form-label">Bairro / Localidade</label><input class="form-input" type="text" id="lead-bairro" placeholder="Bairro"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Indicado por (opcional)</label>
+        <select class="form-select" id="lead-parent">
+          <option value="">— Sem vínculo (lead solto) —</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Observação</label><input class="form-input" type="text" id="lead-obs" placeholder="Notas..."></div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-primary" style="flex:1" onclick="salvarLeadManual()">💾 Salvar lead</button>
+        <button class="btn btn-outline" onclick="fecharModal('modal-lead')">Cancelar</button>
+      </div>
+      <div id="lead-feedback" style="display:none;font-size:12px;padding:10px;margin-top:10px;border-radius:8px;text-align:center;font-weight:600;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL IMPORTAR PLANILHA -->
+<div class="modal-overlay" id="modal-import">
+  <div class="modal" style="max-width:700px;">
+    <div class="modal-header">
+      <div class="modal-title">📥 Importar planilha de leads</div>
+      <button class="modal-close" onclick="fecharModal('modal-import')">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Etapa 1: Upload -->
+      <div id="import-etapa-upload">
+        <div style="font-size:13px;color:var(--cinza);line-height:1.6;margin-bottom:14px;">
+          Aceita <b>.csv</b>, <b>.xlsx</b> ou <b>.xls</b>. A primeira linha deve conter os cabeçalhos. Vou tentar reconhecer as colunas automaticamente (nome, telefone, município, bairro).
+        </div>
+        <input type="file" id="import-arquivo" accept=".csv,.xlsx,.xls" onchange="processarArquivoPlanilha(this)" style="display:none;">
+        <button class="btn btn-primary" onclick="document.getElementById('import-arquivo').click()" style="width:100%;">📂 Escolher arquivo</button>
+        <div style="font-size:11px;color:var(--cinza2);margin-top:10px;line-height:1.5;">
+          Exemplo de cabeçalho recomendado:<br>
+          <code style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-family:var(--mono);">nome,telefone,municipio,bairro</code>
+        </div>
+      </div>
+
+      <!-- Etapa 2: Mapeamento + preview -->
+      <div id="import-etapa-preview" style="display:none;">
+        <div style="font-size:13px;color:var(--cinza);margin-bottom:14px;">
+          <span id="import-info-arquivo">—</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
+          <div><label class="form-label">Nome *</label><select id="map-nome" class="form-select"></select></div>
+          <div><label class="form-label">Telefone</label><select id="map-telefone" class="form-select"></select></div>
+          <div><label class="form-label">Município</label><select id="map-municipio" class="form-select"></select></div>
+          <div><label class="form-label">Bairro</label><select id="map-bairro" class="form-select"></select></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Vincular todos os leads importados a:</label>
+          <select id="import-parent" class="form-select">
+            <option value="">— Deixar soltos (sem liderança pai) —</option>
+          </select>
+        </div>
+        <div style="font-size:11px;color:var(--cinza2);margin-bottom:8px;">Preview das primeiras linhas:</div>
+        <div id="import-preview" style="max-height:200px;overflow:auto;border:1px solid var(--borda);border-radius:8px;font-size:11px;font-family:var(--mono);background:var(--bg3);"></div>
+        <div style="display:flex;gap:10px;margin-top:14px;">
+          <button class="btn btn-primary" style="flex:1" onclick="confirmarImportPlanilha()">📥 Importar <span id="import-contagem">0</span> leads</button>
+          <button class="btn btn-outline" onclick="resetarImport()">Cancelar</button>
+        </div>
+      </div>
+
+      <!-- Etapa 3: Progresso/resultado -->
+      <div id="import-etapa-progresso" style="display:none;">
+        <div style="text-align:center;padding:20px;">
+          <div style="font-size:14px;font-weight:700;color:var(--branco);margin-bottom:12px;" id="import-progresso-texto">Importando...</div>
+          <div style="background:var(--bg4);border-radius:6px;height:10px;overflow:hidden;margin-bottom:8px;">
+            <div id="import-barra" style="height:10px;background:linear-gradient(to right,#059669,#10B981);width:0%;transition:width 0.3s;"></div>
+          </div>
+          <div style="font-size:11px;color:var(--cinza2);" id="import-progresso-num">0 / 0</div>
+        </div>
+        <div id="import-resultado" style="display:none;text-align:center;padding:14px;border-radius:8px;font-size:13px;font-weight:600;"></div>
+        <button class="btn btn-outline" onclick="fecharModal('modal-import');resetarImport();" style="width:100%;margin-top:10px;">Fechar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-lideranca">
   <div class="modal">
     <div class="modal-header">
@@ -1975,6 +2130,7 @@ const PAGE_TITLES = {
   'concorrente-detalhe':'Perfil do Concorrente',
   'lideranca-detalhe':'Rede da Liderança',
   rede:'Rede de Indicações',
+  leads:'Leads / Munícipes',
   config:'Configurações',votos:'Registrar Votos'
 };
 
@@ -1986,7 +2142,8 @@ function showPage(id, el) {
   document.getElementById('topbar-title').textContent = PAGE_TITLES[id] || id;
   window.scrollTo({top:0,behavior:'smooth'});
   if(id === 'config' && typeof carregarUsuarios === 'function') carregarUsuarios();
-  if(id === 'rede' && typeof renderPaginaRede === 'function') renderPaginaRede();
+  if(id === 'rede'   && typeof renderPaginaRede === 'function') renderPaginaRede();
+  if(id === 'leads'  && typeof renderLeads === 'function') renderLeads();
   // fecha drawer no mobile ao navegar
   if(window.innerWidth <= 900) toggleSidebar(true);
 }
@@ -2215,6 +2372,7 @@ document.addEventListener('keydown', e => {
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <script>
 const _fbConfig = {
   apiKey: "AIzaSyDmJFXVO3BQFU8NmbYPEkOTvhJrrgcrPVU",
@@ -2254,8 +2412,10 @@ function gerarLinkCode() {
   for (let i = 0; i < 6; i++) c += chars[Math.floor(Math.random() * chars.length)];
   return c;
 }
-// Tipo derivado: parent_id presente => lead. Ausente => liderança. Campo `tipo` é metadado.
+// Tipo: prioriza campo explícito; fallback usa parent_id (lead se tiver pai)
 function tipoDe(l) {
+  if (l && l.tipo === 'lead') return 'lead';
+  if (l && l.tipo === 'lideranca') return 'lideranca';
   if (l && l.parent_id) return 'lead';
   return 'lideranca';
 }
@@ -2517,6 +2677,321 @@ function renderPaginaRede() {
         </div>
       </div>`;
   }).join('');
+}
+
+// ══════════ LEADS / MUNÍCIPES ══════════
+let _leadsPagina = 1;
+const _LEADS_POR_PAGINA = 50;
+
+function renderLeads() {
+  const tbody = document.getElementById('leads-tbody');
+  if (!tbody) return;
+  const leads = _liderancasData.filter(l => tipoDe(l) === 'lead');
+
+  // Stats
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const cadHoje = leads.filter(l => l.created_at?.toDate && l.created_at.toDate() >= hoje).length;
+  const vinc = leads.filter(l => l.parent_id).length;
+  const muns = new Set(leads.map(l => l.municipio).filter(Boolean));
+  const el = id => document.getElementById(id);
+  if (el('leads-total'))       el('leads-total').textContent       = leads.length;
+  if (el('leads-municipios'))  el('leads-municipios').textContent  = muns.size;
+  if (el('leads-hoje'))        el('leads-hoje').textContent        = cadHoje;
+  if (el('leads-vinculados'))  el('leads-vinculados').textContent  = vinc;
+
+  // Filtro de município (popula select se vazio)
+  const selMun = document.getElementById('leads-filtro-mun');
+  if (selMun && selMun.options.length <= 1) {
+    [...muns].sort().forEach(m => { const o=document.createElement('option'); o.value=m; o.textContent=m; selMun.appendChild(o); });
+  }
+
+  const busca = (document.getElementById('leads-busca')?.value || '').toLowerCase().trim();
+  const fmun  = document.getElementById('leads-filtro-mun')?.value || '';
+  const fvin  = document.getElementById('leads-filtro-vinculo')?.value || '';
+  const filtrados = leads.filter(l => {
+    if (busca && !((l.nome||'').toLowerCase().includes(busca) || (l.telefone||'').toLowerCase().includes(busca))) return false;
+    if (fmun && l.municipio !== fmun) return false;
+    if (fvin === 'vinculado' && !l.parent_id) return false;
+    if (fvin === 'solto' && l.parent_id) return false;
+    return true;
+  });
+
+  // Paginação
+  const totalPag = Math.max(1, Math.ceil(filtrados.length / _LEADS_POR_PAGINA));
+  if (_leadsPagina > totalPag) _leadsPagina = totalPag;
+  const inicio = (_leadsPagina - 1) * _LEADS_POR_PAGINA;
+  const pagina = filtrados.slice(inicio, inicio + _LEADS_POR_PAGINA);
+
+  if (filtrados.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--cinza2);padding:24px;font-size:13px;">Nenhum lead encontrado. Use "+ Novo lead" ou "Importar planilha" pra começar.</td></tr>';
+  } else {
+    tbody.innerHTML = pagina.map(l => {
+      const pai = l.parent_id ? _liderancasData.find(x => x.id === l.parent_id) : null;
+      const origem = l.created_via === 'afiliado' ? '<span style="color:#10b981;">🔗 link</span>'
+                   : l.created_via === 'planilha' ? '<span style="color:#f59e0b;">📥 planilha</span>'
+                   : '<span style="color:var(--cinza2);">👤 manual</span>';
+      const dt = l.created_at?.toDate ? l.created_at.toDate().toLocaleDateString('pt-BR') : '—';
+      return `
+        <tr>
+          <td><span class="crm-avatar" style="background:linear-gradient(135deg,#059669,#10b981);">${(l.nome||'?')[0].toUpperCase()}</span>${l.nome||'—'}</td>
+          <td>
+            <div style="font-weight:600;color:var(--branco);font-size:12px;">${l.municipio||'—'}</div>
+            ${l.bairro?`<div style="font-size:11px;color:var(--cinza2);">${l.bairro}</div>`:''}
+          </td>
+          <td style="font-size:12px;color:var(--cinza);">${l.telefone||'—'}</td>
+          <td style="font-size:12px;">${pai ? `<a onclick="abrirDetalheLideranca('${pai.id}')" style="cursor:pointer;color:var(--ciano3);">${pai.nome}</a>` : '<span style="color:var(--cinza2);">— solto —</span>'}</td>
+          <td>${origem}</td>
+          <td style="font-size:11px;color:var(--cinza2);">${dt}</td>
+          <td style="white-space:nowrap;">
+            <button onclick="editarLead('${l.id}')" style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">✏️</button>
+            <button onclick="apagarLead('${l.id}','${(l.nome||'').replace(/'/g,"\\'")}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">🗑️</button>
+          </td>
+        </tr>`;
+    }).join('');
+  }
+
+  // Paginação UI
+  const pag = el('leads-paginacao');
+  if (pag) {
+    pag.innerHTML = `
+      <span>Mostrando ${pagina.length} de ${filtrados.length} ${filtrados.length === leads.length ? '' : `(${leads.length} total)`}</span>
+      <div style="display:flex;gap:6px;align-items:center;">
+        <button ${_leadsPagina<=1?'disabled':''} onclick="_leadsPagina--;renderLeads();" style="background:var(--bg3);border:1px solid var(--borda);color:var(--cinza);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;">← Anterior</button>
+        <span style="font-family:var(--mono);">${_leadsPagina} / ${totalPag}</span>
+        <button ${_leadsPagina>=totalPag?'disabled':''} onclick="_leadsPagina++;renderLeads();" style="background:var(--bg3);border:1px solid var(--borda);color:var(--cinza);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;">Próxima →</button>
+      </div>`;
+  }
+}
+
+function abrirNovoLead() {
+  document.getElementById('lead-edit-id').value = '';
+  ['lead-nome','lead-telefone','lead-municipio','lead-bairro','lead-obs'].forEach(id => { const e=document.getElementById(id); if(e) e.value=''; });
+  // Popula dropdown de lideranças
+  const sel = document.getElementById('lead-parent');
+  const lideres = _liderancasData.filter(l => tipoDe(l) === 'lideranca').sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+  sel.innerHTML = '<option value="">— Sem vínculo (lead solto) —</option>' +
+    lideres.map(l => `<option value="${l.id}">${l.nome} · ${l.municipio||''}</option>`).join('');
+  sel.value = '';
+  document.getElementById('modal-lead').classList.add('show');
+}
+
+function editarLead(id) {
+  const l = _liderancasData.find(x => x.id === id);
+  if (!l) return;
+  abrirNovoLead();
+  document.getElementById('lead-edit-id').value = id;
+  document.getElementById('lead-nome').value = l.nome || '';
+  document.getElementById('lead-telefone').value = l.telefone || '';
+  document.getElementById('lead-municipio').value = l.municipio || '';
+  document.getElementById('lead-bairro').value = l.bairro || '';
+  document.getElementById('lead-obs').value = l.obs || '';
+  document.getElementById('lead-parent').value = l.parent_id || '';
+  document.querySelector('#modal-lead .modal-title').textContent = 'Editar Lead';
+}
+
+async function salvarLeadManual() {
+  const nome = document.getElementById('lead-nome').value.trim();
+  const municipio = document.getElementById('lead-municipio').value.trim();
+  if (!nome || !municipio) { feedbackLead('Informe nome e município.', false); return; }
+  const editId = document.getElementById('lead-edit-id').value;
+  const parent = document.getElementById('lead-parent').value || null;
+  const payload = {
+    nome, telefone: document.getElementById('lead-telefone').value.trim(),
+    municipio, bairro: document.getElementById('lead-bairro').value.trim(),
+    obs: document.getElementById('lead-obs').value.trim(),
+    regiao: (typeof REGIOES_MAP !== 'undefined' && REGIOES_MAP[municipio]) || '',
+    parent_id: parent, tipo: 'lead', status: 'Prospecto', votos_comprometidos: 0,
+    updated_at: firebase.firestore.FieldValue.serverTimestamp()
+  };
+  try {
+    if (editId) {
+      await _db.collection('liderancas').doc(editId).update(payload);
+    } else {
+      payload.created_at = firebase.firestore.FieldValue.serverTimestamp();
+      payload.created_via = 'manual';
+      payload.link_code = gerarLinkCode();
+      await _db.collection('liderancas').add(payload);
+    }
+    fecharModal('modal-lead');
+  } catch(e) { feedbackLead('❌ '+e.message, false); }
+}
+
+function feedbackLead(msg, ok) {
+  const el = document.getElementById('lead-feedback');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.background = ok ? 'rgba(16,185,129,0.12)' : 'rgba(239,68,68,0.12)';
+  el.style.color = ok ? '#10B981' : '#EF4444';
+}
+
+async function apagarLead(id, nome) {
+  if (!confirm(`Apagar o lead "${nome}"?`)) return;
+  try { await _db.collection('liderancas').doc(id).delete(); }
+  catch(e) { alert('Erro: '+e.message); }
+}
+
+// ══════════ IMPORTAR PLANILHA (CSV / Excel) ══════════
+let _importLinhas = []; // array de objetos {col1: val1, ...}
+let _importHeaders = [];
+
+function abrirImportPlanilha() {
+  resetarImport();
+  // Popula dropdown de liderança pai
+  const sel = document.getElementById('import-parent');
+  const lideres = _liderancasData.filter(l => tipoDe(l) === 'lideranca').sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
+  sel.innerHTML = '<option value="">— Deixar soltos (sem liderança pai) —</option>' +
+    lideres.map(l => `<option value="${l.id}">${l.nome} · ${l.municipio||''}</option>`).join('');
+  document.getElementById('modal-import').classList.add('show');
+}
+
+function resetarImport() {
+  _importLinhas = []; _importHeaders = [];
+  document.getElementById('import-etapa-upload').style.display = 'block';
+  document.getElementById('import-etapa-preview').style.display = 'none';
+  document.getElementById('import-etapa-progresso').style.display = 'none';
+  document.getElementById('import-resultado').style.display = 'none';
+  const inp = document.getElementById('import-arquivo'); if (inp) inp.value = '';
+}
+
+async function processarArquivoPlanilha(input) {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  try {
+    const buf = await file.arrayBuffer();
+    let linhas = [];
+    if (file.name.toLowerCase().endsWith('.csv')) {
+      linhas = parsearCSV(new TextDecoder('utf-8').decode(buf));
+    } else if (typeof XLSX !== 'undefined') {
+      const wb = XLSX.read(buf, { type: 'array' });
+      const sheet = wb.Sheets[wb.SheetNames[0]];
+      linhas = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: false });
+    } else {
+      alert('SheetJS não carregou. Tente recarregar a página.');
+      return;
+    }
+    if (linhas.length < 2) { alert('Arquivo precisa de pelo menos uma linha de cabeçalho e uma linha de dados.'); return; }
+    _importHeaders = linhas[0].map(h => String(h||'').trim());
+    const cols = _importHeaders;
+    _importLinhas = linhas.slice(1).filter(r => r.some(c => String(c||'').trim() !== '')).map(r => {
+      const obj = {}; cols.forEach((c,i) => obj[c] = String(r[i]||'').trim()); return obj;
+    });
+    // UI
+    document.getElementById('import-etapa-upload').style.display = 'none';
+    document.getElementById('import-etapa-preview').style.display = 'block';
+    document.getElementById('import-info-arquivo').textContent = `📄 ${file.name} — ${_importLinhas.length} linhas detectadas`;
+    document.getElementById('import-contagem').textContent = _importLinhas.length;
+    // Popula selects de mapeamento + auto-detect
+    const optsHtml = '<option value="">— ignorar —</option>' + cols.map(c => `<option value="${c}">${c}</option>`).join('');
+    ['nome','telefone','municipio','bairro'].forEach(campo => {
+      const sel = document.getElementById('map-' + campo);
+      sel.innerHTML = optsHtml;
+      const match = cols.find(c => normalizarHeader(c) === normalizarHeader(campo) || normalizarHeader(c).includes(normalizarHeader(campo)));
+      if (match) sel.value = match;
+    });
+    // Preview
+    const head = '<tr style="background:var(--bg4);">' + cols.map(c => `<th style="padding:6px 8px;text-align:left;border-bottom:1px solid var(--borda);">${c}</th>`).join('') + '</tr>';
+    const rows = _importLinhas.slice(0,6).map(r => '<tr>' + cols.map(c => `<td style="padding:6px 8px;border-bottom:1px solid var(--borda);">${(r[c]||'').slice(0,40)}</td>`).join('') + '</tr>').join('');
+    document.getElementById('import-preview').innerHTML = `<table style="width:100%;border-collapse:collapse;">${head}${rows}</table>`;
+  } catch(e) {
+    alert('Erro ao ler arquivo: ' + e.message);
+    console.error(e);
+  }
+}
+
+function normalizarHeader(s) {
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'');
+}
+
+function parsearCSV(texto) {
+  // Parser CSV simples: aceita aspas duplas e vírgulas dentro de aspas
+  const linhas = [];
+  let linha = [], campo = '', dentroAspas = false;
+  for (let i = 0; i < texto.length; i++) {
+    const c = texto[i], prox = texto[i+1];
+    if (dentroAspas) {
+      if (c === '"' && prox === '"') { campo += '"'; i++; }
+      else if (c === '"') dentroAspas = false;
+      else campo += c;
+    } else {
+      if (c === '"') dentroAspas = true;
+      else if (c === ',' || c === ';') { linha.push(campo); campo = ''; }
+      else if (c === '\n' || c === '\r') {
+        if (c === '\r' && prox === '\n') i++;
+        linha.push(campo); campo = '';
+        linhas.push(linha); linha = [];
+      } else campo += c;
+    }
+  }
+  if (campo !== '' || linha.length) { linha.push(campo); linhas.push(linha); }
+  return linhas;
+}
+
+async function confirmarImportPlanilha() {
+  const mapNome = document.getElementById('map-nome').value;
+  const mapTel  = document.getElementById('map-telefone').value;
+  const mapMun  = document.getElementById('map-municipio').value;
+  const mapBai  = document.getElementById('map-bairro').value;
+  const parent  = document.getElementById('import-parent').value || null;
+  if (!mapNome) { alert('Selecione qual coluna tem o nome — é obrigatório.'); return; }
+
+  document.getElementById('import-etapa-preview').style.display = 'none';
+  document.getElementById('import-etapa-progresso').style.display = 'block';
+  const barra = document.getElementById('import-barra');
+  const txt   = document.getElementById('import-progresso-num');
+
+  const validos = _importLinhas.filter(r => (r[mapNome]||'').trim());
+  let importados = 0, erros = 0;
+  const total = validos.length;
+  const BATCH_SIZE = 400; // limite Firestore é 500 ops/batch
+
+  try {
+    for (let i = 0; i < validos.length; i += BATCH_SIZE) {
+      const batch = _db.batch();
+      const slice = validos.slice(i, i + BATCH_SIZE);
+      slice.forEach(r => {
+        const mun = mapMun ? (r[mapMun]||'').trim() : '';
+        const docRef = _db.collection('liderancas').doc();
+        batch.set(docRef, {
+          nome:      (r[mapNome]||'').trim(),
+          telefone:  mapTel ? (r[mapTel]||'').trim() : '',
+          municipio: mun,
+          bairro:    mapBai ? (r[mapBai]||'').trim() : '',
+          regiao:    (typeof REGIOES_MAP !== 'undefined' && REGIOES_MAP[mun]) || '',
+          parent_id: parent,
+          tipo: 'lead',
+          status: 'Prospecto',
+          votos_comprometidos: 0,
+          created_via: 'planilha',
+          link_code: gerarLinkCode(),
+          created_at: firebase.firestore.FieldValue.serverTimestamp(),
+          updated_at: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      });
+      try {
+        await batch.commit();
+        importados += slice.length;
+      } catch(e) {
+        console.error('[import] batch falhou:', e);
+        erros += slice.length;
+      }
+      const pct = Math.round((i + slice.length) / total * 100);
+      barra.style.width = pct + '%';
+      txt.textContent = `${i + slice.length} / ${total}`;
+    }
+    const res = document.getElementById('import-resultado');
+    res.style.display = 'block';
+    if (erros === 0) {
+      res.style.background = 'rgba(16,185,129,0.12)';
+      res.style.color = '#10B981';
+      res.textContent = `✅ ${importados} leads importados com sucesso!`;
+    } else {
+      res.style.background = 'rgba(245,158,11,0.12)';
+      res.style.color = '#f59e0b';
+      res.textContent = `⚠️ ${importados} importados, ${erros} falharam.`;
+    }
+  } catch(e) {
+    alert('Erro: ' + e.message);
+  }
 }
 
 // ── CAPA DO LOGIN (personalizável pelo admin) ──
@@ -3067,6 +3542,9 @@ _db.collection('liderancas').orderBy('updated_at','desc').onSnapshot(snapshot =>
   // Atualiza visualizações de rede em tempo real
   if (typeof renderPaginaRede === 'function' && document.getElementById('page-rede')?.classList.contains('active')) {
     renderPaginaRede();
+  }
+  if (typeof renderLeads === 'function' && document.getElementById('page-leads')?.classList.contains('active')) {
+    renderLeads();
   }
   if (_liderancaAtual && document.getElementById('page-lideranca-detalhe')?.classList.contains('active')) {
     const atualizado = _liderancasData.find(l => l.id === _liderancaAtual.id);
