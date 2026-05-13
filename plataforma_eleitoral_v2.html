@@ -135,6 +135,100 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 .login-view.active{display:block;}
 .login-success{font-size:12px;color:var(--verde3);margin-top:10px;display:none;text-align:center;font-weight:600;padding:8px;border-radius:8px;background:var(--verde-glow);border:1px solid rgba(16,201,132,0.2);}
 
+/* CADASTRO PÚBLICO (link de afiliado) */
+#cadastro-screen{
+  position:fixed;inset:0;z-index:9000;display:none;background:#f7f8fc;
+  align-items:center;justify-content:center;padding:24px;overflow-y:auto;
+}
+.cadastro-card{
+  background:#fff;border:1px solid #e8ecf2;border-radius:18px;
+  padding:36px 32px;width:440px;max-width:100%;
+  box-shadow:0 4px 32px rgba(0,0,0,0.08);
+}
+.cadastro-eyebrow{
+  font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;
+  color:#7c3aed;margin-bottom:14px;
+}
+.cadastro-title{
+  font-family:var(--serif);font-size:24px;font-weight:500;font-style:italic;
+  color:#0f172a;line-height:1.2;margin-bottom:6px;
+}
+.cadastro-sub{font-size:12px;color:#64748b;margin-bottom:26px;}
+.cadastro-input{
+  width:100%;background:#f7f8fc;border:1px solid #e8ecf2;border-radius:10px;
+  padding:12px 14px;font-size:14px;color:#0f172a;font-family:var(--fonte);
+  outline:none;transition:border-color 0.2s,box-shadow 0.2s;margin-bottom:10px;
+}
+.cadastro-input:focus{border-color:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,0.12);}
+.cadastro-input::placeholder{color:#94a3b8;}
+.cadastro-btn{
+  width:100%;background:linear-gradient(135deg,#6d28d9,#7c3aed);color:#fff;border:none;
+  border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;
+  font-family:var(--fonte);margin-top:6px;box-shadow:0 4px 20px rgba(124,58,237,0.25);
+  transition:transform 0.15s,box-shadow 0.15s;
+}
+.cadastro-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(124,58,237,0.32);}
+.cadastro-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.cadastro-feedback{
+  margin-top:14px;font-size:13px;padding:12px;border-radius:8px;text-align:center;font-weight:600;
+}
+.cadastro-feedback.ok{background:rgba(5,150,105,0.08);color:#047857;border:1px solid rgba(5,150,105,0.2);}
+.cadastro-feedback.err{background:rgba(239,68,68,0.08);color:#b91c1c;border:1px solid rgba(239,68,68,0.2);}
+
+/* PÁGINA DETALHE LIDERANÇA — árvore + lista */
+.ld-share-box{
+  display:flex;gap:8px;align-items:center;background:var(--bg3);border:1px solid var(--borda);
+  border-radius:10px;padding:10px 12px;
+}
+.ld-share-box input{
+  flex:1;background:transparent;border:none;outline:none;font-family:var(--mono);
+  font-size:12px;color:var(--branco);
+}
+.ld-share-box button{
+  background:var(--bg4);border:1px solid var(--borda);color:var(--branco);
+  border-radius:6px;padding:6px 10px;font-size:11px;font-weight:600;
+  cursor:pointer;font-family:var(--fonte);transition:all 0.15s;
+}
+.ld-share-box button:hover{background:var(--ciano2);color:#fff;border-color:transparent;}
+.ld-share-box button.wa{background:#25D366;color:#fff;border-color:#25D366;}
+.ld-share-box button.wa:hover{background:#1da851;}
+
+/* Árvore — flexbox em colunas, linhas conectando */
+.tree-root{display:flex;justify-content:center;padding:20px 8px 8px;overflow-x:auto;}
+.tree-node{display:flex;flex-direction:column;align-items:center;padding:0 12px;position:relative;}
+.tree-bubble{
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,#6d28d9,#7c3aed);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;
+  border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.18);position:relative;z-index:2;
+}
+.tree-bubble.root{background:linear-gradient(135deg,#0f172a,#1e293b);width:64px;height:64px;font-size:20px;}
+.tree-label{
+  font-size:11px;font-weight:600;color:var(--branco);margin-top:6px;text-align:center;
+  max-width:96px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.tree-label small{display:block;font-size:9px;color:var(--cinza2);font-weight:400;margin-top:1px;}
+.tree-children{display:flex;justify-content:center;margin-top:24px;position:relative;}
+.tree-children::before{
+  content:"";position:absolute;top:-12px;left:50%;width:1px;height:12px;background:#cbd5e1;
+}
+.tree-node + .tree-node::before{
+  content:"";position:absolute;top:-24px;left:-50%;right:50%;height:1px;background:#cbd5e1;
+}
+.tree-node::after{
+  content:"";position:absolute;top:-12px;left:50%;width:1px;height:12px;background:#cbd5e1;
+}
+.tree-node:first-child::before{content:none;}
+
+.ld-list-item{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  background:var(--bg3);border:1px solid var(--borda);border-radius:10px;margin-bottom:6px;
+  font-size:13px;
+}
+.ld-list-bullet{
+  width:8px;height:8px;border-radius:50%;background:var(--ciano2);flex-shrink:0;
+}
+
 /* SETTINGS */
 .settings-card{background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
 .settings-section-title{font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--borda);}
@@ -543,6 +637,24 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   </div><!-- /.login-right -->
 </div>
 
+<!-- ══════════════ CADASTRO PÚBLICO (link de afiliado) ══════════════ -->
+<div id="cadastro-screen">
+  <div class="cadastro-card">
+    <div class="cadastro-eyebrow">Apoio à Talita Oliveira · Bahia 2026</div>
+    <h2 class="cadastro-title">Indicação de <span id="cadastro-lider-nome">—</span></h2>
+    <div class="cadastro-sub">Preencha seus dados para se cadastrar na rede de apoio.</div>
+    <input type="hidden" id="cadastro-parent-id" value="">
+    <input type="hidden" id="cadastro-parent-mun" value="">
+    <input class="cadastro-input" type="text" id="cadastro-nome" placeholder="Seu nome completo" autocomplete="name">
+    <input class="cadastro-input" type="tel" id="cadastro-telefone" placeholder="Seu telefone / WhatsApp" autocomplete="tel">
+    <input class="cadastro-input" type="text" id="cadastro-municipio" placeholder="Município" list="municipios-list-pub">
+    <datalist id="municipios-list-pub"></datalist>
+    <input class="cadastro-input" type="text" id="cadastro-bairro" placeholder="Bairro / localidade">
+    <button class="cadastro-btn" id="cadastro-btn" onclick="salvarCadastroPublico()">Confirmar cadastro →</button>
+    <div id="cadastro-feedback" class="cadastro-feedback" style="display:none;"></div>
+  </div>
+</div>
+
 <!-- ══════════════ APP ══════════════ -->
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 <div id="app">
@@ -923,6 +1035,55 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         </div>
       </div>
 
+      <!-- ══ DETALHE LIDERANÇA — rede de indicações (MLM) ══ -->
+      <div class="page" id="page-lideranca-detalhe">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+          <button class="btn btn-outline" onclick="showPage('crm',document.querySelector('[onclick*=crm]'))" style="font-size:12px;padding:8px 14px;">← Voltar</button>
+          <div style="flex:1;">
+            <div class="page-title" id="ld-nome">—</div>
+            <div class="page-sub"><span id="ld-mun">—</span> · <span id="ld-telefone">—</span></div>
+          </div>
+          <button class="btn btn-outline" onclick="editarLiderancaAtual()" style="font-size:12px;padding:8px 14px;">✏️ Editar</button>
+        </div>
+
+        <!-- Link de afiliado -->
+        <div class="panel" style="margin-bottom:20px;">
+          <div class="panel-header"><div class="panel-title">🔗 Link de cadastro</div></div>
+          <div class="panel-body" style="display:flex;flex-direction:column;gap:12px;">
+            <div style="font-size:12px;color:var(--cinza);line-height:1.5;">Compartilhe esse link no WhatsApp. Quem se cadastrar por ele entra automaticamente na rede dessa liderança.</div>
+            <div class="ld-share-box">
+              <input id="ld-link" type="text" readonly value="—">
+              <button onclick="copiarLink()">📋 Copiar</button>
+              <button class="wa" onclick="compartilharWA()">WhatsApp</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats da rede -->
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+          <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-num" id="ld-diretas">0</div><div class="stat-label">Indicações diretas</div></div>
+          <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/></svg></div><div class="stat-num" id="ld-rede">0</div><div class="stat-label">Total na rede</div></div>
+          <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="stat-num" id="ld-votos">0</div><div class="stat-label">Votos da rede</div></div>
+          <div class="stat-card roxo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="stat-num" id="ld-nivel">0</div><div class="stat-label">Profundidade</div></div>
+        </div>
+
+        <!-- Árvore + Lista -->
+        <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start;">
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">🌳 Árvore de indicações</div></div>
+            <div class="panel-body" id="ld-arvore" style="padding:8px;">
+              <div style="text-align:center;color:var(--cinza2);font-size:13px;padding:24px;">Sem indicações ainda.</div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">📋 Lista completa</div></div>
+            <div class="panel-body" id="ld-lista" style="max-height:600px;overflow-y:auto;">
+              <div style="text-align:center;color:var(--cinza2);font-size:13px;padding:24px;">Vazio.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- ══ PROJETO DETALHE + IA ══ -->
       <div class="page" id="page-projeto-detalhe">
         <div class="page-header" style="display:flex;align-items:center;gap:12px;">
@@ -995,10 +1156,10 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
               <table class="crm-table" style="width:100%">
                 <thead><tr>
                   <th>Nome</th><th>Município / Bairro</th><th>Segmento</th>
-                  <th>Votos</th><th>Status</th><th>Contato</th><th></th>
+                  <th>Votos</th><th>Status</th><th title="Indicações diretas (rede total)">Rede</th><th>Contato</th><th></th>
                 </tr></thead>
                 <tbody id="crm-tbody">
-                  <tr><td colspan="7" style="text-align:center;color:var(--cinza2);padding:24px;font-size:13px;">Nenhuma liderança cadastrada ainda.</td></tr>
+                  <tr><td colspan="8" style="text-align:center;color:var(--cinza2);padding:24px;font-size:13px;">Nenhuma liderança cadastrada ainda.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -1762,6 +1923,7 @@ const PAGE_TITLES = {
   monitoramento:'Monitoramento',trafego:'Tráfego & Leads',
   ia:'IA Estratégica','projeto-detalhe':'Projeto',
   'concorrente-detalhe':'Perfil do Concorrente',
+  'lideranca-detalhe':'Rede da Liderança',
   config:'Configurações',votos:'Registrar Votos'
 };
 
@@ -2018,6 +2180,10 @@ const _auth = firebase.auth(_fbApp);
 const _fbApp2 = firebase.initializeApp(_fbConfig, 'secondary');
 const _auth2  = firebase.auth(_fbApp2);
 
+// Checa rota imediatamente — se for #/cadastro/<code>, dispara fluxo público
+// e impede que a tela de login apareça
+setTimeout(() => verificarRotaCadastro(), 0);
+
 // ── LISTENERS FIRESTORE (anexados após autenticação) ──
 let _listenersIniciados = false;
 function iniciarListenersFirestore() {
@@ -2027,6 +2193,209 @@ function iniciarListenersFirestore() {
   try { iniciarListener_liderancas();   } catch(e){ console.error('[listeners] liderancas:',   e); }
   try { iniciarListener_concorrentes(); } catch(e){ console.error('[listeners] concorrentes:', e); }
   try { iniciarListener_eventos();      } catch(e){ console.error('[listeners] eventos:',      e); }
+}
+
+// ── REDE DE LIDERANÇAS (estilo MLM com link de afiliado) ──
+function gerarLinkCode() {
+  const chars = 'abcdefghjkmnpqrstuvwxyz23456789'; // sem 0/o/1/i/l
+  let c = '';
+  for (let i = 0; i < 6; i++) c += chars[Math.floor(Math.random() * chars.length)];
+  return c;
+}
+function urlLinkAfiliado(code) {
+  return location.origin + location.pathname + '#/cadastro/' + code;
+}
+function descendentesDe(id, todos = _liderancasData) {
+  const out = [];
+  const stack = todos.filter(l => l.parent_id === id);
+  while (stack.length) {
+    const cur = stack.shift();
+    out.push(cur);
+    stack.push(...todos.filter(l => l.parent_id === cur.id));
+  }
+  return out;
+}
+function filhosDe(id, todos = _liderancasData) {
+  return todos.filter(l => l.parent_id === id);
+}
+
+// ── Hash router (#/cadastro/<code>) ──
+function verificarRotaCadastro() {
+  const m = (location.hash || '').match(/^#\/cadastro\/([a-z0-9]+)/i);
+  if (m) abrirCadastroPublico(m[1]);
+}
+window.addEventListener('hashchange', verificarRotaCadastro);
+
+async function abrirCadastroPublico(code) {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('cadastro-screen').style.display = 'flex';
+  // Popular datalist de municípios
+  const dl = document.getElementById('municipios-list-pub');
+  if (dl && !dl.children.length && typeof MUNICIPIOS_BA !== 'undefined') {
+    MUNICIPIOS_BA.forEach(m => { const o=document.createElement('option'); o.value=m; dl.appendChild(o); });
+  }
+  // Garante uma sessão (anônima) pra passar nas regras do Firestore
+  try {
+    if (!_auth.currentUser) await _auth.signInAnonymously();
+  } catch(e) { console.warn('[cadastro] anônimo indisponível:', e.code); }
+  try {
+    const snap = await _db.collection('liderancas').where('link_code','==',code).limit(1).get();
+    if (snap.empty) {
+      document.getElementById('cadastro-lider-nome').textContent = 'Link inválido';
+      document.getElementById('cadastro-btn').disabled = true;
+      return;
+    }
+    const d = snap.docs[0];
+    const lid = { id: d.id, ...d.data() };
+    document.getElementById('cadastro-lider-nome').textContent = lid.nome || '—';
+    document.getElementById('cadastro-parent-id').value = lid.id;
+    document.getElementById('cadastro-parent-mun').value = lid.municipio || '';
+    if (lid.municipio) document.getElementById('cadastro-municipio').value = lid.municipio;
+  } catch(e) {
+    console.error('[cadastro] erro ao buscar líder:', e);
+    document.getElementById('cadastro-lider-nome').textContent = 'Erro ao carregar';
+  }
+}
+
+async function salvarCadastroPublico() {
+  const fb = document.getElementById('cadastro-feedback');
+  const showFb = (msg, ok) => { fb.textContent=msg; fb.className='cadastro-feedback '+(ok?'ok':'err'); fb.style.display='block'; };
+  const nome      = document.getElementById('cadastro-nome').value.trim();
+  const telefone  = document.getElementById('cadastro-telefone').value.trim();
+  const municipio = document.getElementById('cadastro-municipio').value.trim();
+  const bairro    = document.getElementById('cadastro-bairro').value.trim();
+  const parent_id = document.getElementById('cadastro-parent-id').value;
+  if (!nome || !municipio) { showFb('Informe nome e município.', false); return; }
+  if (!parent_id) { showFb('Link inválido.', false); return; }
+  const btn = document.getElementById('cadastro-btn');
+  btn.disabled = true; btn.textContent = 'Salvando...';
+  try {
+    await _db.collection('liderancas').add({
+      nome, telefone, municipio, bairro,
+      regiao: (typeof REGIOES_MAP !== 'undefined' && REGIOES_MAP[municipio]) || '',
+      parent_id, link_code: gerarLinkCode(),
+      status: 'Prospecto', votos_comprometidos: 0,
+      segmento: '', obs: '',
+      created_via: 'afiliado',
+      created_at: firebase.firestore.FieldValue.serverTimestamp(),
+      updated_at: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    showFb('✅ Cadastro confirmado! Obrigado pelo apoio.', true);
+    btn.style.display = 'none';
+    ['cadastro-nome','cadastro-telefone','cadastro-bairro'].forEach(id=>{ const e=document.getElementById(id); if(e) e.disabled=true; });
+  } catch(e) {
+    showFb('❌ Erro: ' + e.message, false);
+    btn.disabled = false; btn.textContent = 'Confirmar cadastro →';
+  }
+}
+
+// ── Detalhe da liderança ──
+let _liderancaAtual = null;
+function abrirDetalheLideranca(id) {
+  const l = _liderancasData.find(x => x.id === id);
+  if (!l) return;
+  _liderancaAtual = l;
+  document.getElementById('ld-nome').textContent     = l.nome || '—';
+  document.getElementById('ld-mun').textContent      = l.municipio || '—';
+  document.getElementById('ld-telefone').textContent = l.telefone || 'sem telefone';
+  // Garante link_code (caso seja registro antigo sem código)
+  let code = l.link_code;
+  if (!code) {
+    code = gerarLinkCode();
+    _db.collection('liderancas').doc(id).update({ link_code: code }).catch(e => console.warn('backfill link_code:', e));
+    l.link_code = code;
+  }
+  document.getElementById('ld-link').value = urlLinkAfiliado(code);
+  renderEstatisticasRede(l);
+  renderArvore(l);
+  renderListaRede(l);
+  showPage('lideranca-detalhe');
+}
+
+function renderEstatisticasRede(lider) {
+  const desc = descendentesDe(lider.id);
+  const diretas = filhosDe(lider.id).length;
+  const votos = desc.reduce((s,d) => s + (d.votos_comprometidos||0), 0);
+  // Profundidade máxima
+  function profundidade(id, lvl=0) {
+    const fs = filhosDe(id);
+    if (!fs.length) return lvl;
+    return Math.max(...fs.map(c => profundidade(c.id, lvl+1)));
+  }
+  document.getElementById('ld-diretas').textContent = diretas;
+  document.getElementById('ld-rede').textContent    = desc.length;
+  document.getElementById('ld-votos').textContent   = votos.toLocaleString('pt-BR');
+  document.getElementById('ld-nivel').textContent   = profundidade(lider.id);
+}
+
+function renderArvore(lider) {
+  const cont = document.getElementById('ld-arvore');
+  const fs = filhosDe(lider.id);
+  if (!fs.length) {
+    cont.innerHTML = '<div style="text-align:center;color:var(--cinza2);font-size:13px;padding:24px;">Sem indicações ainda. Compartilhe o link acima pra começar a rede.</div>';
+    return;
+  }
+  function nodeHtml(n, isRoot=false) {
+    const fs = filhosDe(n.id);
+    const inicial = (n.nome||'?')[0].toUpperCase();
+    const sub = filhosDe(n.id).length;
+    return `
+      <div class="tree-node">
+        <div class="tree-bubble${isRoot?' root':''}" onclick="abrirDetalheLideranca('${n.id}')" style="cursor:pointer;" title="${n.nome}">${inicial}</div>
+        <div class="tree-label">${n.nome.split(' ')[0]}<small>${sub?sub+' indic.':'—'}</small></div>
+        ${fs.length ? `<div class="tree-children">${fs.map(c => nodeHtml(c)).join('')}</div>` : ''}
+      </div>`;
+  }
+  cont.innerHTML = `<div class="tree-root">${nodeHtml(lider, true)}</div>`;
+}
+
+function renderListaRede(lider) {
+  const cont = document.getElementById('ld-lista');
+  const desc = descendentesDe(lider.id);
+  if (!desc.length) { cont.innerHTML = '<div style="text-align:center;color:var(--cinza2);font-size:13px;padding:24px;">Lista vazia.</div>'; return; }
+  // Nível de cada um
+  function nivel(id, lvl=0) {
+    const l = _liderancasData.find(x=>x.id===id);
+    if (!l || !l.parent_id || l.parent_id === lider.id) return lvl + (l && l.parent_id === lider.id ? 1 : 0);
+    return nivel(l.parent_id, lvl+1);
+  }
+  cont.innerHTML = desc.map(d => {
+    const lv = nivel(d.id);
+    return `
+      <div class="ld-list-item" onclick="abrirDetalheLideranca('${d.id}')" style="cursor:pointer;padding-left:${12 + lv*14}px;">
+        <span class="ld-list-bullet"></span>
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:600;color:var(--branco);font-size:13px;">${d.nome||'—'} <small style="color:var(--cinza2);font-weight:400;">· nível ${lv}</small></div>
+          <div style="font-size:11px;color:var(--cinza2);">${d.municipio||'—'}${d.bairro?' · '+d.bairro:''}</div>
+        </div>
+        <div style="font-size:11px;color:var(--cinza);">${d.created_via==='afiliado'?'🔗':'👤'}</div>
+      </div>`;
+  }).join('');
+}
+
+function copiarLink() {
+  const input = document.getElementById('ld-link');
+  input.select(); input.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(input.value).then(() => {
+    const btn = document.querySelector('#ld-link + button');
+    const orig = btn.textContent;
+    btn.textContent = '✓ Copiado!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  }).catch(() => alert('Link: ' + input.value));
+}
+
+function compartilharWA() {
+  if (!_liderancaAtual) return;
+  const url = document.getElementById('ld-link').value;
+  const msg = `Olá! Sou da rede de apoio à *Talita Oliveira · 1022 · Bahia 2026*. Cadastre-se aqui para confirmar seu apoio:\n\n${url}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function editarLiderancaAtual() {
+  if (!_liderancaAtual) return;
+  showPage('crm', document.querySelector('[onclick*=crm]'));
+  setTimeout(() => editarLideranca(_liderancaAtual.id), 100);
 }
 
 // ── CAPA DO LOGIN (personalizável pelo admin) ──
@@ -2138,6 +2507,11 @@ async function removerCapaLogin() {
 // ── AUTH STATE ──
 let _logoutTimer = null;
 _auth.onAuthStateChanged(async user => {
+  // Sessões anônimas existem só pro fluxo de cadastro público — não inicializam o app
+  if (user && user.isAnonymous) {
+    console.log('[AUTH] anônimo (cadastro público) — ignorando init do app');
+    return;
+  }
   console.log('[AUTH]', user ? 'logado: ' + user.email : 'null — possível logout');
   if (user) {
     if (_logoutTimer) { clearTimeout(_logoutTimer); _logoutTimer = null; }
@@ -2185,6 +2559,9 @@ _auth.onAuthStateChanged(async user => {
       console.warn('[AUTH] Confirmado: sessão encerrada. Redirecionando para login.');
       _logoutTimer = null;
       _currentUser = null;
+      // Se a tela de cadastro público está aberta, não interrompe com tela de login
+      const cadastroAberto = document.getElementById('cadastro-screen')?.style.display === 'flex';
+      if (cadastroAberto) return;
       document.getElementById('login-screen').style.display = 'flex';
       document.getElementById('app').style.display = 'none';
     }, 4000);
@@ -2623,13 +3000,19 @@ function renderCRM() {
   const tbody = document.getElementById('crm-tbody');
   if(!tbody) return;
   if(_liderancasFiltradas.length===0){
-    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--cinza2);padding:24px;font-size:13px;">Nenhuma liderança encontrada.</td></tr>';
+    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--cinza2);padding:24px;font-size:13px;">Nenhuma liderança encontrada.</td></tr>';
     return;
   }
   const statusColor = { 'Confirmado':'verde','Negociando':'azul','Prospecto':'amarelo' };
-  tbody.innerHTML = _liderancasFiltradas.map(l => `
+  tbody.innerHTML = _liderancasFiltradas.map(l => {
+    const diretas = filhosDe(l.id).length;
+    const rede    = descendentesDe(l.id).length;
+    return `
     <tr>
-      <td><span class="crm-avatar">${(l.nome||'?')[0].toUpperCase()}</span>${l.nome||'—'}</td>
+      <td>
+        <span class="crm-avatar" onclick="abrirDetalheLideranca('${l.id}')" style="cursor:pointer;">${(l.nome||'?')[0].toUpperCase()}</span>
+        <a onclick="abrirDetalheLideranca('${l.id}')" style="cursor:pointer;text-decoration:none;color:var(--branco);font-weight:600;">${l.nome||'—'}</a>
+      </td>
       <td>
         <div style="font-weight:600;color:var(--branco);font-size:12px;">${l.municipio||'—'}</div>
         ${l.bairro?`<div style="font-size:11px;color:var(--cinza2);">${l.bairro}</div>`:''}
@@ -2637,14 +3020,18 @@ function renderCRM() {
       <td>${l.segmento||'—'}</td>
       <td style="font-weight:800;color:var(--verde2);font-family:var(--mono);">${(l.votos_comprometidos||0).toLocaleString('pt-BR')}</td>
       <td><span class="badge ${statusColor[l.status]||'azul'}">${l.status||'—'}</span></td>
+      <td style="font-size:11px;color:var(--cinza);font-family:var(--mono);">${diretas}${rede>diretas?` <small style="color:var(--cinza2);">(${rede})</small>`:''}</td>
       <td style="font-size:12px;color:var(--cinza);">${l.telefone||'—'}</td>
       <td style="white-space:nowrap;">
+        <button onclick="abrirDetalheLideranca('${l.id}')" title="Ver rede de indicações"
+          style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:var(--ciano3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">🔗</button>
         <button onclick="editarLideranca('${l.id}')"
           style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">✏️</button>
         <button onclick="apagarLideranca('${l.id}','${(l.nome||'').replace(/'/g,"\\'")}')"
           style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">🗑️</button>
       </td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 }
 
 function abrirFormLideranca() {
@@ -2720,6 +3107,9 @@ async function salvarLideranca() {
       mostrarFeedbackCRM(`✅ ${nome} atualizado!`, true);
     } else {
       payload.created_at = firebase.firestore.FieldValue.serverTimestamp();
+      payload.link_code   = gerarLinkCode();
+      payload.parent_id   = null;
+      payload.created_via = 'manual';
       await _db.collection('liderancas').add(payload);
       mostrarFeedbackCRM(`✅ ${nome} cadastrado!`, true);
     }
