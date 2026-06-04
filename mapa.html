@@ -4,38 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mapa Eleitoral Bahia — Talita Oliveira 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg:#080C14;--bg2:#0E1420;--bg3:#141B2D;--bg4:#1A2236;
-    --azul:#2563EB;--azul2:#3B82F6;--azul-glow:rgba(37,99,235,0.15);
-    --verde:#10B981;--vermelho:#EF4444;--amarelo:#F59E0B;--roxo:#7C3AED;
-    --branco:#F8FAFC;--cinza:#94A3B8;--cinza2:#64748B;
-    --borda:rgba(255,255,255,0.07);
-    --fonte:'Segoe UI',Arial,sans-serif;
+    /* Paleta clara — alinhada à plataforma (Sora + violeta) */
+    --bg:#f7f8fc;--bg2:#ffffff;--bg3:#f0f2f8;--bg4:#e8edf4;
+    --azul:#6d28d9;--azul2:#7c3aed;--azul-glow:rgba(124,58,237,0.10);
+    --verde:#059669;--vermelho:#dc2626;--amarelo:#d97706;--roxo:#7c3aed;
+    --branco:#0f172a;--cinza:#64748b;--cinza2:#94a3b8;
+    --borda:#e8ecf2;
+    --fonte:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); font-family:var(--fonte); color:var(--branco); }
 
   #header {
     background:var(--bg2);
-    border-bottom:2px solid var(--azul);
+    border-bottom:1px solid var(--borda);
     padding:12px 24px;
     display:flex; align-items:center; justify-content:space-between;
     position:sticky; top:0; z-index:100;
-    box-shadow:0 2px 20px rgba(0,0,0,0.4);
+    box-shadow:0 1px 3px rgba(15,23,42,0.04);
     gap:20px; flex-wrap:wrap;
   }
   #header h1 { font-size:17px; font-weight:800; color:var(--branco); }
   #header p { font-size:11px; color:var(--cinza); margin-top:2px; }
   .header-stats { display:flex; gap:22px; align-items:center; }
   .hstat { text-align:center; }
-  .hstat-val { font-size:18px; font-weight:800; color:var(--azul2); font-family:monospace; }
+  .hstat-val { font-size:18px; font-weight:800; color:var(--azul2); font-family:var(--mono); }
   .hstat-val.green { color:var(--verde); }
   .hstat-lbl { font-size:10px; color:var(--cinza2); text-transform:uppercase; letter-spacing:0.5px; margin-top:1px; }
 
   .header-progress { display:flex; flex-direction:column; gap:3px; min-width:180px; }
   .hp-row { display:flex; justify-content:space-between; font-size:10px; color:var(--cinza2); }
-  .hp-row strong { color:var(--verde); font-family:monospace; }
+  .hp-row strong { color:var(--verde); font-family:var(--mono); }
   .hp-bar-bg { height:6px; background:var(--bg3); border-radius:3px; overflow:hidden; border:1px solid var(--borda); }
   .hp-bar-fill { height:6px; background:linear-gradient(to right,#059669,#10B981); border-radius:3px; width:0%; transition:width 0.8s ease; }
 
@@ -89,27 +93,27 @@
   }
   .top-rank { color:var(--cinza2); width:16px; font-size:11px; }
   .top-name { flex:1; color:var(--branco); }
-  .top-votes { font-weight:700; color:var(--azul2); font-family:monospace; }
+  .top-votes { font-weight:700; color:var(--azul2); font-family:var(--mono); }
 
   path.mun {
-    stroke:rgba(255,255,255,0.1); stroke-width:0.4;
-    cursor:pointer; transition:filter 0.15s;
+    stroke:#ffffff; stroke-width:0.5;
+    cursor:pointer; transition:fill 0.15s, stroke 0.15s;
   }
-  path.mun:hover { filter:brightness(1.3); stroke-width:1.2; stroke:#fff; }
-  .mun-name { font-size:7px; font-weight:600; fill:rgba(255,255,255,0.7); }
-  .mun-votes { font-size:6.5px; font-weight:700; fill:#93C5FD; }
+  path.mun:hover { stroke:#6d28d9; stroke-width:1.4; }
+  .mun-name { font-size:7px; font-weight:600; fill:#475569; }
+  .mun-votes { font-size:6.5px; font-weight:700; fill:#6d28d9; }
 
   #tooltip {
     position:fixed; background:var(--bg2);
     border:1.5px solid var(--azul);
     border-radius:10px; padding:10px 14px;
     pointer-events:none; opacity:0; transition:opacity 0.12s;
-    z-index:1000; box-shadow:0 4px 24px rgba(0,0,0,0.5); min-width:190px;
+    z-index:1000; box-shadow:0 8px 28px rgba(15,23,42,0.12); min-width:190px;
   }
   #tooltip.show { opacity:1; }
   .tt-region { font-size:10px; text-transform:uppercase; letter-spacing:0.8px; color:var(--cinza2); margin-bottom:4px; }
   .tt-name { font-size:15px; font-weight:800; color:var(--branco); margin-bottom:6px; }
-  .tt-votes { font-size:20px; font-weight:800; color:var(--azul2); font-family:monospace; }
+  .tt-votes { font-size:20px; font-weight:800; color:var(--azul2); font-family:var(--mono); }
   .tt-pct { font-size:12px; color:var(--cinza); margin-top:2px; }
 
   #loading {
@@ -139,7 +143,7 @@
   .meta-card:hover { border-color:rgba(37,99,235,0.4); }
   .meta-card.active { border-color:var(--azul); background:var(--azul-glow); }
   .meta-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
-  .meta-dot { width:12px; height:12px; border-radius:3px; flex-shrink:0; border:1px solid rgba(255,255,255,0.1); }
+  .meta-dot { width:12px; height:12px; border-radius:3px; flex-shrink:0; border:1px solid rgba(15,23,42,0.08); }
   .meta-name { font-size:12px; font-weight:600; color:var(--branco); flex:1; }
   .meta-pct { font-size:11px; color:var(--verde); font-weight:700; }
   .meta-bar-bg { background:var(--bg4); border-radius:4px; height:5px; margin-bottom:5px; }
@@ -156,7 +160,7 @@
     border:1px solid var(--borda);
   }
   .ms-label { font-size:10px; text-transform:uppercase; letter-spacing:0.5px; color:var(--cinza2); }
-  .ms-val { font-size:16px; font-weight:800; color:var(--azul2); font-family:monospace; }
+  .ms-val { font-size:16px; font-weight:800; color:var(--azul2); font-family:var(--mono); }
   .ms-val.green { color:var(--verde); }
 
   .layer-switcher { display:flex; gap:5px; margin-bottom:6px; flex-wrap:wrap; }
@@ -166,11 +170,7 @@
     cursor:pointer; color:var(--cinza); transition:all 0.15s; font-family:var(--fonte);
   }
   .layer-btn:hover { border-color:var(--azul); color:var(--azul2); }
-  .layer-btn.active       { background:var(--azul);   border-color:var(--azul);   color:#fff; }
-  .layer-btn.active.green { background:#059669;        border-color:#059669;       color:#fff; }
-  .layer-btn.active.red   { background:#DC2626;        border-color:#DC2626;       color:#fff; }
-  .layer-btn.active.yellow{ background:#B45309;        border-color:#B45309;       color:#fff; }
-  .layer-btn.active.purple{ background:#6D28D9;        border-color:#6D28D9;       color:#fff; }
+  .layer-btn.active { background:var(--azul); border-color:var(--azul); color:#fff; }
 
   .color-scale {
     display:flex; align-items:center; gap:6px;
@@ -188,15 +188,15 @@
   .filter-wrap { margin-bottom:4px; }
   .filter-label { display:flex; justify-content:space-between; margin-bottom:6px; font-size:12px; }
   .filter-label span:first-child { color:var(--cinza); }
-  .filter-label span:last-child { color:var(--azul2); font-weight:700; font-family:monospace; }
+  .filter-label span:last-child { color:var(--azul2); font-weight:700; font-family:var(--mono); }
   input[type=range] { width:100%; accent-color:var(--azul); cursor:pointer; background:transparent; }
 
   #detail-panel {
     display:none; position:fixed; bottom:20px; left:20px;
-    background:var(--bg2); border:1px solid rgba(37,99,235,0.5);
+    background:var(--bg2); border:1px solid var(--borda);
     border-radius:16px; padding:20px; width:340px;
     max-height:calc(100vh - 40px); overflow-y:auto;
-    z-index:500; box-shadow:0 12px 48px rgba(0,0,0,0.6);
+    z-index:500; box-shadow:0 12px 40px rgba(15,23,42,0.16);
     animation:slideUp 0.2s ease;
   }
   @keyframes slideUp { from { transform:translateY(10px); opacity:0; } to { transform:translateY(0); opacity:1; } }
@@ -211,7 +211,7 @@
     background:var(--bg3); border-radius:8px; padding:10px 12px; border:1px solid var(--borda);
   }
   .detail-stat-lbl { font-size:10px; color:var(--cinza2); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:4px; }
-  .detail-stat-val { font-size:22px; font-weight:800; font-family:monospace; line-height:1; }
+  .detail-stat-val { font-size:22px; font-weight:800; font-family:var(--mono); line-height:1; }
   .detail-stat-sub { font-size:10px; color:var(--cinza2); margin-top:3px; }
   .detail-prog-bg { background:var(--bg4); border-radius:3px; height:4px; margin-top:8px; }
   .detail-prog-fill { height:4px; border-radius:3px; background:var(--verde); transition:width 0.6s ease; }
@@ -220,18 +220,18 @@
   .ibge-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
   .ibge-cell { background:var(--bg3); border:1px solid var(--borda); border-radius:8px; padding:8px 10px; }
   .ibge-cell .k { font-size:9px; color:var(--cinza2); text-transform:uppercase; letter-spacing:0.5px; }
-  .ibge-cell .v { font-size:14px; font-weight:700; color:#F8FAFC; font-family:monospace; margin-top:2px; }
+  .ibge-cell .v { font-size:14px; font-weight:700; color:var(--branco); font-family:var(--mono); margin-top:2px; }
   .ibge-cell .v small { font-size:9px; color:var(--cinza2); font-weight:400; }
   .eco-bar { display:flex; height:11px; border-radius:6px; overflow:hidden; background:var(--bg4); }
   .eco-bar > span { display:block; height:100%; }
   .eco-leg { display:grid; grid-template-columns:1fr 1fr; gap:5px 10px; margin-top:9px; }
   .eco-leg div { font-size:11px; color:var(--cinza); display:flex; align-items:center; gap:6px; }
-  .eco-leg b { color:#F8FAFC; font-family:monospace; margin-left:auto; }
+  .eco-leg b { color:var(--branco); font-family:var(--mono); margin-left:auto; }
   .eco-dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
   .voc-box { margin-top:13px; background:rgba(124,58,237,0.12); border:1px solid rgba(124,58,237,0.35); border-radius:10px; padding:10px 12px; }
-  .voc-box .t { font-size:12px; font-weight:800; color:#A78BFA; }
+  .voc-box .t { font-size:12px; font-weight:800; color:#6d28d9; }
   .voc-box .d { font-size:11px; color:var(--cinza); margin-top:3px; line-height:1.35; }
-  .cod-ibge { font-size:10px; color:var(--cinza2); font-family:monospace; margin-top:10px; text-align:right; letter-spacing:0.5px; }
+  .cod-ibge { font-size:10px; color:var(--cinza2); font-family:var(--mono); margin-top:10px; text-align:right; letter-spacing:0.5px; }
 
   .activity-item {
     display:flex; gap:8px; padding:5px 0;
@@ -274,23 +274,24 @@
   <div id="map-area">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
       <div class="layer-switcher">
-        <button class="layer-btn active"  onclick="setLayer('votos2022')">📊 Votos 2022</button>
-        <button class="layer-btn green"   onclick="setLayer('meta2026')">🎯 Meta 2026</button>
-        <button class="layer-btn red"     onclick="setLayer('crescimento')">🔥 Crescimento</button>
-        <button class="layer-btn yellow"  onclick="setLayer('votosatual')">📍 Votos Atuais</button>
-        <button class="layer-btn purple"  onclick="setLayer('falta')">⚡ Faltam</button>
+        <button class="layer-btn active" onclick="setLayer('regioes')">Regiões</button>
+        <button class="layer-btn" onclick="setLayer('votos2022')">Votos 2022</button>
+        <button class="layer-btn" onclick="setLayer('meta2026')">Meta 2026</button>
+        <button class="layer-btn" onclick="setLayer('crescimento')">Crescimento</button>
+        <button class="layer-btn" onclick="setLayer('votosatual')">Votos atuais</button>
+        <button class="layer-btn" onclick="setLayer('falta')">Faltam</button>
       </div>
       <div style="display:flex;gap:6px;">
-        <button class="zoom-btn" onclick="zoomIn()">＋ Zoom</button>
-        <button class="zoom-btn" onclick="zoomOut()">－ Zoom</button>
-        <button class="zoom-btn" onclick="resetZoom()">↺ Resetar</button>
+        <button class="zoom-btn" onclick="zoomIn()">Zoom +</button>
+        <button class="zoom-btn" onclick="zoomOut()">Zoom −</button>
+        <button class="zoom-btn" onclick="resetZoom()">Resetar</button>
       </div>
     </div>
     <div class="color-scale">
-      <span id="scale-min">0</span>
-      <div class="scale-bar" id="scale-bar" style="background:linear-gradient(to right,#1E3A5F,#2563EB);"></div>
-      <span id="scale-max">5.720</span>
-      <span id="scale-label" style="margin-left:4px;font-weight:700;color:var(--cinza)">votos 2022</span>
+      <span id="scale-min"></span>
+      <div class="scale-bar" id="scale-bar" style="background:linear-gradient(to right,#e8edf4,#cbd5e1);"></div>
+      <span id="scale-max"></span>
+      <span id="scale-label" style="margin-left:4px;font-weight:700;color:var(--cinza)">cores por região</span>
     </div>
     <div id="map-container">
       <div id="loading"><div class="spinner"></div><span>Carregando mapa da Bahia...</span></div>
@@ -473,10 +474,11 @@ const VOTES = {
   "Tanquinho":2,"Biritinga":1,"Guajeru":1,"Caldeirão Grande":0
 };
 
+// Paleta harmonizada e suave (tons médios dessaturados) — limpa sobre fundo claro
 const REGION_COLORS = {
-  "NORTE":"#4A90D9","NORDESTE":"#E67E22","CENTRO-NORTE":"#8E44AD",
-  "CENTRO-LESTE":"#27AE60","LESTE":"#E74C3C","SUDOESTE":"#F39C12",
-  "OESTE":"#16A085","SUL":"#2ECC71","EXTREMO-SUL":"#C0392B"
+  "NORTE":"#6d8fc9","NORDESTE":"#d99a6c","CENTRO-NORTE":"#9b7fcf",
+  "CENTRO-LESTE":"#5fae8f","LESTE":"#d97f7f","SUDOESTE":"#d9b46c",
+  "OESTE":"#6cb3b0","SUL":"#86c08e","EXTREMO-SUL":"#c47f96"
 };
 
 const REGION_MAP = {};
@@ -511,7 +513,7 @@ function getVotesAtual(name) {
   return 0;
 }
 function getRegion(name) { return REGION_MAP[normalize(name)] || null; }
-function getColor(name) { const r = getRegion(name); return r ? REGION_COLORS[r] : '#2a3a4a'; }
+function getColor(name) { const r = getRegion(name); return r ? REGION_COLORS[r] : '#eef1f6'; }
 // Dados socioeconomicos IBGE (dados_municipios_ba.js) — mesma logica de match do getVotes
 function getIBGE(name) {
   const M = window.DADOS_MUN; if (!M) return null;
@@ -557,21 +559,24 @@ function getMunFalta(name) {
 }
 
 // Escalas de cor
-const colorVotos  = d3.scaleSequential(d3.interpolate('#1E3A5F','#2563EB')).domain([0,5720]);
-const colorMeta   = d3.scaleSequential(d3.interpolate('#064E3B','#10B981')).domain([0,40000]);
-const colorGrowth = d3.scaleSequential(d3.interpolate('#450A0A','#EF4444')).domain([0,35000]);
-const colorAtual  = d3.scaleSequential(d3.interpolate('#2D1B69','#7C3AED')).domain([0,10000]);
-const colorFalta  = d3.scaleSequential(d3.interpolate('#451A03','#F59E0B')).domain([0,35000]);
-let currentLayer = 'votos2022';
+// Escalas claras: do tom bem suave ao saturado da família violeta/verde/âmbar
+const colorVotos  = d3.scaleSequential(d3.interpolate('#ede9fe','#6d28d9')).domain([0,5720]);
+const colorMeta   = d3.scaleSequential(d3.interpolate('#d1fae5','#059669')).domain([0,40000]);
+const colorGrowth = d3.scaleSequential(d3.interpolate('#fee2e2','#dc2626')).domain([0,35000]);
+const colorAtual  = d3.scaleSequential(d3.interpolate('#ede9fe','#7c3aed')).domain([0,10000]);
+const colorFalta  = d3.scaleSequential(d3.interpolate('#fef3c7','#d97706')).domain([0,35000]);
+let currentLayer = 'regioes';
 
 function getFillForLayer(name, layer) {
-  const r = getRegion(name); if(!r) return '#1a2236';
-  if(layer==='votos2022'){ const v=getVotes(name); return v>0?colorVotos(v):'#1a2236'; }
-  if(layer==='meta2026'){ const m=getMunMeta(name); return m>0?colorMeta(m):'#1a2236'; }
-  if(layer==='crescimento'){ const g=getMunGrowth(name); return g>0?colorGrowth(g):'#1a2236'; }
-  if(layer==='votosatual'){ const a=getVotesAtual(name); return a>0?colorAtual(a):'#1a2236'; }
-  if(layer==='falta'){ const f=getMunFalta(name); return f>0?colorFalta(f):'#1a2236'; }
-  return '#1a2236';
+  const EMPTY='#eef1f6';
+  const r = getRegion(name); if(!r) return EMPTY;
+  if(layer==='regioes'){ return getColor(name); }
+  if(layer==='votos2022'){ const v=getVotes(name); return v>0?colorVotos(v):EMPTY; }
+  if(layer==='meta2026'){ const m=getMunMeta(name); return m>0?colorMeta(m):EMPTY; }
+  if(layer==='crescimento'){ const g=getMunGrowth(name); return g>0?colorGrowth(g):EMPTY; }
+  if(layer==='votosatual'){ const a=getVotesAtual(name); return a>0?colorAtual(a):EMPTY; }
+  if(layer==='falta'){ const f=getMunFalta(name); return f>0?colorFalta(f):EMPTY; }
+  return EMPTY;
 }
 
 function getTooltipExtra(name, layer) {
@@ -583,6 +588,7 @@ function getTooltipExtra(name, layer) {
 }
 
 function getLayerValue(name, layer) {
+  if(layer==='regioes') return getVotes(name);
   if(layer==='votos2022') return getVotes(name);
   if(layer==='meta2026') return getMunMeta(name);
   if(layer==='crescimento') return getMunGrowth(name);
@@ -594,16 +600,17 @@ function getLayerValue(name, layer) {
 function setLayer(layer) {
   currentLayer = layer;
   document.querySelectorAll('.layer-btn').forEach(b=>b.classList.remove('active'));
-  const idx = ['votos2022','meta2026','crescimento','votosatual','falta'].indexOf(layer);
+  const idx = ['regioes','votos2022','meta2026','crescimento','votosatual','falta'].indexOf(layer);
   document.querySelectorAll('.layer-btn')[idx].classList.add('active');
   const sb=document.getElementById('scale-bar'), sl=document.getElementById('scale-label');
   const sMin=document.getElementById('scale-min'), sMax=document.getElementById('scale-max');
   const configs = {
-    votos2022:   ['linear-gradient(to right,#1E3A5F,#2563EB)','0','5.720','votos 2022'],
-    meta2026:    ['linear-gradient(to right,#064E3B,#10B981)','0','40.000','meta 2026'],
-    crescimento: ['linear-gradient(to right,#450A0A,#EF4444)','0','35.000','votos a conquistar'],
-    votosatual:  ['linear-gradient(to right,#2D1B69,#7C3AED)','0','10.000','votos atuais'],
-    falta:       ['linear-gradient(to right,#451A03,#F59E0B)','0','35.000','votos que faltam'],
+    regioes:     ['linear-gradient(to right,#e8edf4,#cbd5e1)','','','cores por região'],
+    votos2022:   ['linear-gradient(to right,#ede9fe,#6d28d9)','0','5.720','votos 2022'],
+    meta2026:    ['linear-gradient(to right,#d1fae5,#059669)','0','40.000','meta 2026'],
+    crescimento: ['linear-gradient(to right,#fee2e2,#dc2626)','0','35.000','votos a conquistar'],
+    votosatual:  ['linear-gradient(to right,#ede9fe,#7c3aed)','0','10.000','votos atuais'],
+    falta:       ['linear-gradient(to right,#fef3c7,#d97706)','0','35.000','votos que faltam'],
   };
   const [grad,min,max,lbl] = configs[layer];
   sb.style.background=grad; sMin.textContent=min; sMax.textContent=max; sl.textContent=lbl;
@@ -630,9 +637,9 @@ function showDetailPanel(name) {
       <div style="width:10px;height:10px;border-radius:2px;background:${regionColor};flex-shrink:0"></div>
       <div style="font-size:10px;color:#64748B;text-transform:uppercase;letter-spacing:1px">${region||'—'}${ib?` · ${ib.micro}`:''}</div>
     </div>
-    <div style="font-size:21px;font-weight:800;color:#F8FAFC;margin-bottom:4px;line-height:1.1">${name}</div>
+    <div style="font-size:21px;font-weight:800;color:var(--branco);margin-bottom:4px;line-height:1.1">${name}</div>
     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      <span style="font-size:30px;font-weight:800;color:#7C3AED;font-family:monospace;line-height:1">${fmt(votes)}</span>
+      <span style="font-size:30px;font-weight:800;color:#7C3AED;font-family:var(--mono);line-height:1">${fmt(votes)}</span>
       <span style="font-size:12px;color:var(--cinza2)">votos · ${pctTotal}% do total do candidato</span>
     </div>
     <div class="detail-stat">
@@ -651,17 +658,17 @@ function showDetailPanel(name) {
       {k:'Adm. pública',v:e.adm,c:'#F59E0B'}
     ];
     html+=`
-      <div class="sec-title">📊 Dados do IBGE</div>
+      <div class="sec-title">Dados do IBGE</div>
       <div class="ibge-grid">
         <div class="ibge-cell"><div class="k">Pop. 2025</div><div class="v">${fmt(ib.pop)} <small>hab</small></div></div>
         <div class="ibge-cell"><div class="k">PIB per capita</div><div class="v">R$ ${fmt(ib.pibpc)}</div></div>
         <div class="ibge-cell"><div class="k">Votos / 1.000 hab</div><div class="v">${votosMil}</div></div>
         <div class="ibge-cell"><div class="k">Mesorregião</div><div class="v" style="font-size:11px">${ib.meso}</div></div>
       </div>
-      <div class="sec-title">🏭 Economia (2021)</div>
+      <div class="sec-title">Economia (2021)</div>
       <div class="eco-bar">${segs.map(s=>`<span style="width:${s.v}%;background:${s.c}"></span>`).join('')}</div>
       <div class="eco-leg">${segs.map(s=>`<div><span class="eco-dot" style="background:${s.c}"></span>${s.k}<b>${s.v}%</b></div>`).join('')}</div>
-      <div class="voc-box"><div class="t">🎯 Vocação: ${ib.voc}</div><div class="d">${ib.vocd}</div></div>
+      <div class="voc-box"><div class="t">Vocação · ${ib.voc}</div><div class="d">${ib.vocd}</div></div>
       <div class="cod-ibge">Código IBGE ${ib.cod}</div>`;
   }
   document.getElementById('detail-content').innerHTML=html;
@@ -752,7 +759,7 @@ function renderActivityLog() {
     const timeStr = ago<1?'agora':ago+'min atrás';
     return `<div class="activity-item">
       <div class="activity-dot"></div>
-      <div class="activity-text">${item.nome}: <strong style="color:#F8FAFC">${item.votos.toLocaleString('pt-BR')} votos</strong></div>
+      <div class="activity-text">${item.nome}: <strong style="color:var(--branco)">${item.votos.toLocaleString('pt-BR')} votos</strong></div>
       <div class="activity-time">${timeStr}</div>
     </div>`;
   }).join('');
@@ -829,7 +836,7 @@ async function loadMap() {
     svgEl = d3.select('#map-container').append('svg')
       .attr('viewBox',`0 0 ${W} ${H}`)
       .attr('width','100%').attr('height','100%')
-      .style('display','block').style('background','#080C14');
+      .style('display','block').style('background','#f7f8fc');
 
     const g = svgEl.append('g').attr('id','map-g');
     const projection = d3.geoMercator().fitSize([W,H],geojson);
@@ -837,8 +844,8 @@ async function loadMap() {
 
     g.selectAll('path').data(geojson.features).join('path')
       .attr('class','mun').attr('d',pathGen)
-      .attr('fill',d=>getColor(getPropName(d)))
-      .attr('fill-opacity',d=>{const v=getVotes(getPropName(d));return v>0?0.8+Math.min(0.2,v/5720*0.2):0.25;});
+      .attr('fill',d=>getFillForLayer(getPropName(d),currentLayer))
+      .attr('fill-opacity',1);
 
     const labelG = g.append('g').attr('id','labels');
     geojson.features.forEach(d=>{
@@ -865,11 +872,12 @@ async function loadMap() {
     window._zoom=zoom; window._svg=svgEl;
     svgEl.on('click',()=>fecharDetalhe());
     patchMouseover();
+    setLayer(currentLayer); // sincroniza fills, rótulos e barra de escala com a camada padrão
   } catch(err) {
     document.getElementById('loading').innerHTML=`
       <div style="text-align:center;color:#64748B;padding:40px">
         <div style="font-size:28px;margin-bottom:12px">⚠️</div>
-        <div style="font-weight:700;margin-bottom:8px;color:#F8FAFC">Erro ao carregar mapa</div>
+        <div style="font-weight:700;margin-bottom:8px;color:var(--branco)">Erro ao carregar mapa</div>
         <div style="font-size:13px">${err.message}</div>
       </div>`;
   }
@@ -891,11 +899,11 @@ function patchMouseover() {
       document.getElementById('tt-pct').textContent=votes>0?((votes/TOTAL)*100).toFixed(2)+'% do total':'';
       document.getElementById('tt-extra').innerHTML=extra;
       tooltip.classList.add('show'); moveTT(event);
-      d3.select(this).attr('stroke','#fff').attr('stroke-width',1.2).raise();
+      d3.select(this).attr('stroke','#6d28d9').attr('stroke-width',1.4).raise();
     })
     .on('mouseleave',function(){
       tooltip.classList.remove('show');
-      d3.select(this).attr('stroke','rgba(255,255,255,0.1)').attr('stroke-width',0.4);
+      d3.select(this).attr('stroke','#ffffff').attr('stroke-width',0.5);
     })
     .on('click',function(event,d){
       event.stopPropagation();
