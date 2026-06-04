@@ -194,7 +194,8 @@
   #detail-panel {
     display:none; position:fixed; bottom:20px; left:20px;
     background:var(--bg2); border:1px solid rgba(37,99,235,0.5);
-    border-radius:16px; padding:20px; width:320px;
+    border-radius:16px; padding:20px; width:340px;
+    max-height:calc(100vh - 40px); overflow-y:auto;
     z-index:500; box-shadow:0 12px 48px rgba(0,0,0,0.6);
     animation:slideUp 0.2s ease;
   }
@@ -214,6 +215,23 @@
   .detail-stat-sub { font-size:10px; color:var(--cinza2); margin-top:3px; }
   .detail-prog-bg { background:var(--bg4); border-radius:3px; height:4px; margin-top:8px; }
   .detail-prog-fill { height:4px; border-radius:3px; background:var(--verde); transition:width 0.6s ease; }
+  /* Card rico estilo gabiflow — dados IBGE + economia + vocacao */
+  .sec-title { font-size:10px; color:var(--cinza2); text-transform:uppercase; letter-spacing:1px; margin:14px 0 7px; font-weight:700; }
+  .ibge-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+  .ibge-cell { background:var(--bg3); border:1px solid var(--borda); border-radius:8px; padding:8px 10px; }
+  .ibge-cell .k { font-size:9px; color:var(--cinza2); text-transform:uppercase; letter-spacing:0.5px; }
+  .ibge-cell .v { font-size:14px; font-weight:700; color:#F8FAFC; font-family:monospace; margin-top:2px; }
+  .ibge-cell .v small { font-size:9px; color:var(--cinza2); font-weight:400; }
+  .eco-bar { display:flex; height:11px; border-radius:6px; overflow:hidden; background:var(--bg4); }
+  .eco-bar > span { display:block; height:100%; }
+  .eco-leg { display:grid; grid-template-columns:1fr 1fr; gap:5px 10px; margin-top:9px; }
+  .eco-leg div { font-size:11px; color:var(--cinza); display:flex; align-items:center; gap:6px; }
+  .eco-leg b { color:#F8FAFC; font-family:monospace; margin-left:auto; }
+  .eco-dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
+  .voc-box { margin-top:13px; background:rgba(124,58,237,0.12); border:1px solid rgba(124,58,237,0.35); border-radius:10px; padding:10px 12px; }
+  .voc-box .t { font-size:12px; font-weight:800; color:#A78BFA; }
+  .voc-box .d { font-size:11px; color:var(--cinza); margin-top:3px; line-height:1.35; }
+  .cod-ibge { font-size:10px; color:var(--cinza2); font-family:monospace; margin-top:10px; text-align:right; letter-spacing:0.5px; }
 
   .activity-item {
     display:flex; gap:8px; padding:5px 0;
@@ -328,6 +346,7 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="dados_municipios_ba.js?v=1"></script>
 <script>
 
 // ── Firebase ──────────────────────────────────────────────────────────────────
@@ -493,6 +512,15 @@ function getVotesAtual(name) {
 }
 function getRegion(name) { return REGION_MAP[normalize(name)] || null; }
 function getColor(name) { const r = getRegion(name); return r ? REGION_COLORS[r] : '#2a3a4a'; }
+// Dados socioeconomicos IBGE (dados_municipios_ba.js) — mesma logica de match do getVotes
+function getIBGE(name) {
+  const M = window.DADOS_MUN; if (!M) return null;
+  const n = normalize(name);
+  if (M[n]) return M[n];
+  for (const k in M) { if (k === n) return M[k]; }
+  for (const k in M) { if (k.includes(n) || n.includes(k)) return M[k]; }
+  return null;
+}
 
 const TOTAL = 33455;
 const META_TOTAL = 120000;
@@ -588,42 +616,55 @@ let _detalheAtivo = null;  // município aberto no card (pra atualizar ao vivo)
 function showDetailPanel(name) {
   _detalheAtivo = name;
   const votes=getVotes(name), region=getRegion(name);
-  const meta=getMunMeta(name), growth=getMunGrowth(name);
+  const meta=getMunMeta(name);
   const atual=getVotesAtual(name), falta=getMunFalta(name);
-  const mult=votes>0?(meta/votes).toFixed(1):'—';
-  const pctTotal=votes>0?((votes/TOTAL)*100).toFixed(2):'0';
+  const pctTotal=votes>0?((votes/TOTAL)*100).toFixed(2):'0.00';
   const pctMetaAtual=meta>0?Math.min(100,(atual/meta)*100).toFixed(1):'0';
-  const pctMeta2022=meta>0?Math.min(100,(votes/meta)*100).toFixed(1):'0';
   const regionColor=region?REGION_COLORS[region]:'#2563EB';
-  document.getElementById('detail-content').innerHTML=`
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+  const ib=getIBGE(name);
+  const fmt=n=>Number(n).toLocaleString('pt-BR');
+  const votosMil=(ib&&ib.pop>0)?(votes/ib.pop*1000).toFixed(2):'—';
+
+  let html=`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
       <div style="width:10px;height:10px;border-radius:2px;background:${regionColor};flex-shrink:0"></div>
-      <div style="font-size:10px;color:#64748B;text-transform:uppercase;letter-spacing:1px">${region||'—'}</div>
+      <div style="font-size:10px;color:#64748B;text-transform:uppercase;letter-spacing:1px">${region||'—'}${ib?` · ${ib.micro}`:''}</div>
     </div>
-    <div style="font-size:19px;font-weight:800;color:#F8FAFC;margin-bottom:14px;line-height:1.2">${name}</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-      <div class="detail-stat">
-        <div class="detail-stat-lbl">Votos 2022</div>
-        <div class="detail-stat-val" style="color:#3B82F6">${votes.toLocaleString('pt-BR')}</div>
-        <div class="detail-stat-sub">${pctTotal}% do total · ${mult}x até meta</div>
-      </div>
-      <div class="detail-stat">
-        <div class="detail-stat-lbl">Meta 2026</div>
-        <div class="detail-stat-val" style="color:#10B981">${meta.toLocaleString('pt-BR')}</div>
-        <div class="detail-stat-sub">Base 2022: ${pctMeta2022}%</div>
-      </div>
-    </div>
-    <div class="detail-stat" style="margin-bottom:8px">
-      <div class="detail-stat-lbl">Votos Atuais (tempo real)</div>
-      <div class="detail-stat-val" style="color:#7C3AED">${atual>0?atual.toLocaleString('pt-BR'):'Não registrado'}</div>
-      <div class="detail-prog-bg"><div class="detail-prog-fill" style="width:${pctMetaAtual}%;background:#7C3AED"></div></div>
-      <div class="detail-stat-sub" style="margin-top:4px">${pctMetaAtual}% da meta atingida</div>
+    <div style="font-size:21px;font-weight:800;color:#F8FAFC;margin-bottom:4px;line-height:1.1">${name}</div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <span style="font-size:30px;font-weight:800;color:#7C3AED;font-family:monospace;line-height:1">${fmt(votes)}</span>
+      <span style="font-size:12px;color:var(--cinza2)">votos · ${pctTotal}% do total do candidato</span>
     </div>
     <div class="detail-stat">
-      <div class="detail-stat-lbl">Faltam para a Meta</div>
-      <div class="detail-stat-val" style="color:#F59E0B">${falta.toLocaleString('pt-BR')}</div>
-      <div class="detail-stat-sub">votos a conquistar neste município</div>
+      <div class="detail-stat-lbl">Votos atuais (tempo real)</div>
+      <div class="detail-stat-val" style="color:#10B981;font-size:18px">${atual>0?fmt(atual):'Não registrado'}</div>
+      <div class="detail-prog-bg"><div class="detail-prog-fill" style="width:${pctMetaAtual}%;background:#10B981"></div></div>
+      <div class="detail-stat-sub" style="margin-top:4px">Meta 2026: ${fmt(meta)} · faltam ${fmt(falta)} (${pctMetaAtual}%)</div>
     </div>`;
+
+  if(ib){
+    const e=ib.eco;
+    const segs=[
+      {k:'Agro',v:e.agro,c:'#10B981'},
+      {k:'Indústria',v:e.ind,c:'#8B5CF6'},
+      {k:'Serviços',v:e.serv,c:'#3B82F6'},
+      {k:'Adm. pública',v:e.adm,c:'#F59E0B'}
+    ];
+    html+=`
+      <div class="sec-title">📊 Dados do IBGE</div>
+      <div class="ibge-grid">
+        <div class="ibge-cell"><div class="k">Pop. 2025</div><div class="v">${fmt(ib.pop)} <small>hab</small></div></div>
+        <div class="ibge-cell"><div class="k">PIB per capita</div><div class="v">R$ ${fmt(ib.pibpc)}</div></div>
+        <div class="ibge-cell"><div class="k">Votos / 1.000 hab</div><div class="v">${votosMil}</div></div>
+        <div class="ibge-cell"><div class="k">Mesorregião</div><div class="v" style="font-size:11px">${ib.meso}</div></div>
+      </div>
+      <div class="sec-title">🏭 Economia (2021)</div>
+      <div class="eco-bar">${segs.map(s=>`<span style="width:${s.v}%;background:${s.c}"></span>`).join('')}</div>
+      <div class="eco-leg">${segs.map(s=>`<div><span class="eco-dot" style="background:${s.c}"></span>${s.k}<b>${s.v}%</b></div>`).join('')}</div>
+      <div class="voc-box"><div class="t">🎯 Vocação: ${ib.voc}</div><div class="d">${ib.vocd}</div></div>
+      <div class="cod-ibge">Código IBGE ${ib.cod}</div>`;
+  }
+  document.getElementById('detail-content').innerHTML=html;
   document.getElementById('detail-panel').classList.add('show');
 }
 function fecharDetalhe() { _detalheAtivo = null; document.getElementById('detail-panel').classList.remove('show'); }
