@@ -11,8 +11,8 @@
   :root {
     /* Paleta clara — alinhada à plataforma (Sora + violeta) */
     --bg:#f7f8fc;--bg2:#ffffff;--bg3:#f0f2f8;--bg4:#e8edf4;
-    --azul:#6d28d9;--azul2:#7c3aed;--azul-glow:rgba(124,58,237,0.10);
-    --verde:#059669;--vermelho:#dc2626;--amarelo:#d97706;--roxo:#7c3aed;
+    --azul:#1d4ed8;--azul2:#2563eb;--azul-glow:rgba(37,99,235,0.10);
+    --verde:#059669;--vermelho:#dc2626;--amarelo:#d97706;--roxo:#2563eb;
     --branco:#0f172a;--cinza:#64748b;--cinza2:#94a3b8;
     --borda:#e8ecf2;
     --fonte:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
@@ -99,9 +99,9 @@
     stroke:#ffffff; stroke-width:0.5;
     cursor:pointer; transition:fill 0.15s, stroke 0.15s;
   }
-  path.mun:hover { stroke:#6d28d9; stroke-width:1.4; }
+  path.mun:hover { stroke:#1d4ed8; stroke-width:1.4; }
   .mun-name { font-size:7px; font-weight:600; fill:#475569; }
-  .mun-votes { font-size:6.5px; font-weight:700; fill:#6d28d9; }
+  .mun-votes { font-size:6.5px; font-weight:700; fill:#1d4ed8; }
 
   #tooltip {
     position:fixed; background:var(--bg2);
@@ -228,8 +228,8 @@
   .eco-leg div { font-size:11px; color:var(--cinza); display:flex; align-items:center; gap:6px; }
   .eco-leg b { color:var(--branco); font-family:var(--mono); margin-left:auto; }
   .eco-dot { width:9px; height:9px; border-radius:2px; flex-shrink:0; }
-  .voc-box { margin-top:13px; background:rgba(124,58,237,0.12); border:1px solid rgba(124,58,237,0.35); border-radius:10px; padding:10px 12px; }
-  .voc-box .t { font-size:12px; font-weight:800; color:#6d28d9; }
+  .voc-box { margin-top:13px; background:rgba(37,99,235,0.12); border:1px solid rgba(37,99,235,0.35); border-radius:10px; padding:10px 12px; }
+  .voc-box .t { font-size:12px; font-weight:800; color:#1d4ed8; }
   .voc-box .d { font-size:11px; color:var(--cinza); margin-top:3px; line-height:1.35; }
   .cod-ibge { font-size:10px; color:var(--cinza2); font-family:var(--mono); margin-top:10px; text-align:right; letter-spacing:0.5px; }
 
@@ -560,10 +560,10 @@ function getMunFalta(name) {
 
 // Escalas de cor
 // Escalas claras: do tom bem suave ao saturado da família violeta/verde/âmbar
-const colorVotos  = d3.scaleSequential(d3.interpolate('#ede9fe','#6d28d9')).domain([0,5720]);
+const colorVotos  = d3.scaleSequential(d3.interpolate('#dbeafe','#1d4ed8')).domain([0,5720]);
 const colorMeta   = d3.scaleSequential(d3.interpolate('#d1fae5','#059669')).domain([0,40000]);
 const colorGrowth = d3.scaleSequential(d3.interpolate('#fee2e2','#dc2626')).domain([0,35000]);
-const colorAtual  = d3.scaleSequential(d3.interpolate('#ede9fe','#7c3aed')).domain([0,10000]);
+const colorAtual  = d3.scaleSequential(d3.interpolate('#dbeafe','#2563eb')).domain([0,10000]);
 const colorFalta  = d3.scaleSequential(d3.interpolate('#fef3c7','#d97706')).domain([0,35000]);
 let currentLayer = 'regioes';
 
@@ -582,7 +582,7 @@ function getFillForLayer(name, layer) {
 function getTooltipExtra(name, layer) {
   if(layer==='meta2026'){ const m=getMunMeta(name); return `<div style="font-size:12px;color:#10B981;margin-top:4px">Meta 2026: <strong>${m.toLocaleString('pt-BR')}</strong></div>`; }
   if(layer==='crescimento'){ const v=getVotes(name),m=getMunMeta(name),g=getMunGrowth(name),mult=v>0?(m/v).toFixed(1):'—'; return `<div style="font-size:12px;color:#EF4444;margin-top:4px">Faltam (vs 2022): <strong>${g.toLocaleString('pt-BR')}</strong> (${mult}x)</div>`; }
-  if(layer==='votosatual'){ const a=getVotesAtual(name),m=getMunMeta(name),pct=m>0?((a/m)*100).toFixed(1):'0'; return `<div style="font-size:12px;color:#7C3AED;margin-top:4px">Atual: <strong>${a.toLocaleString('pt-BR')}</strong> · ${pct}% da meta</div>`; }
+  if(layer==='votosatual'){ const a=getVotesAtual(name),m=getMunMeta(name),pct=m>0?((a/m)*100).toFixed(1):'0'; return `<div style="font-size:12px;color:#2563eb;margin-top:4px">Atual: <strong>${a.toLocaleString('pt-BR')}</strong> · ${pct}% da meta</div>`; }
   if(layer==='falta'){ const f=getMunFalta(name),a=getVotesAtual(name),m=getMunMeta(name),pct=m>0?((a/m)*100).toFixed(1):'0'; return `<div style="font-size:12px;color:#F59E0B;margin-top:4px">Faltam: <strong>${f.toLocaleString('pt-BR')}</strong> · ${pct}% atingido</div>`; }
   return '';
 }
@@ -606,10 +606,10 @@ function setLayer(layer) {
   const sMin=document.getElementById('scale-min'), sMax=document.getElementById('scale-max');
   const configs = {
     regioes:     ['linear-gradient(to right,#e8edf4,#cbd5e1)','','','cores por região'],
-    votos2022:   ['linear-gradient(to right,#ede9fe,#6d28d9)','0','5.720','votos 2022'],
+    votos2022:   ['linear-gradient(to right,#dbeafe,#1d4ed8)','0','5.720','votos 2022'],
     meta2026:    ['linear-gradient(to right,#d1fae5,#059669)','0','40.000','meta 2026'],
     crescimento: ['linear-gradient(to right,#fee2e2,#dc2626)','0','35.000','votos a conquistar'],
-    votosatual:  ['linear-gradient(to right,#ede9fe,#7c3aed)','0','10.000','votos atuais'],
+    votosatual:  ['linear-gradient(to right,#dbeafe,#2563eb)','0','10.000','votos atuais'],
     falta:       ['linear-gradient(to right,#fef3c7,#d97706)','0','35.000','votos que faltam'],
   };
   const [grad,min,max,lbl] = configs[layer];
@@ -639,7 +639,7 @@ function showDetailPanel(name) {
     </div>
     <div style="font-size:21px;font-weight:800;color:var(--branco);margin-bottom:4px;line-height:1.1">${name}</div>
     <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      <span style="font-size:30px;font-weight:800;color:#7C3AED;font-family:var(--mono);line-height:1">${fmt(votes)}</span>
+      <span style="font-size:30px;font-weight:800;color:#2563eb;font-family:var(--mono);line-height:1">${fmt(votes)}</span>
       <span style="font-size:12px;color:var(--cinza2)">votos · ${pctTotal}% do total do candidato</span>
     </div>
     <div class="detail-stat">
@@ -899,7 +899,7 @@ function patchMouseover() {
       document.getElementById('tt-pct').textContent=votes>0?((votes/TOTAL)*100).toFixed(2)+'% do total':'';
       document.getElementById('tt-extra').innerHTML=extra;
       tooltip.classList.add('show'); moveTT(event);
-      d3.select(this).attr('stroke','#6d28d9').attr('stroke-width',1.4).raise();
+      d3.select(this).attr('stroke','#1d4ed8').attr('stroke-width',1.4).raise();
     })
     .on('mouseleave',function(){
       tooltip.classList.remove('show');
