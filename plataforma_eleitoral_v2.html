@@ -87,6 +87,19 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   margin-top:10px;
 }
 @media(min-width:900px){.login-cover{display:block;}}
+/* Celular — capa vira banner no topo (foto da Talita visível acima do formulário) */
+@media(max-width:899px){
+  #login-screen{flex-direction:column;}
+  .login-cover{
+    display:block;width:100%;max-width:none;height:38vh;
+    min-height:200px;max-height:300px;flex-shrink:0;
+    background-position:center 28%;
+  }
+  .login-cover-overlay{left:22px;right:22px;bottom:16px;}
+  .login-cover-name{font-size:28px;}
+  .login-cover-sub{display:none;}
+  .login-right{flex:1;min-height:0;}
+}
 .login-right{
   flex:1;background:#f7f8fc;display:flex;align-items:center;justify-content:center;
   padding:30px 20px;overflow-y:auto;
@@ -3023,8 +3036,12 @@ function atualizarPreviewCapa(url) {
   if (url) { preview.style.backgroundImage = `url("${url.replace(/"/g,'%22')}")`; preview.textContent = ''; }
   else     { preview.style.backgroundImage = ''; preview.textContent = 'Sem foto definida'; }
 }
-// Aplica imediatamente do cache local
+// Aplica imediatamente do cache local (instantâneo, sem rede)
 try { aplicarCapaLogin(localStorage.getItem(_CAPA_KEY) || ''); } catch(_) {}
+// E busca a capa do Firestore JÁ na tela de login — antes de o usuário logar.
+// Garante que a foto apareça em qualquer dispositivo/navegador novo (não só onde o
+// admin subiu a imagem). Requer que a regra de leitura de config/login seja pública.
+sincronizarCapaLogin();
 
 async function sincronizarCapaLogin() {
   try {
