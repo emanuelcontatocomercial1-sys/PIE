@@ -584,7 +584,9 @@ function setLayer(layer) {
 }
 
 // ── Painel de detalhes ────────────────────────────────────────────────────────
+let _detalheAtivo = null;  // município aberto no card (pra atualizar ao vivo)
 function showDetailPanel(name) {
+  _detalheAtivo = name;
   const votes=getVotes(name), region=getRegion(name);
   const meta=getMunMeta(name), growth=getMunGrowth(name);
   const atual=getVotesAtual(name), falta=getMunFalta(name);
@@ -624,7 +626,7 @@ function showDetailPanel(name) {
     </div>`;
   document.getElementById('detail-panel').classList.add('show');
 }
-function fecharDetalhe() { document.getElementById('detail-panel').classList.remove('show'); }
+function fecharDetalhe() { _detalheAtivo = null; document.getElementById('detail-panel').classList.remove('show'); }
 
 // ── Meta cards ────────────────────────────────────────────────────────────────
 function renderMetaCards() {
@@ -688,10 +690,13 @@ function atualizarStats() {
   document.getElementById('hp-bar').style.width = pct+'%';
   document.getElementById('sidebar-atual').textContent = totalAtual.toLocaleString('pt-BR');
   renderMetaCards();
-  // Atualiza mapa se layer usa dados atuais
-  if(currentLayer==='votosatual'||currentLayer==='falta') {
-    d3.selectAll('path.mun').attr('fill',d=>getFillForLayer(getPropName(d),currentLayer));
-  }
+  // Repinta o mapa ao vivo (cor + números) refletindo os votos que acabaram de chegar.
+  // Roda em qualquer camada — pra camadas estáticas (2022/meta) é um no-op visual,
+  // pras camadas vivas (votos atuais / faltam) mostra o voto novo na hora.
+  d3.selectAll('path.mun').attr('fill',d=>getFillForLayer(getPropName(d),currentLayer));
+  d3.selectAll('.mun-votes').text(d=>{ if(!d)return ''; const n=getPropName(d),val=getLayerValue(n,currentLayer); return val>0?val.toLocaleString('pt-BR'):''; });
+  // Se o painel de detalhe está aberto, atualiza com o voto novo
+  if(_detalheAtivo) showDetailPanel(_detalheAtivo);
 }
 
 // ── Activity log ──────────────────────────────────────────────────────────────
