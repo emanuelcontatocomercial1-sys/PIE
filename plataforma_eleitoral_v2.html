@@ -636,6 +636,9 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
       <div style="text-align:center;margin-top:20px;font-size:12px;color:var(--cinza);">
         Não tem conta? <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);text-decoration:underline;" onclick="mostrarView('view-criar')">Criar conta</button>
       </div>
+      <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--borda);text-align:center;">
+        <button style="background:none;border:none;color:var(--verde2);cursor:pointer;font-size:12.5px;font-family:var(--fonte);font-weight:700;" onclick="mostrarView('view-lideranca')">🔑 Sou liderança — acessar meu painel</button>
+      </div>
     </div>
 
     <!-- VIEW: Criar Conta -->
@@ -669,6 +672,24 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);text-decoration:underline;" onclick="mostrarView('view-login')">← Voltar para o login</button>
       </div>
     </div>
+
+    <!-- VIEW: Liderança (auto-cadastro com código de vínculo) -->
+    <div class="login-view" id="view-lideranca">
+      <div style="font-size:13px;color:var(--cinza);margin-bottom:18px;line-height:1.6;">Crie seu acesso de liderança usando o <b style="color:var(--branco)">código de vínculo</b> que a campanha te passou.</div>
+      <input class="login-input" type="text" id="lid-nome" placeholder="Seu nome completo" autocomplete="name" autocapitalize="words">
+      <input class="login-input" type="email" id="lid-email" placeholder="Seu e-mail" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false">
+      <div class="pass-wrap">
+        <input class="login-input" type="password" id="lid-senha" placeholder="Crie uma senha (mín. 6)" style="margin-bottom:0;padding-right:44px;" autocapitalize="none" autocorrect="off" spellcheck="false">
+        <button class="pass-toggle" type="button" onclick="toggleSenha('lid-senha','ptb4')" id="ptb4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+      </div>
+      <input class="login-input" type="text" id="lid-codigo" placeholder="Código de vínculo (ex: a7k2m9)" style="margin-top:12px;font-family:var(--mono);letter-spacing:2px;" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')cadastrarLideranca()">
+      <button class="login-btn" id="btn-lid" onclick="cadastrarLideranca()" style="margin-top:16px;">Criar acesso e entrar →</button>
+      <div class="login-err" id="lid-err"></div>
+      <div class="login-success" id="lid-success"></div>
+      <div style="text-align:center;margin-top:16px;">
+        <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);text-decoration:underline;" onclick="mostrarView('view-login')">← Já tenho acesso (entrar)</button>
+      </div>
+    </div>
   </div><!-- /.login-card -->
   </div><!-- /.login-right -->
 </div>
@@ -688,6 +709,20 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
     <input class="cadastro-input" type="text" id="cadastro-bairro" placeholder="Bairro / localidade">
     <button class="cadastro-btn" id="cadastro-btn" onclick="salvarCadastroPublico()">Confirmar cadastro →</button>
     <div id="cadastro-feedback" class="cadastro-feedback" style="display:none;"></div>
+  </div>
+</div>
+
+<!-- ══════════════ PORTAL DA LIDERANÇA ══════════════ -->
+<div id="portal-lideranca" style="display:none;min-height:100vh;background:var(--bg);">
+  <div class="topbar" style="position:sticky;top:0;">
+    <div class="topbar-title">Painel da Liderança <span style="color:var(--cinza2);font-weight:500;font-size:12px;">· Talita Oliveira 1022</span></div>
+    <div class="topbar-right">
+      <span id="portal-user-nome" style="font-size:13px;color:var(--cinza);"></span>
+      <button onclick="sair()" class="btn btn-outline" style="padding:7px 14px;">Sair</button>
+    </div>
+  </div>
+  <div style="max-width:940px;margin:0 auto;padding:28px 24px 60px;">
+    <div id="portal-body"><div style="text-align:center;color:var(--cinza);padding:60px;">Carregando seu painel…</div></div>
   </div>
 </div>
 
@@ -2638,6 +2673,171 @@ function editarLiderancaAtual() {
   setTimeout(() => editarLideranca(_liderancaAtual.id), 100);
 }
 
+// ══════════════ PORTAL DA LIDERANÇA ══════════════
+let _fluxoLideranca = false;   // trava o init padrão do app durante o auto-cadastro
+let _portalAtivo = false;      // sinaliza que estamos no portal (pra re-render ao vivo)
+let _portalListener = false;
+
+// Admin gera/mostra o código de vínculo de uma liderança (CRM)
+async function gerarCodAcesso(id) {
+  const l = _lidPorId.get(id); if (!l) return;
+  let code = l.cod_acesso;
+  if (!code) {
+    code = gerarLinkCode();
+    try { await _db.collection('liderancas').doc(id).update({ cod_acesso: code }); l.cod_acesso = code; }
+    catch(e){ alert('Erro ao gerar código: '+e.message); return; }
+  }
+  const aviso = l.auth_uid ? '\n\n⚠️ Esta liderança JÁ tem um acesso vinculado.' : '';
+  prompt(`Código de vínculo de ${l.nome}:\n\nPasse para a liderança. Ela cria o acesso na tela de login → "Sou liderança".${aviso}`, code);
+}
+
+// Auto-cadastro da liderança com código de vínculo
+async function cadastrarLideranca() {
+  const g = x => document.getElementById(x);
+  const nome = g('lid-nome').value.trim(), email = g('lid-email').value.trim();
+  const senha = g('lid-senha').value, codigo = g('lid-codigo').value.trim().toLowerCase();
+  const btn = g('btn-lid');
+  g('lid-err').style.display='none'; g('lid-success').style.display='none';
+  if (!nome || !email || !senha || !codigo) { showLoginErr('lid-err','Preencha todos os campos.'); return; }
+  if (senha.length < 6) { showLoginErr('lid-err','A senha deve ter no mínimo 6 caracteres.'); return; }
+  btn.disabled = true; btn.textContent = 'Verificando...';
+  _fluxoLideranca = true;
+  let cred = null;
+  try {
+    cred = await _auth.createUserWithEmailAndPassword(email, senha);
+    const snap = await _db.collection('liderancas').where('cod_acesso','==',codigo).limit(1).get();
+    if (snap.empty) { await cred.user.delete(); throw { code:'cod-invalido' }; }
+    const ld = snap.docs[0];
+    if (ld.data().auth_uid) { await cred.user.delete(); throw { code:'ja-vinculada' }; }
+    await cred.user.updateProfile({ displayName: nome }).catch(()=>{});
+    await _db.collection('liderancas').doc(ld.id).update({ auth_uid: cred.user.uid });
+    await _db.collection('usuarios').doc(cred.user.uid).set({
+      nome, email, role:'lideranca', liderancaId: ld.id, status:'ativo',
+      created_at: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    _fluxoLideranca = false;
+    showLoginOk('lid-success','✅ Acesso criado! Entrando no seu painel...');
+    setTimeout(() => location.reload(), 1300);
+  } catch(e) {
+    _fluxoLideranca = false;
+    const map = {
+      'cod-invalido':'Código de vínculo inválido. Confira com a campanha.',
+      'ja-vinculada':'Essa liderança já tem um acesso criado. Use "entrar".',
+      'auth/email-already-in-use':'Esse e-mail já está em uso. Use a opção "entrar".',
+      'auth/invalid-email':'E-mail inválido.',
+      'auth/weak-password':'Senha muito fraca.'
+    };
+    showLoginErr('lid-err', map[e.code] || ('Erro: ' + (e.message || e.code)));
+    btn.disabled = false; btn.textContent = 'Criar acesso e entrar →';
+  }
+}
+
+function entrarPortalLideranca() {
+  _portalAtivo = true;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'none';
+  const p = document.getElementById('portal-lideranca'); if (p) p.style.display = 'block';
+  const nm = document.getElementById('portal-user-nome');
+  if (nm) nm.textContent = _currentUser?.nome || '';
+  if (!_portalListener) { _portalListener = true; try { iniciarListener_liderancas(); } catch(e){ console.error('[portal] listener:', e); } }
+  renderPortal();
+}
+
+function renderPortal() {
+  const body = document.getElementById('portal-body'); if (!body) return;
+  const id = _currentUser && _currentUser.liderancaId;
+  if (!id) { body.innerHTML = '<div style="text-align:center;color:var(--cinza);padding:60px;">Sua conta não está vinculada a uma liderança. Fale com a campanha.</div>'; return; }
+  const me = _lidPorId.get(id);
+  if (!me) { body.innerHTML = '<div style="text-align:center;color:var(--cinza);padding:60px;">Carregando seus dados…</div>'; return; }
+  const desc = descendentesDe(id);
+  const diretas = filhosDe(id).length;
+  const leads = desc.filter(d => tipoDe(d)==='lead').length;
+  const votos = desc.reduce((s,d)=>s+(d.votos_comprometidos||0),0) + (me.votos_comprometidos||0);
+  const code = me.link_code || '';
+  const url = urlLinkAfiliado(code);
+  const prim = (me.nome||'?').split(' ')[0];
+  function nivel(x, lvl=0){ const l=_lidPorId.get(x); if(!l||!l.parent_id||l.parent_id===id) return lvl+(l&&l.parent_id===id?1:0); return nivel(l.parent_id, lvl+1); }
+  const lista = desc.length ? desc.map(d => {
+    const lv = nivel(d.id); const isL = tipoDe(d)==='lideranca';
+    const col = isL ? '#3b82f6' : '#10b981'; const txt = isL ? 'liderança' : 'apoiador';
+    return `<div class="ld-list-item" style="padding-left:${12+lv*14}px;">
+      <span class="ld-list-bullet" style="background:${col};"></span>
+      <div style="flex:1;min-width:0;"><div style="font-weight:600;color:var(--branco);font-size:13px;">${d.nome||'—'} <small style="color:var(--cinza2);font-weight:400;">· nível ${lv}</small></div>
+      <div style="font-size:11px;color:var(--cinza2);">${d.municipio||'—'}${d.bairro?' · '+d.bairro:''}</div></div>
+      <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:${isL?'rgba(37,99,235,0.15)':'rgba(5,150,105,0.15)'};color:${col};">${txt}</span></div>`;
+  }).join('') : '<div style="text-align:center;color:var(--cinza2);font-size:13px;padding:24px;">Você ainda não indicou ninguém. Compartilhe seu link abaixo pra começar! 🚀</div>';
+  body.innerHTML = `
+    <div style="margin-bottom:24px;">
+      <div style="font-family:var(--serif);font-style:italic;font-size:27px;color:var(--branco);line-height:1.1;">Olá, ${prim} 👋</div>
+      <div style="font-size:13px;color:var(--cinza);margin-top:6px;">${me.municipio||'—'}${me.bairro?' · '+me.bairro:''} · Liderança da campanha</div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card azul"><div class="stat-num">${diretas}</div><div class="stat-label">Indicados diretos</div></div>
+      <div class="stat-card roxo"><div class="stat-num">${desc.length}</div><div class="stat-label">Rede total</div></div>
+      <div class="stat-card verde"><div class="stat-num">${leads}</div><div class="stat-label">Apoiadores</div></div>
+      <div class="stat-card amarelo"><div class="stat-num">${votos.toLocaleString('pt-BR')}</div><div class="stat-label">Votos comprometidos</div></div>
+    </div>
+    <div class="panel" style="margin-bottom:20px;"><div class="panel-header"><div class="panel-title">🔗 Seu link de indicação</div></div>
+      <div class="panel-body">
+        <div style="font-size:12px;color:var(--cinza);margin-bottom:10px;">Compartilhe este link — quem se cadastrar entra na <b style="color:var(--branco)">sua</b> rede.</div>
+        <div class="ld-share-box"><input id="portal-link" readonly value="${url}">
+          <button onclick="copiarLinkPortal()">Copiar</button>
+          <button class="wa" onclick="compartilharWAPortal()">WhatsApp</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel" style="margin-bottom:20px;"><div class="panel-header"><div class="panel-title">➕ Cadastrar apoiador</div></div>
+      <div class="panel-body">
+        <div class="form-row"><div class="form-group"><label class="form-label">Nome *</label><input class="form-input" id="pa-nome" placeholder="Nome completo"></div>
+        <div class="form-group"><label class="form-label">Telefone</label><input class="form-input" id="pa-tel" placeholder="71 99999-9999"></div></div>
+        <div class="form-row"><div class="form-group"><label class="form-label">Município *</label><input class="form-input" id="pa-mun" placeholder="Ex: Salvador" value="${me.municipio||''}"></div>
+        <div class="form-group"><label class="form-label">Bairro</label><input class="form-input" id="pa-bairro" placeholder="Bairro"></div></div>
+        <button class="btn btn-primary" onclick="salvarApoiadorPortal()">Adicionar à minha rede</button>
+        <span id="pa-fb" style="margin-left:12px;font-size:13px;"></span>
+      </div>
+    </div>
+    <div class="panel"><div class="panel-header"><div class="panel-title">👥 Sua rede (${desc.length})</div></div>
+      <div class="panel-body" style="max-height:420px;overflow-y:auto;">${lista}</div>
+    </div>`;
+}
+
+function copiarLinkPortal() {
+  const i = document.getElementById('portal-link'); if(!i) return;
+  i.select(); i.setSelectionRange(0,99999);
+  navigator.clipboard.writeText(i.value).then(()=>{
+    const b = document.querySelector('#portal-link + button'); const o=b.textContent;
+    b.textContent='✓ Copiado!'; setTimeout(()=>b.textContent=o,1500);
+  }).catch(()=>alert(i.value));
+}
+function compartilharWAPortal() {
+  const i = document.getElementById('portal-link'); if(!i) return;
+  const msg = `Olá! Apoie a *Talita Oliveira · 1022 · Bahia 2026*. Cadastre seu apoio aqui:\n\n${i.value}`;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
+}
+async function salvarApoiadorPortal() {
+  const g = x => document.getElementById(x);
+  const id = _currentUser && _currentUser.liderancaId;
+  const fb = g('pa-fb');
+  const nome = g('pa-nome').value.trim(), tel = g('pa-tel').value.trim(), mun = g('pa-mun').value.trim(), bairro = g('pa-bairro').value.trim();
+  if (!id) { return; }
+  if (!nome || !mun) { fb.style.color='var(--vermelho2)'; fb.textContent='Informe nome e município.'; return; }
+  fb.style.color='var(--cinza)'; fb.textContent='Salvando...';
+  try {
+    await _db.collection('liderancas').add({
+      nome, telefone:tel, municipio:mun, bairro,
+      regiao: (typeof REGIOES_MAP !== 'undefined' && REGIOES_MAP[mun]) || '',
+      parent_id: id, link_code: gerarLinkCode(), tipo:'lead',
+      status:'Prospecto', votos_comprometidos:0, segmento:'', obs:'',
+      created_via:'lideranca',
+      created_at: firebase.firestore.FieldValue.serverTimestamp(),
+      updated_at: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    fb.style.color='var(--verde2)'; fb.textContent='✅ Adicionado!';
+    ['pa-nome','pa-tel','pa-bairro'].forEach(x=>{ const e=g(x); if(e) e.value=''; });
+    // a lista se atualiza sozinha pelo snapshot (renderPortal)
+  } catch(e) { fb.style.color='var(--vermelho2)'; fb.textContent='Erro: '+e.message; }
+}
+
 // ── Página "Rede de Indicações" (visão geral) ──
 function renderPaginaRede() {
   const grid = document.getElementById('rede-cards');
@@ -3131,6 +3331,9 @@ _auth.onAuthStateChanged(async user => {
     console.log('[AUTH] anônimo (cadastro público) — ignorando init do app');
     return;
   }
+  // Durante o auto-cadastro de liderança, o cadastrarLideranca() controla o fluxo
+  // (cria conta → valida código → grava docs → reload). Não deixa o init padrão rodar.
+  if (_fluxoLideranca) { console.log('[AUTH] fluxo de liderança em andamento — aguardando'); return; }
   console.log('[AUTH]', user ? 'logado: ' + user.email : 'null — possível logout');
   if (user) {
     if (_logoutTimer) { clearTimeout(_logoutTimer); _logoutTimer = null; }
@@ -3159,6 +3362,8 @@ _auth.onAuthStateChanged(async user => {
         return;
       }
       _currentUser = { uid: user.uid, email: user.email, displayName: user.displayName, ...ud };
+      // Liderança → portal restrito (só a rede/leads/meta/link dela), não o app completo
+      if (ud.role === 'lideranca') { entrarPortalLideranca(); return; }
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('app').style.display = 'block';
       initApp();
@@ -3585,6 +3790,7 @@ _db.collection('liderancas').orderBy('updated_at','desc').onSnapshot(snapshot =>
   renderCRM();
   atualizarStatsCRM();
   atualizarFiltroMun();
+  if (_portalAtivo && typeof renderPortal === 'function') renderPortal();
   // Atualiza visualizações de rede em tempo real
   if (typeof renderPaginaRede === 'function' && document.getElementById('page-rede')?.classList.contains('active')) {
     renderPaginaRede();
@@ -3683,6 +3889,8 @@ function renderCRM() {
       <td style="white-space:nowrap;">
         <button onclick="abrirDetalheLideranca('${l.id}')" title="Ver rede de indicações"
           style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--ciano3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">🔗</button>
+        <button onclick="gerarCodAcesso('${l.id}')" title="Código de acesso da liderança${l.auth_uid?' (já vinculada)':''}"
+          style="background:rgba(5,150,105,0.12);border:1px solid rgba(5,150,105,0.3);color:var(--verde2);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">${l.auth_uid?'🔓':'🔑'}</button>
         <button onclick="editarLideranca('${l.id}')"
           style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">✏️</button>
         <button onclick="apagarLideranca('${l.id}','${(l.nome||'').replace(/'/g,"\\'")}')"
