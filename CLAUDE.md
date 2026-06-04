@@ -49,9 +49,9 @@ Two Firebase app instances are initialized in `plataforma_eleitoral_v2.html`:
 
 | Collection | Purpose | Key fields |
 |---|---|---|
-| `usuarios` | User accounts and roles | `nome`, `email`, `role` (`admin`/`usuario`), `status` (`ativo`/`pendente`) |
+| `usuarios` | User accounts and roles | `nome`, `email`, `role` (`admin`/`usuario`/`lideranca`), `status` (`ativo`/`pendente`), `liderancaId` (only for `lideranca` role — links to the `liderancas` doc) |
 | `municipios` | Vote data per municipality | `nome`, `votos_atual`, `obs`, `updated_at` |
-| `liderancas` | Lideranças (leaders) + leads/munícipes (affiliate network) | `nome`, `municipio`, `bairro`, `votos_comprometidos`, `telefone`, `parent_id`, `link_code`, `tipo` (`lideranca`/`lead`), `created_via` (`manual`/`afiliado`/`planilha`), `updated_at` |
+| `liderancas` | Lideranças (leaders) + leads/munícipes (affiliate network) | `nome`, `municipio`, `bairro`, `votos_comprometidos`, `telefone`, `parent_id`, `link_code`, `tipo` (`lideranca`/`lead`), `created_via` (`manual`/`afiliado`/`planilha`/`lideranca`), `cod_acesso` (private binding code for the portal), `auth_uid` (set once a liderança links a login), `updated_at` |
 | `eventos` | Campaign agenda | `titulo`, `data_str`, `data_ts` (Timestamp), `local`, `tipo`, `obs`, `updated_at` |
 | `concorrentes` | Competitor monitoring | `nome`, `partido`, `relacao` (`Republicanos`/`adversario`/`aliado`/`observar`), `foto_url`, `ig`, `fb`, `yt`, `tt` |
 | `config` | Platform-wide settings (e.g., login cover photo) | doc `login` has `cover_url` (base64 dataURL, compressed JPEG ~50-200KB), `updated_at`, `updated_by` |
@@ -69,6 +69,14 @@ The `liderancas` collection holds two entity types distinguished by the `tipo` f
 
 This handles legacy docs without the `tipo` field (created before the MLM feature).
 
+### Portal da liderança (login próprio + visão restrita)
+Lideranças can log in to a restricted **portal** that shows only their own subtree — not the full platform.
+
+- **Binding code (`cod_acesso`):** admin generates/reveals it from the CRM (🔑 button → `gerarCodAcesso`, stored on the liderança doc, distinct from the public `link_code`). The admin passes it to the liderança offline.
+- **Self-registration:** login screen → "Sou liderança" view (`view-lideranca`) → `cadastrarLideranca()` creates the auth account, validates the code against `liderancas.cod_acesso`, links it (`auth_uid` on the liderança doc), and writes a `usuarios` doc with `role: 'lideranca'` + `liderancaId`. Invalid/already-linked code ⇒ the just-created account is deleted. A `_fluxoLideranca` guard makes `onAuthStateChanged` stand down during this flow; on success it `location.reload()`s.
+- **Routing:** `onAuthStateChanged` detects `role === 'lideranca'` and calls `entrarPortalLideranca()` (shows `#portal-lideranca`, hides `#app`) instead of `initApp()`. `renderPortal()` builds the view from `_currentUser.liderancaId` and re-renders live via the `liderancas` snapshot (`_portalAtivo` flag). The portal can add supporters under itself (`salvarApoiadorPortal`, `created_via: 'lideranca'`).
+- **Security notes (MVP):** existing Firestore rules already accommodate the flow (no rules change). Known limitations: a `lideranca` session still *downloads* all `liderancas` docs (subtree filtering is client-side only), and `usuarios` self-writes mean role isn't server-enforced — tighten rules before scaling.
+
 ### Performance caches (rebuilt every snapshot)
 With 30k+ leads possible (mass import), per-render `Array.filter` / `Array.find` becomes O(N²). The listener's callback calls `reconstruirCaches()` to build:
 - `_lidPorId` — `Map<id, doc>` for O(1) lookups
@@ -81,14 +89,16 @@ All render functions consume these caches instead of re-filtering `_liderancasDa
 The four `onSnapshot` subscriptions (`municipios`, `liderancas`, `concorrentes`, `eventos`) live inside `iniciarListener_<col>()` functions called from `iniciarListenersFirestore()` — invoked inside the `onAuthStateChanged` handler **after** `_currentUser` is set. This avoids the stream dying with `permission-denied` if rules require auth and the script load happened before authentication completed. Guard `_listenersIniciados` prevents double-attach.
 
 ### CSS design tokens
-Light theme. CSS variables with Portuguese names:
+Light theme with **Republicanos identity (blue + green)**. CSS variables with Portuguese names:
 - Backgrounds: `--bg` / `--bg2..bg5` (light)
-- Accents: `--ciano`/`--ciano2`/`--ciano3` (violet — `#6d28d9`/`#7c3aed`/`#8b5cf6`), `--verde`/`--vermelho`/`--amarelo`/`--azul`/`--roxo`
+- Accents: `--ciano`/`--ciano2`/`--ciano3` — **Republicanos blue** (`#1d4ed8`/`#2563eb`/`#3b82f6`; the token is still named `--ciano` for compat). `--verde` (secondary), `--vermelho`/`--amarelo`/`--azul`/`--roxo` (roxo is now neutralized to blue). The old violet (`#6d28d9`/`#7c3aed`) was replaced project-wide — same swap applied to `mapa.html`.
 - Text: `--branco` (`#0f172a`), `--cinza`, `--cinza2`
 - Borders: `--borda`, `--borda2`
 - Fonts: `--fonte` (Sora), `--mono` (JetBrains Mono), `--display` (Bebas Neue — for the login cover overlay), `--serif` (Playfair Display — for the editorial sidebar title)
 
-Sidebar overrides these tokens locally to use its dark-violet (`#1a0f3d`) palette and editorial typography (Playfair italic title, no icons, underline lilás on active item).
+> The platform was briefly converted to a full dark theme, then reverted to light per user preference; the durable choice is **light + Republicanos blue+green**. `mapa.html` matches (light, blue accent).
+
+Sidebar overrides these tokens locally to use its dark **navy** (`#0c1f3a`) palette and editorial typography (Playfair italic title, no icons, underline on active item).
 
 ### Login screen
 Split view (desktop, ≥900px wide):
