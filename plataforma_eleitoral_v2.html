@@ -1747,6 +1747,37 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   </div>
 </div>
 
+<!-- ══ MODAL: CÓDIGO DE ACESSO DA LIDERANÇA ══ -->
+<div class="modal-overlay" id="modal-cod-acesso">
+  <div class="modal" style="max-width:460px;">
+    <div class="modal-header">
+      <div class="modal-title">🔑 Acesso ao painel</div>
+      <button class="modal-close" onclick="fecharModal('modal-cod-acesso')">✕</button>
+    </div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:14px;">
+      <div style="font-size:13px;color:var(--cinza);">Código de vínculo de <b id="cod-nome" style="color:var(--branco);">—</b></div>
+
+      <div id="cod-aviso" style="display:none;font-size:12px;font-weight:600;color:#92600a;background:rgba(255,183,0,0.13);border:1px solid rgba(255,183,0,0.35);border-radius:9px;padding:9px 12px;">⚠️ Esta liderança já criou um acesso. Reenvie o código só se ela ainda não entrou.</div>
+
+      <div style="background:var(--ciano-glow);border:1.5px dashed var(--ciano-borda);border-radius:14px;padding:18px;text-align:center;">
+        <div style="font-size:10.5px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">Código de vínculo</div>
+        <div id="cod-codigo" style="font-size:32px;font-weight:800;color:var(--ciano);font-family:var(--mono);letter-spacing:5px;">------</div>
+        <button onclick="copiarCodAcesso(this)" style="margin-top:12px;background:var(--ciano);color:#fff;border:none;border-radius:9px;padding:9px 20px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);">Copiar código</button>
+      </div>
+
+      <div style="background:var(--bg3);border-radius:11px;padding:14px 16px;font-size:12.5px;color:var(--cinza);line-height:1.85;">
+        <div style="font-weight:700;color:var(--branco);margin-bottom:4px;">Como a liderança entra no painel dela:</div>
+        <b style="color:var(--ciano);">1.</b> Abre o site da plataforma<br>
+        <b style="color:var(--ciano);">2.</b> Toca em <b style="color:var(--branco);">"🔑 Sou liderança"</b><br>
+        <b style="color:var(--ciano);">3.</b> Cria o e-mail e a senha dela<br>
+        <b style="color:var(--ciano);">4.</b> Cola este <b style="color:var(--branco);">código de vínculo</b>
+      </div>
+
+      <button id="cod-wa" onclick="waCodAcesso()" style="background:#25D366;color:#fff;border:none;border-radius:11px;padding:13px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);">📲 Enviar tudo no WhatsApp dela</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── LOGIN ──
 let _currentUser = null;
@@ -2342,6 +2373,7 @@ let _portalAtivo = false;      // sinaliza que estamos no portal (pra re-render 
 let _portalListener = false;
 
 // Admin gera/mostra o código de vínculo de uma liderança (CRM)
+let _codAcessoData = { code:'', nome:'', tel:'' };
 async function gerarCodAcesso(id) {
   const l = _lidPorId.get(id); if (!l) return;
   let code = l.cod_acesso;
@@ -2350,8 +2382,24 @@ async function gerarCodAcesso(id) {
     try { await _db.collection('liderancas').doc(id).update({ cod_acesso: code }); l.cod_acesso = code; }
     catch(e){ alert('Erro ao gerar código: '+e.message); return; }
   }
-  const aviso = l.auth_uid ? '\n\n⚠️ Esta liderança JÁ tem um acesso vinculado.' : '';
-  prompt(`Código de vínculo de ${l.nome}:\n\nPasse para a liderança. Ela cria o acesso na tela de login → "Sou liderança".${aviso}`, code);
+  _codAcessoData = { code, nome: l.nome||'', tel: (l.telefone||'').replace(/\D/g,'') };
+  document.getElementById('cod-nome').textContent   = l.nome || '—';
+  document.getElementById('cod-codigo').textContent = code;
+  document.getElementById('cod-aviso').style.display = l.auth_uid ? 'block' : 'none';
+  const wa = document.getElementById('cod-wa');
+  if (wa) wa.style.display = _codAcessoData.tel.length >= 10 ? '' : 'none';
+  document.getElementById('modal-cod-acesso').classList.add('show');
+}
+function copiarCodAcesso(btn){
+  navigator.clipboard.writeText(_codAcessoData.code).then(()=>{
+    const o = btn.textContent; btn.textContent='✔ Copiado!'; setTimeout(()=>btn.textContent=o,1500);
+  });
+}
+function waCodAcesso(){
+  const site = location.origin + location.pathname;
+  const d = _codAcessoData.tel, num = d ? (d.startsWith('55') ? d : '55'+d) : '';
+  const msg = `Olá, ${_codAcessoData.nome}! Aqui está o seu acesso ao painel da campanha *Talita Oliveira · 1022 · Bahia 2026*.\n\nPasso a passo:\n1) Acesse: ${site}\n2) Toque em "Sou liderança — acessar meu painel"\n3) Crie o seu e-mail e senha\n4) Cole este código de vínculo: *${_codAcessoData.code}*\n\nPronto! Você vai ver a sua rede e poderá cadastrar apoiadores. 💙💚`;
+  window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg),'_blank');
 }
 
 // Auto-cadastro da liderança com código de vínculo
