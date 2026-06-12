@@ -640,8 +640,8 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
     <div class="login-cover-fallback" id="login-cover-fallback">TO</div>
     <div class="login-cover-overlay">
       <h1 class="login-cover-name">Talita Oliveira</h1>
-      <span class="login-cover-tag"><b>1022</b> · Bahia 2026</span>
-      <span class="login-cover-sub">Republicanos · Plataforma de Inteligência Eleitoral</span>
+      <span class="login-cover-tag">Bahia</span>
+      <span class="login-cover-sub">Plataforma de Inteligência</span>
     </div>
   </div>
 
@@ -650,8 +650,8 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   <div class="login-card">
     <div class="login-logo">
       <img src="assets/talita-logo-azul.png" alt="Talita Oliveira">
-      <div class="login-badge">Plataforma de Inteligência Eleitoral</div>
-      <div class="login-sub">Republicanos #1022 · Bahia</div>
+      <div class="login-badge">Plataforma de Inteligência</div>
+      <div class="login-sub">Bahia</div>
     </div>
 
     <!-- VIEW: Entrar -->
@@ -748,7 +748,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 <!-- ══════════════ PORTAL DA LIDERANÇA ══════════════ -->
 <div id="portal-lideranca" style="display:none;min-height:100vh;background:var(--bg);">
   <div class="topbar" style="position:sticky;top:0;">
-    <div class="topbar-title">Painel da Liderança <span style="color:var(--cinza2);font-weight:500;font-size:12px;">· Talita Oliveira 1022</span></div>
+    <div class="topbar-title">Painel da Liderança <span style="color:var(--cinza2);font-weight:500;font-size:12px;">· Talita Oliveira</span></div>
     <div class="topbar-right">
       <span id="portal-user-nome" style="font-size:13px;color:var(--cinza);"></span>
       <button onclick="sair()" class="btn btn-outline" style="padding:7px 14px;">Sair</button>
@@ -2029,7 +2029,7 @@ const SYSTEM_PROMPT = `Você é uma consultora especialista em:
 - Estratégia eleitoral para deputados federais
 - Legislação eleitoral e propostas de lei
 
-Você está assessorando a campanha de Talita Oliveira, pré-candidata a deputada federal pela Bahia (Republicanos #1022) nas eleições de 2026. A meta é ir de 33.455 votos em 2022 para 120.000 votos em 2026. O posicionamento é conservador, com foco em mulheres baianas, evangélicos, interior da Bahia e segmentos populares.
+Você está assessorando o trabalho de Talita Oliveira na Bahia. A meta é ir de 33.455 votos em 2022 para 120.000 votos em 2026. O posicionamento é conservador, com foco em mulheres baianas, evangélicos, interior da Bahia e segmentos populares.
 
 Responda sempre de forma direta, prática e estratégica. Use linguagem clara. Quando for pertinente, cite exemplos reais de políticas públicas bem-sucedidas no Brasil. Sugira ações concretas que a campanha pode tomar.`;
 
@@ -2357,7 +2357,7 @@ function copiarLink() {
 function compartilharWA() {
   if (!_liderancaAtual) return;
   const url = document.getElementById('ld-link').value;
-  const msg = `Olá! Sou da rede de apoio à *Talita Oliveira · 1022 · Bahia 2026*. Cadastre-se aqui para confirmar seu apoio:\n\n${url}`;
+  const msg = `Olá! Sou da rede de apoio à *Talita Oliveira · Bahia*. Cadastre-se aqui para confirmar seu apoio:\n\n${url}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
@@ -2398,7 +2398,7 @@ function copiarCodAcesso(btn){
 function _waNumLid(tel){ const d=(tel||'').replace(/\D/g,''); return d ? (d.startsWith('55')?d:'55'+d) : ''; }
 function _msgAcessoLideranca(nome, code){
   const site = location.origin + location.pathname;
-  return `Olá, ${nome}! Aqui está o seu acesso ao painel da campanha *Talita Oliveira · 1022 · Bahia 2026*.\n\nPasso a passo:\n1) Acesse: ${site}\n2) Toque em "Sou liderança — acessar meu painel"\n3) Crie o seu e-mail e senha\n4) Cole este código de vínculo: *${code}*\n\nPronto! Você vai ver a sua rede e poderá cadastrar apoiadores. 💙💚`;
+  return `Olá, ${nome}! Aqui está o seu acesso ao painel da campanha *Talita Oliveira · Bahia*.\n\nPasso a passo:\n1) Acesse: ${site}\n2) Toque em "Sou liderança — acessar meu painel"\n3) Crie o seu e-mail e senha\n4) Cole este código de vínculo: *${code}*\n\nPronto! Você vai ver a sua rede e poderá cadastrar apoiadores. 💙💚`;
 }
 function waCodAcesso(){
   window.open('https://wa.me/'+_waNumLid(_codAcessoData.tel)+'?text='+encodeURIComponent(_msgAcessoLideranca(_codAcessoData.nome, _codAcessoData.code)),'_blank');
@@ -2540,7 +2540,7 @@ function copiarLinkPortal() {
 }
 function compartilharWAPortal() {
   const i = document.getElementById('portal-link'); if(!i) return;
-  const msg = `Olá! Apoie a *Talita Oliveira · 1022 · Bahia 2026*. Cadastre seu apoio aqui:\n\n${i.value}`;
+  const msg = `Olá! Apoie a *Talita Oliveira · Bahia*. Cadastre seu apoio aqui:\n\n${i.value}`;
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 async function salvarApoiadorPortal() {
@@ -3795,7 +3795,7 @@ function copiarCrmPosLink(){
 function waCrmPosLink(){
   const i = document.getElementById('crm-pos-link'); if(!i) return;
   const nome = document.getElementById('crm-pos-nome').textContent;
-  const msg = `Olá, ${nome}! Esse é o seu link para indicar apoiadores da *Talita Oliveira · 1022 · Bahia 2026*. Cada pessoa que você cadastrar entra na sua rede:\n\n${i.value}`;
+  const msg = `Olá, ${nome}! Esse é o seu link para indicar apoiadores da *Talita Oliveira · Bahia*. Cada pessoa que você cadastrar entra na sua rede:\n\n${i.value}`;
   window.open('https://wa.me/'+_waNum(_crmPosTel)+'?text='+encodeURIComponent(msg),'_blank');
 }
 function falarCrmPos(){ if(_crmPosTel) window.open('https://wa.me/'+_waNum(_crmPosTel),'_blank'); }

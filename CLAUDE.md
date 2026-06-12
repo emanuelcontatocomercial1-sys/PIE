@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**PIE — Plataforma de Inteligência Eleitoral** for the Talita Oliveira 2026 campaign (Republicanos #1022, Bahia). A browser-based electoral management system tracking votes, political leadership (lideranças), competitor monitoring, events, leads/munícipes (MLM-style affiliate network), and campaign goals across all 417 municipalities of Bahia. Election date: **October 4, 2026**.
+**PIE — Plataforma de Inteligência** for Talita Oliveira (Bahia). A browser-based management system tracking political leadership (lideranças), events, and leads/munícipes (MLM-style affiliate network) across all 417 municipalities of Bahia.
 
 Deployed at `cidadaoativodabahia.com.br` via GitHub Pages (custom domain).
 
@@ -53,7 +53,7 @@ Two Firebase app instances are initialized in `plataforma_eleitoral_v2.html`:
 | `municipios` | Vote data per municipality | `nome`, `votos_atual`, `obs`, `updated_at` |
 | `liderancas` | Lideranças (leaders) + leads/munícipes (affiliate network) | `nome`, `municipio`, `bairro`, `votos_comprometidos`, `telefone`, `parent_id`, `link_code`, `tipo` (`lideranca`/`lead`), `created_via` (`manual`/`afiliado`/`planilha`/`lideranca`), `cod_acesso` (private binding code for the portal), `auth_uid` (set once a liderança links a login), `updated_at` |
 | `eventos` | Campaign agenda | `titulo`, `data_str`, `data_ts` (Timestamp), `local`, `tipo`, `obs`, `updated_at` |
-| `concorrentes` | Competitor monitoring | `nome`, `partido`, `relacao` (`Republicanos`/`adversario`/`aliado`/`observar`), `foto_url`, `ig`, `fb`, `yt`, `tt` |
+| `concorrentes` | (legado — painel removido) | `nome`, `partido`, `relacao` (`interno`/`adversario`/`aliado`/`observar`), `foto_url`, `ig`, `fb`, `yt`, `tt` |
 | `config` | Platform-wide settings (e.g., login cover photo) | doc `login` has `cover_url` (base64 dataURL, compressed JPEG ~50-200KB), `updated_at`, `updated_by` |
 
 First registered user auto-becomes `admin`; subsequent registrations are assigned `usuario` with `pendente` status requiring admin activation. Anonymous users (from the public cadastro flow) are **never** added to `usuarios` — guarded in the auth handler.
@@ -89,20 +89,20 @@ All render functions consume these caches instead of re-filtering `_liderancasDa
 The four `onSnapshot` subscriptions (`municipios`, `liderancas`, `concorrentes`, `eventos`) live inside `iniciarListener_<col>()` functions called from `iniciarListenersFirestore()` — invoked inside the `onAuthStateChanged` handler **after** `_currentUser` is set. This avoids the stream dying with `permission-denied` if rules require auth and the script load happened before authentication completed. Guard `_listenersIniciados` prevents double-attach.
 
 ### CSS design tokens
-Light theme with **Republicanos identity (blue + green)**. CSS variables with Portuguese names:
+Light theme with **brand identity (blue + green)**. CSS variables with Portuguese names:
 - Backgrounds: `--bg` / `--bg2..bg5` (light)
-- Accents: `--ciano`/`--ciano2`/`--ciano3` — **Republicanos blue** (`#1d4ed8`/`#2563eb`/`#3b82f6`; the token is still named `--ciano` for compat). `--verde` (secondary), `--vermelho`/`--amarelo`/`--azul`/`--roxo` (roxo is now neutralized to blue). The old violet (`#6d28d9`/`#7c3aed`) was replaced project-wide — same swap applied to `mapa.html`.
+- Accents: `--ciano`/`--ciano2`/`--ciano3` — **primary blue** (azul vivo `#0525f7` da marca Talita; the token is still named `--ciano` for compat). `--verde` (secondary), `--vermelho`/`--amarelo`/`--azul`/`--roxo` (roxo is now neutralized to blue). The old violet (`#6d28d9`/`#7c3aed`) was replaced project-wide — same swap applied to `mapa.html`.
 - Text: `--branco` (`#0f172a`), `--cinza`, `--cinza2`
 - Borders: `--borda`, `--borda2`
 - Fonts: `--fonte` (Sora), `--mono` (JetBrains Mono), `--display` (Bebas Neue — for the login cover overlay), `--serif` (Playfair Display — for the editorial sidebar title)
 
-> The platform was briefly converted to a full dark theme, then reverted to light per user preference; the durable choice is **light + Republicanos blue+green**. `mapa.html` matches (light, blue accent).
+> The platform was briefly converted to a full dark theme, then reverted to light per user preference; the durable choice is **light + blue+green**. `mapa.html` matches (light, blue accent).
 
 Sidebar overrides these tokens locally to use its dark **navy** (`#0c1f3a`) palette and editorial typography (Playfair italic title, no icons, underline on active item).
 
 ### Login screen
 Split view (desktop, ≥900px wide):
-- **Left**: admin-customizable cover photo (`config/login.cover_url` from Firestore) at 36% width with a dark gradient overlay containing the candidate name in Bebas Neue + tag "1022 · BAHIA 2026"
+- **Left**: admin-customizable cover photo (`config/login.cover_url` from Firestore) at 36% width with a dark gradient overlay containing the name in Bebas Neue + tag "BAHIA"
 - **Right**: white login card with multi-view (login / criar conta / esqueci senha)
 
 If no cover is set, falls back to a dark `#111` background with "TO" placeholder. URL is cached in `localStorage.pie_login_cover_url` for instant load.
