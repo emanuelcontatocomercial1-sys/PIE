@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
-<title>Plataforma de Inteligência Eleitoral — Talita Oliveira 2026</title>
+<title>Talita Oliveira — Plataforma de Inteligência</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&family=Bebas+Neue&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -708,7 +708,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 
     <!-- VIEW: Liderança (auto-cadastro com código de vínculo) -->
     <div class="login-view" id="view-lideranca">
-      <div style="font-size:13px;color:var(--cinza);margin-bottom:18px;line-height:1.6;">Crie seu acesso de liderança usando o <b style="color:var(--branco)">código de vínculo</b> que a campanha te passou.</div>
+      <div style="font-size:13px;color:var(--cinza);margin-bottom:18px;line-height:1.6;">Crie seu acesso de liderança usando o <b style="color:var(--branco)">código de vínculo</b> que a equipe te passou.</div>
       <input class="login-input" type="text" id="lid-nome" placeholder="Seu nome completo" autocomplete="name" autocapitalize="words">
       <input class="login-input" type="email" id="lid-email" placeholder="Seu e-mail" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false">
       <div class="pass-wrap">
@@ -730,9 +730,9 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 <!-- ══════════════ CADASTRO PÚBLICO (link de afiliado) ══════════════ -->
 <div id="cadastro-screen">
   <div class="cadastro-card">
-    <div class="cadastro-eyebrow">Apoio à Talita Oliveira · Bahia 2026</div>
+    <div class="cadastro-eyebrow">Talita Oliveira · Bahia</div>
     <h2 class="cadastro-title">Indicação de <span id="cadastro-lider-nome">—</span></h2>
-    <div class="cadastro-sub">Preencha seus dados para se cadastrar na rede de apoio.</div>
+    <div class="cadastro-sub">Preencha seus dados para se cadastrar na rede.</div>
     <input type="hidden" id="cadastro-parent-id" value="">
     <input type="hidden" id="cadastro-parent-mun" value="">
     <input class="cadastro-input" type="text" id="cadastro-nome" placeholder="Seu nome completo" autocomplete="name">
@@ -792,7 +792,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
       </div>
 
       <div class="sidebar-section">
-        <div class="sidebar-section-label">Eleição</div>
+        <div class="sidebar-section-label">Território</div>
         <div class="nav-item" onclick="showPage('mapa',this)">
           <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg></span>Mapa
         </div>
@@ -805,7 +805,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
       </div>
 
       <div class="sidebar-section">
-        <div class="sidebar-section-label">Campanha</div>
+        <div class="sidebar-section-label">Atividades</div>
         <div class="nav-item" onclick="showPage('agenda',this)">
           <span class="ni-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>Agenda
         </div>
@@ -849,7 +849,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
       <div class="page active" id="page-dashboard">
         <div class="page-header">
           <div class="page-title">Relatórios das Lideranças</div>
-          <div class="page-sub">Desempenho da rede em tempo real · faltam <strong id="dias-counter">—</strong> dias para a eleição (04/10/2026)</div>
+          <div class="page-sub">Desempenho da rede em tempo real<span style="display:none" id="dias-counter">—</span></div>
         </div>
 
         <div class="stats-grid">
@@ -863,7 +863,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
             <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M4 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
             <div class="stat-num" id="dash-leads">0</div>
             <div class="stat-label">Leads / Munícipes</div>
-            <div class="stat-delta">Apoiadores cadastrados</div>
+            <div class="stat-delta">Cadastrados na rede</div>
           </div>
           <div class="stat-card amarelo">
             <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
@@ -925,12 +925,12 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
       <!-- ══ MAPA ══ -->
       <div class="page" id="page-mapa">
         <div class="page-header">
-          <div class="page-title">Mapa Eleitoral da Bahia</div>
-          <div class="page-sub">Distribuição de votos 2022 e metas 2026 por município</div>
+          <div class="page-title">Mapa da Bahia</div>
+          <div class="page-sub">Distribuição por município</div>
         </div>
         <div class="panel">
           <div class="panel-body" style="padding:0;">
-            <iframe class="mapa-frame" src="/mapa.html?v=9" title="Mapa Eleitoral"></iframe>
+            <iframe class="mapa-frame" src="/mapa.html?v=11" title="Mapa da Bahia"></iframe>
           </div>
         </div>
       </div>
@@ -1117,7 +1117,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
           <div>
             <div class="page-title">Projetos</div>
-            <div class="page-sub">Demandas, articulações e iniciativas da campanha</div>
+            <div class="page-sub">Demandas, articulações e iniciativas</div>
           </div>
           <button class="btn btn-primary" onclick="abrirModalProjeto()">+ Novo projeto</button>
         </div>
@@ -1132,7 +1132,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
           <div>
             <div class="page-title">Leads / Munícipes</div>
-            <div class="page-sub">Apoiadores cadastrados — manualmente, via link de afiliado ou importados de planilha</div>
+            <div class="page-sub">Cadastrados — manualmente, via link de afiliado ou importados de planilha</div>
           </div>
           <div style="display:flex;gap:8px;">
             <button class="btn btn-outline" onclick="abrirImportPlanilha()" style="font-size:12px;">📥 Importar planilha</button>
@@ -1274,12 +1274,12 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
             <div class="panel-header">
               <div>
                 <div class="panel-title">IA Especialista</div>
-                <div style="font-size:11px;color:var(--cinza);margin-top:2px;">Políticas Públicas · Ciência Política · Estratégia Eleitoral</div>
+                <div style="font-size:11px;color:var(--cinza);margin-top:2px;">Políticas Públicas · Estratégia · Articulação</div>
               </div>
             </div>
             <div class="chat-wrap">
               <div class="chat-messages" id="chat-proj-msgs">
-                <div class="msg ai"><div class="msg-label">IA Estratégica</div>Olá! Sou especialista em políticas públicas, ciência política e estratégia eleitoral. Estou aqui para ajudar a desenvolver este projeto. O que você gostaria de analisar?</div>
+                <div class="msg ai"><div class="msg-label">IA Estratégica</div>Olá! Posso ajudar com políticas públicas, estratégia e articulação para desenvolver este projeto. O que você gostaria de analisar?</div>
               </div>
               <div class="chat-input-wrap">
                 <textarea class="chat-input" id="chat-proj-input" placeholder="Faça uma pergunta sobre este projeto..." rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();enviarMsgProjeto();}"></textarea>
@@ -1354,7 +1354,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
       <div class="page" id="page-agenda">
         <div class="page-header">
           <div class="page-title">Agenda</div>
-          <div class="page-sub">Eventos, visitas e compromissos da campanha</div>
+          <div class="page-sub">Eventos, visitas e compromissos</div>
         </div>
         <div class="grid-2">
 
@@ -1399,7 +1399,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
                 <select class="form-select" id="ag-tipo">
                   <option value="Visita ao município">Visita ao município</option>
                   <option value="Reunião com liderança">Reunião com liderança</option>
-                  <option value="Evento de campanha">Evento de campanha</option>
+                  <option value="Evento de campanha">Evento</option>
                   <option value="Digital / Live">Digital / Live</option>
                   <option value="Reunião interna">Reunião interna</option>
                 </select>
@@ -1913,7 +1913,7 @@ function initApp() {
 
 // ── NAVEGAÇÃO ──
 const PAGE_TITLES = {
-  dashboard:'Dashboard',mapa:'Mapa Eleitoral',metas:'Metas 2026',
+  dashboard:'Dashboard',mapa:'Mapa da Bahia',metas:'Metas',
   projetos:'Projetos',crm:'Lideranças',agenda:'Agenda',
   'projeto-detalhe':'Projeto',
   'lideranca-detalhe':'Rede da Liderança',
@@ -1988,7 +1988,7 @@ const PROJETOS_DATA = {
     body:`
       <div style="margin-bottom:14px;"><span class="badge azul">Digital · 80%</span></div>
       <div style="font-size:13px;color:var(--cinza);line-height:1.7;margin-bottom:16px;">
-        Frente digital da campanha. Gestão das redes sociais, produção de conteúdo conservador e mobilização de apoiadores em toda a Bahia.
+        Frente digital. Gestão das redes sociais, produção de conteúdo e mobilização de pessoas em toda a Bahia.
       </div>
       <div style="font-size:12px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Canais ativos</div>
       <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
@@ -2011,7 +2011,7 @@ function abrirProjeto(id) {
   document.getElementById('chat-proj-msgs').innerHTML = `
     <div class="msg ai">
       <div class="msg-label">IA Estratégica</div>
-      Analisando o projeto <strong>${p.title}</strong>. Posso ajudar com análise de políticas públicas, viabilidade legislativa, comunicação eleitoral e estratégia de articulação. O que você precisa?
+      Analisando o projeto <strong>${p.title}</strong>. Posso ajudar com análise de políticas públicas, viabilidade, comunicação e estratégia de articulação. O que você precisa?
     </div>`;
   showPage('projeto-detalhe', null);
 }
@@ -2024,14 +2024,13 @@ function fecharModal(id){document.getElementById(id).classList.remove('show');}
 // ── CHAT IA (Claude API) ──
 const SYSTEM_PROMPT = `Você é uma consultora especialista em:
 - Políticas públicas brasileiras (saúde, transporte, segurança, educação, agronegócio)
-- Ciência política e eleições no Brasil, especialmente na Bahia
-- Publicidade eleitoral e comunicação de campanha
-- Estratégia eleitoral para deputados federais
-- Legislação eleitoral e propostas de lei
+- Gestão e articulação de projetos
+- Comunicação e relacionamento com comunidades
+- Mobilização e engajamento social
 
-Você está assessorando o trabalho de Talita Oliveira na Bahia. A meta é ir de 33.455 votos em 2022 para 120.000 votos em 2026. O posicionamento é conservador, com foco em mulheres baianas, evangélicos, interior da Bahia e segmentos populares.
+Você está apoiando o trabalho de Talita Oliveira na Bahia, com foco em desenvolvimento de propostas e relacionamento com lideranças e comunidades.
 
-Responda sempre de forma direta, prática e estratégica. Use linguagem clara. Quando for pertinente, cite exemplos reais de políticas públicas bem-sucedidas no Brasil. Sugira ações concretas que a campanha pode tomar.`;
+Responda sempre de forma direta, prática e estratégica. Use linguagem clara. Quando for pertinente, cite exemplos reais de políticas públicas bem-sucedidas no Brasil. Sugira ações concretas.`;
 
 let chatProjHistory = [];
 
@@ -2243,7 +2242,7 @@ async function salvarCadastroPublico() {
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       updated_at: firebase.firestore.FieldValue.serverTimestamp()
     });
-    showFb('✅ Cadastro confirmado! Obrigado pelo apoio.', true);
+    showFb('✅ Cadastro confirmado! Muito obrigado.', true);
     btn.style.display = 'none';
     ['cadastro-nome','cadastro-telefone','cadastro-bairro'].forEach(id=>{ const e=document.getElementById(id); if(e) e.disabled=true; });
   } catch(e) {
@@ -2357,7 +2356,7 @@ function copiarLink() {
 function compartilharWA() {
   if (!_liderancaAtual) return;
   const url = document.getElementById('ld-link').value;
-  const msg = `Olá! Sou da rede de apoio à *Talita Oliveira · Bahia*. Cadastre-se aqui para confirmar seu apoio:\n\n${url}`;
+  const msg = `Olá! Faço parte da rede da *Talita Oliveira · Bahia*. Cadastre-se aqui:\n\n${url}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
@@ -2398,7 +2397,7 @@ function copiarCodAcesso(btn){
 function _waNumLid(tel){ const d=(tel||'').replace(/\D/g,''); return d ? (d.startsWith('55')?d:'55'+d) : ''; }
 function _msgAcessoLideranca(nome, code){
   const site = location.origin + location.pathname;
-  return `Olá, ${nome}! Aqui está o seu acesso ao painel da campanha *Talita Oliveira · Bahia*.\n\nPasso a passo:\n1) Acesse: ${site}\n2) Toque em "Sou liderança — acessar meu painel"\n3) Crie o seu e-mail e senha\n4) Cole este código de vínculo: *${code}*\n\nPronto! Você vai ver a sua rede e poderá cadastrar apoiadores. 💙💚`;
+  return `Olá, ${nome}! Aqui está o seu acesso ao painel da *Talita Oliveira · Bahia*.\n\nPasso a passo:\n1) Acesse: ${site}\n2) Toque em "Sou liderança — acessar meu painel"\n3) Crie o seu e-mail e senha\n4) Cole este código de vínculo: *${code}*\n\nPronto! Você vai ver a sua rede e poderá cadastrar pessoas. 💙💚`;
 }
 function waCodAcesso(){
   window.open('https://wa.me/'+_waNumLid(_codAcessoData.tel)+'?text='+encodeURIComponent(_msgAcessoLideranca(_codAcessoData.nome, _codAcessoData.code)),'_blank');
@@ -2450,7 +2449,7 @@ async function cadastrarLideranca() {
   } catch(e) {
     _fluxoLideranca = false;
     const map = {
-      'cod-invalido':'Código de vínculo inválido. Confira com a campanha.',
+      'cod-invalido':'Código de vínculo inválido. Confira com a equipe.',
       'ja-vinculada':'Essa liderança já tem um acesso criado. Use "entrar".',
       'auth/email-already-in-use':'Esse e-mail já está em uso. Use a opção "entrar".',
       'auth/invalid-email':'E-mail inválido.',
@@ -2475,7 +2474,7 @@ function entrarPortalLideranca() {
 function renderPortal() {
   const body = document.getElementById('portal-body'); if (!body) return;
   const id = _currentUser && _currentUser.liderancaId;
-  if (!id) { body.innerHTML = '<div style="text-align:center;color:var(--cinza);padding:60px;">Sua conta não está vinculada a uma liderança. Fale com a campanha.</div>'; return; }
+  if (!id) { body.innerHTML = '<div style="text-align:center;color:var(--cinza);padding:60px;">Sua conta não está vinculada a uma liderança. Fale com a equipe.</div>'; return; }
   const me = _lidPorId.get(id);
   if (!me) { body.innerHTML = '<div style="text-align:center;color:var(--cinza);padding:60px;">Carregando seus dados…</div>'; return; }
   const desc = descendentesDe(id);
@@ -2488,7 +2487,7 @@ function renderPortal() {
   function nivel(x, lvl=0){ const l=_lidPorId.get(x); if(!l||!l.parent_id||l.parent_id===id) return lvl+(l&&l.parent_id===id?1:0); return nivel(l.parent_id, lvl+1); }
   const lista = desc.length ? desc.map(d => {
     const lv = nivel(d.id); const isL = tipoDe(d)==='lideranca';
-    const col = isL ? '#3b82f6' : '#10b981'; const txt = isL ? 'liderança' : 'apoiador';
+    const col = isL ? '#3b82f6' : '#10b981'; const txt = isL ? 'liderança' : 'cadastrado';
     return `<div class="ld-list-item" style="padding-left:${12+lv*14}px;">
       <span class="ld-list-bullet" style="background:${col};"></span>
       <div style="flex:1;min-width:0;"><div style="font-weight:600;color:var(--branco);font-size:13px;">${d.nome||'—'} <small style="color:var(--cinza2);font-weight:400;">· nível ${lv}</small></div>
@@ -2498,12 +2497,12 @@ function renderPortal() {
   body.innerHTML = `
     <div style="margin-bottom:24px;">
       <div style="font-family:var(--serif);font-style:italic;font-size:27px;color:var(--branco);line-height:1.1;">Olá, ${prim} 👋</div>
-      <div style="font-size:13px;color:var(--cinza);margin-top:6px;">${me.municipio||'—'}${me.bairro?' · '+me.bairro:''} · Liderança da campanha</div>
+      <div style="font-size:13px;color:var(--cinza);margin-top:6px;">${me.municipio||'—'}${me.bairro?' · '+me.bairro:''} · Liderança</div>
     </div>
     <div class="stats-grid">
       <div class="stat-card azul"><div class="stat-num">${diretas}</div><div class="stat-label">Indicados diretos</div></div>
       <div class="stat-card roxo"><div class="stat-num">${desc.length}</div><div class="stat-label">Rede total</div></div>
-      <div class="stat-card verde"><div class="stat-num">${leads}</div><div class="stat-label">Apoiadores</div></div>
+      <div class="stat-card verde"><div class="stat-num">${leads}</div><div class="stat-label">Cadastrados</div></div>
       <div class="stat-card amarelo"><div class="stat-num">${votos.toLocaleString('pt-BR')}</div><div class="stat-label">Votos comprometidos</div></div>
     </div>
     <div class="panel" style="margin-bottom:20px;"><div class="panel-header"><div class="panel-title">🔗 Seu link de indicação</div></div>
@@ -2515,7 +2514,7 @@ function renderPortal() {
         </div>
       </div>
     </div>
-    <div class="panel" style="margin-bottom:20px;"><div class="panel-header"><div class="panel-title">➕ Cadastrar apoiador</div></div>
+    <div class="panel" style="margin-bottom:20px;"><div class="panel-header"><div class="panel-title">➕ Cadastrar pessoa</div></div>
       <div class="panel-body">
         <div class="form-row"><div class="form-group"><label class="form-label">Nome *</label><input class="form-input" id="pa-nome" placeholder="Nome completo"></div>
         <div class="form-group"><label class="form-label">Telefone</label><input class="form-input" id="pa-tel" placeholder="71 99999-9999"></div></div>
@@ -2540,7 +2539,7 @@ function copiarLinkPortal() {
 }
 function compartilharWAPortal() {
   const i = document.getElementById('portal-link'); if(!i) return;
-  const msg = `Olá! Apoie a *Talita Oliveira · Bahia*. Cadastre seu apoio aqui:\n\n${i.value}`;
+  const msg = `Olá! Conheça a rede da *Talita Oliveira · Bahia*. Cadastre-se aqui:\n\n${i.value}`;
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 async function salvarApoiadorPortal() {
@@ -3795,7 +3794,7 @@ function copiarCrmPosLink(){
 function waCrmPosLink(){
   const i = document.getElementById('crm-pos-link'); if(!i) return;
   const nome = document.getElementById('crm-pos-nome').textContent;
-  const msg = `Olá, ${nome}! Esse é o seu link para indicar apoiadores da *Talita Oliveira · Bahia*. Cada pessoa que você cadastrar entra na sua rede:\n\n${i.value}`;
+  const msg = `Olá, ${nome}! Esse é o seu link para indicar pessoas para a rede da *Talita Oliveira · Bahia*. Cada pessoa que você cadastrar entra na sua rede:\n\n${i.value}`;
   window.open('https://wa.me/'+_waNum(_crmPosTel)+'?text='+encodeURIComponent(msg),'_blank');
 }
 function falarCrmPos(){ if(_crmPosTel) window.open('https://wa.me/'+_waNum(_crmPosTel),'_blank'); }
