@@ -5,42 +5,46 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="color-scheme" content="light">
 <title>Plataforma de Inteligência Eleitoral — Talita Oliveira 2026</title>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Bebas+Neue&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Sora:wght@400;600;700;800&family=Bebas+Neue&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:light;
-  /* Fundos — tema claro */
-  --bg:#f7f8fc;--bg2:#ffffff;--bg3:#f0f2f8;--bg4:#e8edf4;--bg5:#dde3ef;
+  /* Fundos — tema claro, muito respiro */
+  --bg:#f5f6fb;--bg2:#ffffff;--bg3:#f1f3fa;--bg4:#e9edf7;--bg5:#dde3f1;
 
-  /* Azul Republicanos — destaque principal (mantém nome --ciano por compat) */
-  --ciano:#1d4ed8;--ciano2:#2563eb;--ciano3:#3b82f6;
-  --ciano-glow:rgba(37,99,235,0.08);--ciano-borda:rgba(37,99,235,0.22);
+  /* AZUL VIVO Talita — cor principal da marca (mantém nome --ciano por compat) */
+  --ciano:#0525f7;--ciano2:#2a45f8;--ciano3:#5e72fb;
+  --ciano-glow:rgba(5,37,247,0.07);--ciano-borda:rgba(5,37,247,0.22);
 
-  /* Verde */
-  --verde:#047857;--verde2:#059669;--verde3:#10b981;
-  --verde-glow:rgba(5,150,105,0.08);
+  /* VERDE-LIMÃO Talita — secundária (lima p/ preenchimentos; tons escuros p/ texto legível) */
+  --lima:#c0eb02;                 /* lima exato da marca — usar em barras/preenchimentos */
+  --verde:#4d7c0f;--verde2:#65a30d;--verde3:#84cc16;
+  --verde-glow:rgba(132,204,22,0.16);
 
-  /* Vermelho */
+  /* ROSA VIVO Talita — acento */
+  --rosa:#eb388a;--rosa2:#f25ba2;--rosa-glow:rgba(235,56,138,0.10);
+
+  /* Vermelho (alertas) */
   --vermelho:#b91c1c;--vermelho2:#ef4444;
 
-  /* Amarelo */
-  --amarelo:#b45309;--amarelo2:#f59e0b;
+  /* AMARELO VIVO Talita — acento */
+  --amarelo:#a16207;--amarelo2:#ffb700;
 
-  /* Azul (secundário, mantido para badges) */
-  --azul:#1d4ed8;--azul2:#2563eb;--azul3:#3b82f6;
-  --azul-glow:rgba(37,99,235,0.08);
+  /* Azul (alias da marca para badges) */
+  --azul:#0525f7;--azul2:#2a45f8;--azul3:#5e72fb;
+  --azul-glow:rgba(5,37,247,0.07);
 
-  /* Roxo neutralizado para azul (identidade azul+verde) */
-  --roxo:#1d4ed8;--roxo2:#3b82f6;
+  /* Roxo neutralizado para o azul da marca */
+  --roxo:#0525f7;--roxo2:#5e72fb;
 
   /* Texto */
-  --branco:#0f172a;--cinza:#64748b;--cinza2:#94a3b8;
+  --branco:#0d1326;--cinza:#5b6478;--cinza2:#9aa3b8;
 
   /* Bordas */
-  --borda:#e8ecf2;--borda2:#d1d9e6;
+  --borda:#e9ecf4;--borda2:#d6dcea;
 
-  /* Tipografia */
-  --fonte:'Sora',sans-serif;--mono:'JetBrains Mono',monospace;
+  /* Tipografia — Poppins (geométrica arredondada, estilo do manual) */
+  --fonte:'Poppins',sans-serif;--mono:'Poppins',sans-serif;
   --display:'Bebas Neue',Impact,sans-serif;
   --serif:'Playfair Display',Georgia,serif;
 }
@@ -279,58 +283,59 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 #app{display:none;min-height:100vh;}
 .layout{display:flex;min-height:100vh;}
 
-/* SIDEBAR — fundo violeta escuro + tipografia editorial */
+/* SIDEBAR — azul vivo da marca Talita + logo oficial */
 .sidebar{
-  background:#0c1f3a;border-right:1px solid rgba(59,130,246,0.12);
-  display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:220px;z-index:100;
+  background:var(--ciano);border-right:none;
+  display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;width:230px;z-index:100;
   overflow-y:auto;padding:0;
 }
-.sidebar-logo{padding:34px 24px 22px;border-bottom:1px solid rgba(255,255,255,0.07);}
-.sidebar-logo img{display:none;}
+.sidebar-logo{padding:26px 22px 22px;border-bottom:1px solid rgba(255,255,255,0.16);}
+.sidebar-logo img{display:block;height:26px;width:auto;}
 .sidebar-logo .pre-title{display:none;}
-.sidebar-logo-name{
-  font-family:var(--serif);font-size:22px;font-weight:500;font-style:italic;
-  color:#eaf2ff;line-height:1.1;letter-spacing:-0.5px;
-}
+.sidebar-logo-name{display:none;}
 .sidebar-logo-sub{
-  font-family:var(--fonte);font-size:11px;font-weight:500;color:#93c5fd;
-  margin-top:10px;letter-spacing:0.4px;text-transform:none;
+  font-family:var(--fonte);font-size:10.5px;font-weight:500;color:rgba(255,255,255,0.72);
+  margin-top:12px;letter-spacing:0.3px;text-transform:none;
 }
-.sidebar-section{padding:14px 0 0;}
-.sidebar-section + .sidebar-section{padding-top:12px;}
-.sidebar-section-label{display:none;}
+.sidebar-section{padding:16px 0 0;}
+.sidebar-section + .sidebar-section{padding-top:14px;}
+.sidebar-section-label{
+  display:block;padding:0 22px 7px;font-size:10px;font-weight:700;letter-spacing:1.4px;
+  text-transform:uppercase;color:rgba(255,255,255,0.42);
+}
 .nav-item{
-  display:block;padding:7px 24px;color:#8fa3c4;font-size:14px;font-weight:400;
-  cursor:pointer;transition:color 0.15s;font-family:var(--fonte);position:relative;
-  line-height:1.4;
+  display:block;padding:9px 22px;color:rgba(255,255,255,0.80);font-size:14px;font-weight:500;
+  cursor:pointer;transition:color 0.15s,background 0.15s;font-family:var(--fonte);position:relative;
+  line-height:1.4;border-radius:0;
 }
-.nav-item:hover{color:#fff;background:none;}
-.nav-item.active{color:#fff;font-weight:600;background:none;box-shadow:none;}
-.nav-item.active::after{
-  content:"";position:absolute;left:24px;bottom:0px;width:32px;height:2px;background:#3b82f6;border-radius:2px;
+.nav-item:hover{color:#fff;background:rgba(255,255,255,0.08);}
+.nav-item.active{color:#fff;font-weight:700;background:rgba(255,255,255,0.12);box-shadow:none;}
+.nav-item.active::before{
+  content:"";position:absolute;left:0;top:6px;bottom:6px;width:4px;background:var(--lima);border-radius:0 3px 3px 0;
 }
+.nav-item.active::after{content:none;}
 .nav-item .ni-icon{display:none;}
 .nav-item .ni-badge{
-  margin-left:6px;background:rgba(59,130,246,0.2);color:#93c5fd;font-size:10px;font-weight:700;
+  margin-left:6px;background:rgba(255,255,255,0.18);color:#fff;font-size:10px;font-weight:700;
   padding:2px 7px;border-radius:10px;font-family:var(--fonte);
 }
 .nav-item .ni-badge::before{content:"";}
 .nav-item .ni-badge::after{content:"";}
-.sidebar-bottom{margin-top:auto;padding:18px 24px 22px;border-top:1px solid rgba(255,255,255,0.07);}
-.user-card{display:flex;align-items:flex-end;gap:8px;background:none;padding:0;border-radius:0;}
-.user-avatar{display:none;}
+.sidebar-bottom{margin-top:auto;padding:18px 22px 22px;border-top:1px solid rgba(255,255,255,0.16);}
+.user-card{display:flex;align-items:center;gap:10px;background:none;padding:0;border-radius:0;}
+.user-avatar{display:flex;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.16);align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;}
 .user-card > div:not(.user-avatar){flex:1;min-width:0;}
 .user-name{
-  font-family:var(--serif);font-size:14px;font-weight:500;font-style:italic;color:#eaf2ff;
+  font-family:var(--fonte);font-size:13px;font-weight:600;font-style:normal;color:#fff;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.user-role{font-family:var(--fonte);font-size:11px;color:#8fa3c4;margin-top:2px;}
-.btn-logout{margin-left:auto;background:none;border:none;color:#8fa3c4;cursor:pointer;display:flex;align-items:center;transition:color 0.2s;padding:0;}
+.user-role{font-family:var(--fonte);font-size:11px;color:rgba(255,255,255,0.7);margin-top:1px;}
+.btn-logout{margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.7);cursor:pointer;display:flex;align-items:center;transition:color 0.2s;padding:0;}
 .btn-logout:hover{color:#fff;}
-.btn-logout svg{width:14px;height:14px;}
+.btn-logout svg{width:15px;height:15px;}
 
 /* MAIN */
-.main{margin-left:220px;min-height:100vh;width:calc(100% - 220px);overflow-x:hidden;}
+.main{margin-left:230px;min-height:100vh;width:calc(100% - 230px);overflow-x:hidden;}
 .topbar{
   background:#ffffff;
   border-bottom:1px solid var(--borda);padding:0 32px;height:60px;
@@ -353,35 +358,31 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 /* STAT CARDS */
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;width:100%;}
 .stat-card{
-  background:var(--bg2);border:1px solid var(--borda);border-radius:16px;padding:22px;
-  transition:all 0.25s;position:relative;overflow:hidden;
-  box-shadow:0 1px 3px rgba(0,0,0,0.04),0 4px 12px rgba(0,0,0,0.03);
+  background:var(--bg2);border:1px solid var(--borda);border-radius:18px;padding:22px 22px 20px;
+  transition:transform 0.2s,box-shadow 0.2s,border-color 0.2s;position:relative;
 }
-.stat-card.azul  {border-top:3px solid var(--azul2);}
-.stat-card.verde {border-top:3px solid var(--verde2);}
-.stat-card.amarelo{border-top:3px solid var(--amarelo2);}
-.stat-card.roxo  {border-top:3px solid var(--ciano2);}
-.stat-card.vermelho{border-top:3px solid var(--vermelho2);}
-.stat-card:hover{border-color:var(--borda2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.09);}
+/* sem barrinha colorida — visual unificado e limpo (anti "IA") */
+.stat-card.azul,.stat-card.verde,.stat-card.amarelo,.stat-card.roxo,.stat-card.vermelho{border-top:1px solid var(--borda);}
+.stat-card:hover{border-color:var(--ciano-borda);transform:translateY(-2px);box-shadow:0 12px 30px rgba(5,37,247,0.08);}
 .stat-icon{
-  width:42px;height:42px;border-radius:10px;
+  width:38px;height:38px;border-radius:11px;
   display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+  background:var(--ciano-glow);color:var(--ciano);
 }
-.stat-icon svg{width:20px;height:20px;}
-.stat-card.azul   .stat-icon{background:rgba(37,99,235,0.09);color:var(--azul2);}
-.stat-card.verde  .stat-icon{background:rgba(5,150,105,0.09);color:var(--verde2);}
-.stat-card.amarelo .stat-icon{background:rgba(245,158,11,0.09);color:var(--amarelo2);}
-.stat-card.roxo   .stat-icon{background:rgba(37,99,235,0.09);color:var(--ciano2);}
-.stat-card.vermelho .stat-icon{background:rgba(239,68,68,0.09);color:var(--vermelho2);}
-.stat-num{font-size:28px;font-weight:800;color:var(--branco);font-family:var(--mono);line-height:1;}
-.stat-label{font-size:12px;color:var(--cinza);margin-top:5px;font-weight:600;letter-spacing:0.2px;}
-.stat-delta{font-size:11px;margin-top:6px;font-weight:700;}
+.stat-icon svg{width:19px;height:19px;}
+/* ícone sempre azul da marca, independentemente da classe de cor herdada */
+.stat-card.azul .stat-icon,.stat-card.verde .stat-icon,.stat-card.amarelo .stat-icon,.stat-card.roxo .stat-icon,.stat-card.vermelho .stat-icon{background:var(--ciano-glow);color:var(--ciano);}
+.stat-num{font-size:30px;font-weight:800;color:var(--ciano);font-family:var(--fonte);line-height:1;letter-spacing:-1.2px;}
+.stat-label{font-size:12px;color:var(--cinza);margin-top:7px;font-weight:600;letter-spacing:0.1px;}
+.stat-delta{font-size:11px;margin-top:6px;font-weight:500;color:var(--cinza2);}
 .stat-delta.up{color:var(--verde2);}
 .stat-delta.down{color:var(--vermelho2);}
 
 /* GRIDS */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px;}
+/* layout página com formulário lateral (Lideranças / Leads) */
+.pg-split{display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start;}
 
 /* PANEL */
 .panel{background:var(--bg2);border:1px solid var(--borda);border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
@@ -577,7 +578,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   .topbar-date{display:none;}
   .page{padding:16px 14px;}
   .stats-grid{grid-template-columns:1fr 1fr;gap:10px;}
-  .grid-2,.grid-3,.form-row{grid-template-columns:1fr;}
+  .grid-2,.grid-3,.form-row,.pg-split{grid-template-columns:1fr;}
   .modal{max-width:98vw;margin:8px;}
   .modal-overlay{align-items:flex-end;padding:0;}
   .modal{border-radius:20px 20px 0 0;max-height:92vh;width:100%;max-width:100%;}
@@ -587,11 +588,41 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   .btn{padding:9px 14px;font-size:12px;}
   .form-row{gap:10px;}
 }
+/* TABELAS → CARDS no celular (sem scroll horizontal) */
+@media(max-width:720px){
+  .crm-table{min-width:0 !important;}
+  .crm-table thead{display:none;}
+  .crm-table tbody,.crm-table tr,.crm-table td{display:block;width:100%;}
+  .crm-table tr{
+    background:var(--bg2);border:1px solid var(--borda);border-radius:14px;
+    padding:12px 15px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.04);
+  }
+  .crm-table tr:hover td{background:none;}
+  .crm-table td{
+    display:flex;align-items:center;justify-content:space-between;gap:14px;
+    padding:7px 0;border:none;text-align:right;font-size:13px;
+  }
+  .crm-table td::before{
+    content:attr(data-label);font-size:11px;font-weight:700;color:var(--cinza);
+    text-transform:uppercase;letter-spacing:0.4px;text-align:left;flex-shrink:0;
+  }
+  .crm-table td[data-label="Nome"]{
+    justify-content:flex-start;gap:10px;border-bottom:1px solid var(--borda);
+    padding-bottom:11px;margin-bottom:5px;font-size:15px;font-weight:700;
+  }
+  .crm-table td[data-label="Nome"]::before{display:none;}
+  .crm-table td[data-label="Ações"]{justify-content:flex-start;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--borda);margin-top:5px;}
+  .crm-table td[data-label="Ações"]::before{width:100%;margin-bottom:6px;}
+  .crm-table td[data-label="Ações"] button{padding:7px 11px !important;font-size:13px !important;}
+  /* desliga o scroll horizontal dos contêineres de tabela */
+  .panel-body[style*="overflow-x"]{overflow-x:visible !important;}
+}
 @media(max-width:480px){
   .stats-grid{grid-template-columns:1fr;}
-  .page{padding:12px 10px;}
-  .topbar{padding:0 10px;}
-  .stat-num{font-size:24px;}
+  .page{padding:14px 12px;}
+  .topbar{padding:0 12px;}
+  .stat-num{font-size:26px;}
+  .sidebar{width:84vw;max-width:300px;}
 }
 </style>
 </head>
@@ -616,8 +647,8 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   <div class="login-right">
   <div class="login-card">
     <div class="login-logo">
+      <img src="assets/talita-logo-azul.png" alt="Talita Oliveira">
       <div class="login-badge">Plataforma de Inteligência Eleitoral</div>
-      <div class="login-title">Talita Oliveira 2026</div>
       <div class="login-sub">Republicanos #1022 · Bahia</div>
     </div>
 
@@ -734,8 +765,8 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <div class="sidebar-logo-name">Plataforma<br>Eleitoral</div>
-        <div class="sidebar-logo-sub">Talita Oliveira · Bahia 2026</div>
+        <img src="assets/talita-logo-branco.png" alt="Talita Oliveira">
+        <div class="sidebar-logo-sub">Plataforma de Inteligência · Bahia 2026</div>
       </div>
 
       <div class="sidebar-section">
@@ -1107,7 +1138,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         </div>
 
         <!-- Stats -->
-        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+        <div class="stats-grid" style="margin-bottom:20px;">
           <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-num" id="leads-total">0</div><div class="stat-label">Total de leads</div></div>
           <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/></svg></div><div class="stat-num" id="leads-municipios">0</div><div class="stat-label">Municípios</div></div>
           <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-num" id="leads-hoje">0</div><div class="stat-label">Cadastrados hoje</div></div>
@@ -1160,7 +1191,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         </div>
 
         <!-- Stats globais -->
-        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+        <div class="stats-grid" style="margin-bottom:20px;">
           <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><line x1="12" y1="7.5" x2="12" y2="16.5"/></svg></div><div class="stat-num" id="rede-raizes">0</div><div class="stat-label">Lideranças raiz</div></div>
           <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-num" id="rede-total-pessoas">0</div><div class="stat-label">Leads cadastrados</div></div>
           <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="stat-num" id="rede-profundidade">0</div><div class="stat-label">Profundidade máx.</div></div>
@@ -1199,7 +1230,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         </div>
 
         <!-- Stats da rede -->
-        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+        <div class="stats-grid" style="margin-bottom:20px;">
           <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div><div class="stat-num" id="ld-diretas">0</div><div class="stat-label">Indicações diretas</div></div>
           <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/></svg></div><div class="stat-num" id="ld-rede">0</div><div class="stat-label">Total na rede</div></div>
           <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="stat-num" id="ld-votos">0</div><div class="stat-label">Votos da rede</div></div>
@@ -1207,7 +1238,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         </div>
 
         <!-- Árvore + Lista -->
-        <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start;">
+        <div class="pg-split">
           <div class="panel">
             <div class="panel-header"><div class="panel-title">🌳 Árvore de indicações</div></div>
             <div class="panel-body" id="ld-arvore" style="padding:8px;">
@@ -1264,14 +1295,14 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         </div>
 
         <!-- Stats rápidos -->
-        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px;">
+        <div class="stats-grid" style="margin-bottom:20px;">
           <div class="stat-card azul"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><div class="stat-num" id="crm-total-lid">0</div><div class="stat-label">Total de Lideranças</div></div>
           <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="stat-num" id="crm-total-votos">0</div><div class="stat-label">Votos Comprometidos</div></div>
           <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div class="stat-num" id="crm-top-mun">—</div><div class="stat-label">Município mais forte</div></div>
           <div class="stat-card roxo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-num" id="crm-confirmados">0</div><div class="stat-label">Confirmados</div></div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start;">
+        <div class="pg-split">
 
           <!-- Tabela -->
           <div class="panel">
@@ -1659,7 +1690,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         <div style="font-size:13px;color:var(--cinza);margin-bottom:14px;">
           <span id="import-info-arquivo">—</span>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px;">
           <div><label class="form-label">Nome *</label><select id="map-nome" class="form-select"></select></div>
           <div><label class="form-label">Telefone</label><select id="map-telefone" class="form-select"></select></div>
           <div><label class="form-label">Município</label><select id="map-municipio" class="form-select"></select></div>
@@ -2667,16 +2698,16 @@ function renderLeads() {
       const dt = l.created_at?.toDate ? l.created_at.toDate().toLocaleDateString('pt-BR') : '—';
       return `
         <tr>
-          <td><span class="crm-avatar" style="background:linear-gradient(135deg,#059669,#10b981);">${(l.nome||'?')[0].toUpperCase()}</span>${l.nome||'—'}</td>
-          <td>
+          <td data-label="Nome"><span class="crm-avatar" style="background:linear-gradient(135deg,#059669,#10b981);">${(l.nome||'?')[0].toUpperCase()}</span>${l.nome||'—'}</td>
+          <td data-label="Município">
             <div style="font-weight:600;color:var(--branco);font-size:12px;">${l.municipio||'—'}</div>
             ${l.bairro?`<div style="font-size:11px;color:var(--cinza2);">${l.bairro}</div>`:''}
           </td>
-          <td style="font-size:12px;color:var(--cinza);">${l.telefone||'—'}</td>
-          <td style="font-size:12px;">${pai ? `<a onclick="abrirDetalheLideranca('${pai.id}')" style="cursor:pointer;color:var(--ciano3);">${pai.nome}</a>` : '<span style="color:var(--cinza2);">— solto —</span>'}</td>
-          <td>${origem}</td>
-          <td style="font-size:11px;color:var(--cinza2);">${dt}</td>
-          <td style="white-space:nowrap;">
+          <td data-label="Contato" style="font-size:12px;color:var(--cinza);">${l.telefone||'—'}</td>
+          <td data-label="Liderança" style="font-size:12px;">${pai ? `<a onclick="abrirDetalheLideranca('${pai.id}')" style="cursor:pointer;color:var(--ciano);">${pai.nome}</a>` : '<span style="color:var(--cinza2);">— solto —</span>'}</td>
+          <td data-label="Origem">${origem}</td>
+          <td data-label="Cadastro" style="font-size:11px;color:var(--cinza2);">${dt}</td>
+          <td data-label="Ações" style="white-space:nowrap;">
             <button onclick="editarLead('${l.id}')" style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">✏️</button>
             <button onclick="apagarLead('${l.id}','${(l.nome||'').replace(/'/g,"\\'")}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">🗑️</button>
           </td>
@@ -3592,20 +3623,20 @@ function renderCRM() {
     const rede    = descendentesDe(l.id).length;
     return `
     <tr>
-      <td>
+      <td data-label="Nome">
         <span class="crm-avatar" onclick="abrirDetalheLideranca('${l.id}')" style="cursor:pointer;">${(l.nome||'?')[0].toUpperCase()}</span>
         <a onclick="abrirDetalheLideranca('${l.id}')" style="cursor:pointer;text-decoration:none;color:var(--branco);font-weight:600;">${l.nome||'—'}</a>
       </td>
-      <td>
+      <td data-label="Município">
         <div style="font-weight:600;color:var(--branco);font-size:12px;">${l.municipio||'—'}</div>
         ${l.bairro?`<div style="font-size:11px;color:var(--cinza2);">${l.bairro}</div>`:''}
       </td>
-      <td>${l.segmento||'—'}</td>
-      <td style="font-weight:800;color:var(--verde2);font-family:var(--mono);">${(l.votos_comprometidos||0).toLocaleString('pt-BR')}</td>
-      <td><span class="badge ${statusColor[l.status]||'azul'}">${l.status||'—'}</span></td>
-      <td style="font-size:11px;color:var(--cinza);font-family:var(--mono);">${diretas}${rede>diretas?` <small style="color:var(--cinza2);">(${rede})</small>`:''}</td>
-      <td style="font-size:12px;color:var(--cinza);">${l.telefone||'—'}</td>
-      <td style="white-space:nowrap;">
+      <td data-label="Segmento">${l.segmento||'—'}</td>
+      <td data-label="Votos" style="font-weight:800;color:var(--verde);font-family:var(--mono);">${(l.votos_comprometidos||0).toLocaleString('pt-BR')}</td>
+      <td data-label="Status"><span class="badge ${statusColor[l.status]||'azul'}">${l.status||'—'}</span></td>
+      <td data-label="Rede" style="font-size:11px;color:var(--cinza);font-family:var(--mono);">${diretas}${rede>diretas?` <small style="color:var(--cinza2);">(${rede})</small>`:''}</td>
+      <td data-label="Contato" style="font-size:12px;color:var(--cinza);">${l.telefone||'—'}</td>
+      <td data-label="Ações" style="white-space:nowrap;">
         <button onclick="abrirDetalheLideranca('${l.id}')" title="Ver rede de indicações"
           style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--ciano3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">🔗</button>
         <button onclick="gerarCodAcesso('${l.id}')" title="Código de acesso da liderança${l.auth_uid?' (já vinculada)':''}"
