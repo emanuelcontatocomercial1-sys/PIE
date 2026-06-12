@@ -2395,11 +2395,29 @@ function copiarCodAcesso(btn){
     const o = btn.textContent; btn.textContent='✔ Copiado!'; setTimeout(()=>btn.textContent=o,1500);
   });
 }
-function waCodAcesso(){
+function _waNumLid(tel){ const d=(tel||'').replace(/\D/g,''); return d ? (d.startsWith('55')?d:'55'+d) : ''; }
+function _msgAcessoLideranca(nome, code){
   const site = location.origin + location.pathname;
-  const d = _codAcessoData.tel, num = d ? (d.startsWith('55') ? d : '55'+d) : '';
-  const msg = `Olá, ${_codAcessoData.nome}! Aqui está o seu acesso ao painel da campanha *Talita Oliveira · 1022 · Bahia 2026*.\n\nPasso a passo:\n1) Acesse: ${site}\n2) Toque em "Sou liderança — acessar meu painel"\n3) Crie o seu e-mail e senha\n4) Cole este código de vínculo: *${_codAcessoData.code}*\n\nPronto! Você vai ver a sua rede e poderá cadastrar apoiadores. 💙💚`;
-  window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg),'_blank');
+  return `Olá, ${nome}! Aqui está o seu acesso ao painel da campanha *Talita Oliveira · 1022 · Bahia 2026*.\n\nPasso a passo:\n1) Acesse: ${site}\n2) Toque em "Sou liderança — acessar meu painel"\n3) Crie o seu e-mail e senha\n4) Cole este código de vínculo: *${code}*\n\nPronto! Você vai ver a sua rede e poderá cadastrar apoiadores. 💙💚`;
+}
+function waCodAcesso(){
+  window.open('https://wa.me/'+_waNumLid(_codAcessoData.tel)+'?text='+encodeURIComponent(_msgAcessoLideranca(_codAcessoData.nome, _codAcessoData.code)),'_blank');
+}
+// Atalho: 1 clique na tabela → gera o código (se preciso) e abre o WhatsApp da liderança
+async function enviarCodWhatsApp(id){
+  const l = _lidPorId.get(id); if(!l) return;
+  const tel = (l.telefone||'').replace(/\D/g,'');
+  if(tel.length < 10){ alert('Esta liderança não tem um WhatsApp válido cadastrado.\n\nEdite a liderança (✏️) e adicione o telefone dela primeiro.'); return; }
+  // Abre a aba já no clique (evita bloqueio de popup), depois redireciona
+  const win = window.open('', '_blank');
+  let code = l.cod_acesso;
+  if(!code){
+    code = gerarLinkCode();
+    try { await _db.collection('liderancas').doc(id).update({ cod_acesso: code }); l.cod_acesso = code; }
+    catch(e){ if(win) win.close(); alert('Erro ao gerar código: '+e.message); return; }
+  }
+  const url = 'https://wa.me/'+_waNumLid(tel)+'?text='+encodeURIComponent(_msgAcessoLideranca(l.nome||'', code));
+  if(win) win.location.href = url; else window.open(url,'_blank');
 }
 
 // Auto-cadastro da liderança com código de vínculo
@@ -3681,6 +3699,8 @@ function renderCRM() {
           style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--ciano3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">🔗</button>
         <button onclick="gerarCodAcesso('${l.id}')" title="Código de acesso da liderança${l.auth_uid?' (já vinculada)':''}"
           style="background:rgba(5,150,105,0.12);border:1px solid rgba(5,150,105,0.3);color:var(--verde2);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">${l.auth_uid?'🔓':'🔑'}</button>
+        <button onclick="enviarCodWhatsApp('${l.id}')" title="Enviar acesso ao painel direto no WhatsApp da liderança"
+          style="background:rgba(37,211,102,0.13);border:1px solid rgba(37,211,102,0.4);color:#1da851;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">📲</button>
         <button onclick="editarLideranca('${l.id}')"
           style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">✏️</button>
         <button onclick="apagarLideranca('${l.id}','${(l.nome||'').replace(/'/g,"\\'")}')"
