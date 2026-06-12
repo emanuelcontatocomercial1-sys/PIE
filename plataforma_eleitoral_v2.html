@@ -139,6 +139,8 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 .login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(37,99,235,0.35);}
 .login-err{font-size:12px;color:var(--vermelho2);margin-top:10px;display:none;}
 .crm-label{font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;}
+.req{color:var(--rosa);font-weight:800;}
+.crm-input.invalido{border-color:var(--rosa)!important;box-shadow:0 0 0 3px var(--rosa-glow)!important;}
 .crm-input{width:100%;background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--branco);font-family:var(--fonte);outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
 .crm-input:focus{border-color:var(--ciano2);box-shadow:0 0 0 3px var(--ciano-glow);}
 .crm-input::placeholder{color:var(--cinza2);}
@@ -953,6 +955,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
                   style="width:100%;background:var(--bg3);border:1px solid var(--borda);border-radius:8px;padding:11px 14px;font-size:13px;color:var(--branco);font-family:var(--fonte);outline:none;transition:border-color 0.2s;"
                   onfocus="this.style.borderColor='var(--azul2)'" onblur="this.style.borderColor='var(--borda)'">
                 <datalist id="municipios-list"></datalist>
+                <datalist id="bairros-list"></datalist>
               </div>
               <div>
                 <label style="font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px;">Votos Conquistados</label>
@@ -1344,22 +1347,22 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
               <input type="hidden" id="crm-edit-id">
 
               <div>
-                <label class="crm-label">Nome completo</label>
+                <label class="crm-label">Nome completo <span class="req">*</span></label>
                 <input type="text" id="crm-nome" placeholder="Nome da liderança"
-                  class="crm-input">
+                  class="crm-input" onkeydown="if(event.key==='Enter')salvarLideranca()">
               </div>
               <div>
-                <label class="crm-label">Telefone / WhatsApp</label>
-                <input type="text" id="crm-telefone" placeholder="Ex: 71 99999-9999" class="crm-input">
+                <label class="crm-label">Telefone / WhatsApp <span class="req">*</span></label>
+                <input type="tel" id="crm-telefone" inputmode="numeric" maxlength="16" placeholder="(71) 99999-9999" class="crm-input" oninput="mascararTel(this)" onkeydown="if(event.key==='Enter')salvarLideranca()">
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                 <div>
-                  <label class="crm-label">Município</label>
-                  <input type="text" id="crm-municipio" placeholder="Município" class="crm-input" list="municipios-list" oninput="atualizarRegiaoLid()">
+                  <label class="crm-label">Município <span class="req">*</span></label>
+                  <input type="text" id="crm-municipio" placeholder="Município" class="crm-input" list="municipios-list" oninput="atualizarRegiaoLid()" onkeydown="if(event.key==='Enter')salvarLideranca()">
                 </div>
                 <div>
                   <label class="crm-label">Bairro / Localidade</label>
-                  <input type="text" id="crm-bairro" placeholder="Bairro ou localidade" class="crm-input">
+                  <input type="text" id="crm-bairro" placeholder="Bairro ou localidade" class="crm-input" list="bairros-list" onkeydown="if(event.key==='Enter')salvarLideranca()">
                 </div>
               </div>
               <div>
@@ -1388,7 +1391,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
               </div>
               <div>
                 <label class="crm-label">Votos comprometidos</label>
-                <input type="number" id="crm-votos" placeholder="Ex: 300" min="0" class="crm-input">
+                <input type="number" id="crm-votos" placeholder="Ex: 300" min="0" class="crm-input" onkeydown="if(event.key==='Enter')salvarLideranca()">
               </div>
               <div>
                 <label class="crm-label">Observação</label>
@@ -1400,6 +1403,20 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
                 ➕ Cadastrar Liderança
               </button>
               <div id="crm-feedback" style="display:none;font-size:12px;text-align:center;padding:8px;border-radius:8px;font-weight:600;"></div>
+
+              <!-- Pós-cadastro: link de indicação na hora -->
+              <div id="crm-pos-cadastro" style="display:none;border:1px solid var(--ciano-borda);background:var(--ciano-glow);border-radius:12px;padding:14px;">
+                <div style="font-size:12.5px;font-weight:700;color:var(--ciano);margin-bottom:10px;">✅ <span id="crm-pos-nome">Liderança</span> cadastrada! Link de indicação dela:</div>
+                <div class="ld-share-box" style="margin-bottom:10px;">
+                  <input id="crm-pos-link" readonly value="">
+                  <button onclick="copiarCrmPosLink()">Copiar</button>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <button onclick="waCrmPosLink()" style="flex:1;min-width:150px;background:#25D366;color:#fff;border:none;border-radius:9px;padding:10px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);">📲 Enviar link</button>
+                  <button id="crm-pos-falar" onclick="falarCrmPos()" style="flex:1;min-width:150px;background:var(--ciano);color:#fff;border:none;border-radius:9px;padding:10px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);">💬 Falar com ela</button>
+                </div>
+                <button onclick="document.getElementById('crm-pos-cadastro').style.display='none'" style="width:100%;margin-top:8px;background:none;border:none;color:var(--cinza2);font-size:11px;cursor:pointer;font-family:var(--fonte);">fechar</button>
+              </div>
 
               <!-- Ranking -->
               <div style="border-top:1px solid var(--borda);padding-top:14px;margin-top:4px;">
@@ -3652,9 +3669,12 @@ function renderCRM() {
 
 function abrirFormLideranca() {
   limparFormLideranca();
+  const pos = document.getElementById('crm-pos-cadastro'); if(pos) pos.style.display='none';
+  ['crm-nome','crm-municipio','crm-telefone'].forEach(id=>document.getElementById(id)?.classList.remove('invalido'));
   document.getElementById('crm-form-title').textContent = '➕ Nova Liderança';
   document.getElementById('crm-btn-salvar').textContent = '➕ Cadastrar Liderança';
   document.getElementById('crm-form-panel').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>document.getElementById('crm-nome')?.focus(),300);
 }
 
 function limparFormLideranca() {
@@ -3681,6 +3701,8 @@ function editarLideranca(id) {
   document.getElementById('crm-obs').value        = l.obs||'';
   document.getElementById('crm-form-title').textContent   = '✏️ Editar Liderança';
   document.getElementById('crm-btn-salvar').textContent   = '💾 Salvar Alterações';
+  const pos = document.getElementById('crm-pos-cadastro'); if(pos) pos.style.display='none';
+  ['crm-nome','crm-municipio','crm-telefone'].forEach(id=>document.getElementById(id)?.classList.remove('invalido'));
   document.getElementById('crm-form-panel').scrollIntoView({behavior:'smooth'});
 }
 
@@ -3692,21 +3714,82 @@ async function apagarLideranca(id, nome) {
   } catch(e) { mostrarFeedbackCRM('❌ Erro: '+e.message, false); }
 }
 
+function escHtml(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// Máscara (DD) 99999-9999 / (DD) 9999-9999
+function mascararTel(input){
+  let d = (input.value||'').replace(/\D/g,'').slice(0,11);
+  let r='';
+  if(d.length>=1) r='('+d.slice(0,2);
+  if(d.length>=2) r+=') ';
+  if(d.length>2){
+    const rest=d.slice(2), split = d.length>10 ? 5 : 4;
+    r += rest.length>split ? rest.slice(0,split)+'-'+rest.slice(split) : rest;
+  }
+  input.value=r;
+  input.classList.remove('invalido');
+}
+
+let _crmPosTel = '';
+function mostrarPosCadastro(nome, linkCode, telDig){
+  const box = document.getElementById('crm-pos-cadastro'); if(!box) return;
+  document.getElementById('crm-pos-nome').textContent = nome;
+  document.getElementById('crm-pos-link').value = urlLinkAfiliado(linkCode);
+  _crmPosTel = telDig || '';
+  const fb = document.getElementById('crm-pos-falar');
+  if(fb) fb.style.display = _crmPosTel.length>=10 ? '' : 'none';
+  box.style.display = 'block';
+}
+function _waNum(d){ return d ? (d.startsWith('55') ? d : '55'+d) : ''; }
+function copiarCrmPosLink(){
+  const i = document.getElementById('crm-pos-link'); if(!i) return;
+  i.select(); i.setSelectionRange(0,99999);
+  navigator.clipboard.writeText(i.value).then(()=>{
+    const b = document.querySelector('#crm-pos-link + button'); const o=b.textContent;
+    b.textContent='Copiado!'; setTimeout(()=>b.textContent=o,1500);
+  });
+}
+function waCrmPosLink(){
+  const i = document.getElementById('crm-pos-link'); if(!i) return;
+  const nome = document.getElementById('crm-pos-nome').textContent;
+  const msg = `Olá, ${nome}! Esse é o seu link para indicar apoiadores da *Talita Oliveira · 1022 · Bahia 2026*. Cada pessoa que você cadastrar entra na sua rede:\n\n${i.value}`;
+  window.open('https://wa.me/'+_waNum(_crmPosTel)+'?text='+encodeURIComponent(msg),'_blank');
+}
+function falarCrmPos(){ if(_crmPosTel) window.open('https://wa.me/'+_waNum(_crmPosTel),'_blank'); }
+
 async function salvarLideranca() {
-  const nome    = document.getElementById('crm-nome').value.trim();
-  const mun     = document.getElementById('crm-municipio').value.trim();
-  const votos   = parseInt(document.getElementById('crm-votos').value)||0;
-  if(!nome){ mostrarFeedbackCRM('Informe o nome da liderança.', false); return; }
-  if(!mun){  mostrarFeedbackCRM('Informe o município.', false); return; }
+  const elNome = document.getElementById('crm-nome');
+  const elMun  = document.getElementById('crm-municipio');
+  const elTel  = document.getElementById('crm-telefone');
+  const nome   = elNome.value.trim();
+  const mun    = elMun.value.trim();
+  const telDig = (elTel.value||'').replace(/\D/g,'');
+  const votos  = parseInt(document.getElementById('crm-votos').value)||0;
+  const editId = document.getElementById('crm-edit-id').value;
+
+  // Validação com destaque visual
+  [elNome,elMun,elTel].forEach(e=>e.classList.remove('invalido'));
+  if(!nome){ elNome.classList.add('invalido'); elNome.focus(); mostrarFeedbackCRM('Informe o nome da liderança.', false); return; }
+  if(!mun){  elMun.classList.add('invalido');  elMun.focus();  mostrarFeedbackCRM('Informe o município.', false); return; }
+  if(telDig.length < 10){ elTel.classList.add('invalido'); elTel.focus(); mostrarFeedbackCRM('Informe um telefone/WhatsApp válido (com DDD).', false); return; }
+
+  // Detecção de duplicado (só ao cadastrar) — mesmo telefone
+  if(!editId){
+    const dup = _liderancasData.find(x => (x.telefone||'').replace(/\D/g,'') === telDig);
+    if(dup){
+      elTel.classList.add('invalido');
+      mostrarFeedbackCRM(`⚠️ Esse telefone já é de <b>${escHtml(dup.nome||'—')}</b> (${escHtml(dup.municipio||'—')}). <a onclick="abrirDetalheLideranca('${dup.id}')" style="color:var(--ciano);cursor:pointer;text-decoration:underline;font-weight:700;">ver cadastro</a>`, false);
+      return;
+    }
+  }
 
   const btn = document.getElementById('crm-btn-salvar');
   btn.disabled = true; btn.textContent = '⏳ Salvando...';
 
-  const editId = document.getElementById('crm-edit-id').value;
   const regiao = REGIOES_MAP[mun] || document.getElementById('crm-regiao').value || '';
   const payload = {
     nome,
-    telefone:            document.getElementById('crm-telefone').value.trim(),
+    telefone:            elTel.value.trim(),
     municipio:           mun,
     bairro:              document.getElementById('crm-bairro').value.trim(),
     regiao,
@@ -3720,22 +3803,24 @@ async function salvarLideranca() {
   try {
     if(editId) {
       await _db.collection('liderancas').doc(editId).update(payload);
-      mostrarFeedbackCRM(`✅ ${nome} atualizado!`, true);
+      mostrarFeedbackCRM(`✅ ${escHtml(nome)} atualizado!`, true);
     } else {
-      payload.created_at = firebase.firestore.FieldValue.serverTimestamp();
-      payload.link_code   = gerarLinkCode();
+      const linkCode = gerarLinkCode();
+      payload.created_at  = firebase.firestore.FieldValue.serverTimestamp();
+      payload.link_code   = linkCode;
       payload.parent_id   = null;
       payload.tipo        = 'lideranca';
       payload.created_via = 'manual';
       await _db.collection('liderancas').add(payload);
-      mostrarFeedbackCRM(`✅ ${nome} cadastrado!`, true);
+      mostrarFeedbackCRM(`✅ ${escHtml(nome)} cadastrada!`, true);
+      mostrarPosCadastro(nome, linkCode, telDig);
     }
     limparFormLideranca();
     document.getElementById('crm-form-title').textContent = '➕ Nova Liderança';
+    if(!editId) setTimeout(()=>elNome.focus(),100);
   } catch(e) { mostrarFeedbackCRM('❌ Erro: '+e.message, false); }
 
   btn.disabled = false;
-  btn.textContent = editId ? '💾 Salvar Alterações' : '➕ Cadastrar Liderança';
   document.getElementById('crm-edit-id').value = '';
   btn.textContent = '➕ Cadastrar Liderança';
 }
@@ -4179,11 +4264,11 @@ function atualizarRegiaoLid() {
 function mostrarFeedbackCRM(msg, ok) {
   const el = document.getElementById('crm-feedback');
   if(!el) return;
-  el.textContent=msg; el.style.display='block';
+  el.innerHTML=msg; el.style.display='block';
   el.style.background = ok?'rgba(16,185,129,0.15)':'rgba(239,68,68,0.15)';
   el.style.color       = ok?'#10B981':'#EF4444';
   el.style.border      = `1px solid ${ok?'rgba(16,185,129,0.3)':'rgba(239,68,68,0.3)'}`;
-  setTimeout(()=>{ el.style.display='none'; }, 4000);
+  setTimeout(()=>{ el.style.display='none'; }, ok?4000:7000);
 }
 
 function mostrarFeedback(msg, ok) {
