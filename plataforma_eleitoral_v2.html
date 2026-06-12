@@ -1906,14 +1906,13 @@ async function criarConta() {
   try {
     const cred = await _auth.createUserWithEmailAndPassword(email, senha);
     await cred.user.updateProfile({ displayName: nome });
-    const snap = await _db.collection('usuarios').get();
-    const primeiro = snap.empty;            // 1º usuário vira admin ativo; demais ficam pendentes
-    const role = primeiro ? 'admin' : 'usuario';
+    // Toda conta nova nasce pendente (o admin já existe e aprova na aba Aprovações).
+    // Não lemos a coleção de usuários aqui — as regras proíbem isso pra não-admin.
     await _db.collection('usuarios').doc(cred.user.uid).set({
-      nome, email, role, status: primeiro ? 'ativo' : 'pendente',
+      nome, email, role: 'usuario', status: 'pendente',
       created_at: firebase.firestore.FieldValue.serverTimestamp()
     });
-    // onAuthStateChanged cuida do resto (pendente → bloqueia e pede aprovação)
+    // onAuthStateChanged bloqueia e pede aprovação do admin
   } catch(e) {
     const msgs = {
       'auth/email-already-in-use':'Este e-mail já está cadastrado.',
@@ -3204,12 +3203,9 @@ _auth.onAuthStateChanged(async user => {
       const ref = _db.collection('usuarios').doc(user.uid);
       let docSnap = await ref.get();
       if (!docSnap.exists) {
-        const allSnap = await _db.collection('usuarios').get();
-        const primeiro = allSnap.empty;
-        const role = primeiro ? 'admin' : 'usuario';
         await ref.set({
           nome: user.displayName || user.email.split('@')[0],
-          email: user.email, role, status: primeiro ? 'ativo' : 'pendente',
+          email: user.email, role: 'usuario', status: 'pendente',
           created_at: firebase.firestore.FieldValue.serverTimestamp()
         });
         docSnap = await ref.get();
