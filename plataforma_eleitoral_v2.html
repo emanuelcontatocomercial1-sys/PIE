@@ -1305,9 +1305,9 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
           <div class="stat-card roxo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stat-num" id="crm-confirmados">0</div><div class="stat-label">Confirmados</div></div>
         </div>
 
-        <div class="pg-split">
+        <div>
 
-          <!-- Tabela -->
+          <!-- Tabela (largura total) -->
           <div class="panel">
             <div class="panel-header" style="gap:10px;flex-wrap:wrap;">
               <div class="panel-title">Lideranças cadastradas</div>
@@ -1338,92 +1338,12 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
             </div>
           </div>
 
-          <!-- Formulário lateral -->
-          <div class="panel" id="crm-form-panel">
-            <div class="panel-header">
-              <div class="panel-title" id="crm-form-title">➕ Nova Liderança</div>
-            </div>
-            <div class="panel-body" style="display:flex;flex-direction:column;gap:12px;">
-              <input type="hidden" id="crm-edit-id">
-
-              <div>
-                <label class="crm-label">Nome completo <span class="req">*</span></label>
-                <input type="text" id="crm-nome" placeholder="Nome da liderança"
-                  class="crm-input" onkeydown="if(event.key==='Enter')salvarLideranca()">
-              </div>
-              <div>
-                <label class="crm-label">Telefone / WhatsApp <span class="req">*</span></label>
-                <input type="tel" id="crm-telefone" inputmode="numeric" maxlength="16" placeholder="(71) 99999-9999" class="crm-input" oninput="mascararTel(this)" onkeydown="if(event.key==='Enter')salvarLideranca()">
-              </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                <div>
-                  <label class="crm-label">Município <span class="req">*</span></label>
-                  <input type="text" id="crm-municipio" placeholder="Município" class="crm-input" list="municipios-list" oninput="atualizarRegiaoLid()" onkeydown="if(event.key==='Enter')salvarLideranca()">
-                </div>
-                <div>
-                  <label class="crm-label">Bairro / Localidade</label>
-                  <input type="text" id="crm-bairro" placeholder="Bairro ou localidade" class="crm-input" list="bairros-list" onkeydown="if(event.key==='Enter')salvarLideranca()">
-                </div>
-              </div>
-              <div>
-                <label class="crm-label">Região (automático)</label>
-                <input type="text" id="crm-regiao" placeholder="Detectada pelo município" class="crm-input" readonly
-                  style="opacity:0.6;cursor:default;">
-              </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-                <div>
-                  <label class="crm-label">Segmento</label>
-                  <select id="crm-segmento" class="crm-input">
-                    <option value="">Selecione...</option>
-                    <option>Político</option><option>Religioso</option><option>Comunitário</option>
-                    <option>Transporte</option><option>Saúde</option><option>Educação</option>
-                    <option>Empresarial</option><option>Sindical</option><option>Digital</option><option>Outro</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="crm-label">Status</label>
-                  <select id="crm-status" class="crm-input">
-                    <option value="Prospecto">Prospecto</option>
-                    <option value="Negociando">Negociando</option>
-                    <option value="Confirmado">Confirmado</option>
-                  </select>
-                </div>
-              </div>
-              <div>
-                <label class="crm-label">Votos comprometidos</label>
-                <input type="number" id="crm-votos" placeholder="Ex: 300" min="0" class="crm-input" onkeydown="if(event.key==='Enter')salvarLideranca()">
-              </div>
-              <div>
-                <label class="crm-label">Observação</label>
-                <input type="text" id="crm-obs" placeholder="Notas, demandas, contexto..." class="crm-input">
-              </div>
-              <button onclick="salvarLideranca()" id="crm-btn-salvar"
-                style="background:var(--azul2);color:#fff;border:none;border-radius:10px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fonte);transition:background 0.2s;"
-                onmouseover="this.style.background='var(--azul3)'" onmouseout="this.style.background='var(--azul2)'">
-                ➕ Cadastrar Liderança
-              </button>
-              <div id="crm-feedback" style="display:none;font-size:12px;text-align:center;padding:8px;border-radius:8px;font-weight:600;"></div>
-
-              <!-- Pós-cadastro: link de indicação na hora -->
-              <div id="crm-pos-cadastro" style="display:none;border:1px solid var(--ciano-borda);background:var(--ciano-glow);border-radius:12px;padding:14px;">
-                <div style="font-size:12.5px;font-weight:700;color:var(--ciano);margin-bottom:10px;">✅ <span id="crm-pos-nome">Liderança</span> cadastrada! Link de indicação dela:</div>
-                <div class="ld-share-box" style="margin-bottom:10px;">
-                  <input id="crm-pos-link" readonly value="">
-                  <button onclick="copiarCrmPosLink()">Copiar</button>
-                </div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                  <button onclick="waCrmPosLink()" style="flex:1;min-width:150px;background:#25D366;color:#fff;border:none;border-radius:9px;padding:10px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);">📲 Enviar link</button>
-                  <button id="crm-pos-falar" onclick="falarCrmPos()" style="flex:1;min-width:150px;background:var(--ciano);color:#fff;border:none;border-radius:9px;padding:10px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);">💬 Falar com ela</button>
-                </div>
-                <button onclick="document.getElementById('crm-pos-cadastro').style.display='none'" style="width:100%;margin-top:8px;background:none;border:none;color:var(--cinza2);font-size:11px;cursor:pointer;font-family:var(--fonte);">fechar</button>
-              </div>
-
-              <!-- Ranking -->
-              <div style="border-top:1px solid var(--borda);padding-top:14px;margin-top:4px;">
-                <div style="font-size:11px;font-weight:700;color:var(--cinza2);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">🏆 Ranking por Votos</div>
-                <div id="crm-ranking" style="display:flex;flex-direction:column;gap:6px;">
-                  <div style="font-size:12px;color:var(--cinza2);">Sem dados ainda.</div>
-                </div>
+          <!-- Ranking por votos (largura total, abaixo da tabela) -->
+          <div class="panel" style="margin-top:20px;">
+            <div class="panel-header"><div class="panel-title">🏆 Ranking por Votos</div></div>
+            <div class="panel-body">
+              <div id="crm-ranking" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;">
+                <div style="font-size:12px;color:var(--cinza2);">Sem dados ainda.</div>
               </div>
             </div>
           </div>
@@ -1745,28 +1665,83 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 </div>
 
 <div class="modal-overlay" id="modal-lideranca">
-  <div class="modal">
+  <div class="modal" style="max-width:560px;">
     <div class="modal-header">
-      <div class="modal-title">Nova Liderança</div>
+      <div class="modal-title" id="crm-form-title">➕ Nova Liderança</div>
       <button class="modal-close" onclick="fecharModal('modal-lideranca')">✕</button>
     </div>
-    <div class="modal-body">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Nome *</label><input class="form-input" type="text" placeholder="Nome completo"></div>
-        <div class="form-group"><label class="form-label">WhatsApp *</label><input class="form-input" type="tel" placeholder="71 99999-9999"></div>
+    <div class="modal-body" style="display:flex;flex-direction:column;gap:12px;">
+      <input type="hidden" id="crm-edit-id">
+
+      <div>
+        <label class="crm-label">Nome completo <span class="req">*</span></label>
+        <input type="text" id="crm-nome" placeholder="Nome da liderança" class="crm-input" onkeydown="if(event.key==='Enter')salvarLideranca()">
       </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Município</label><input class="form-input" type="text" placeholder="Ex: Salvador"></div>
-        <div class="form-group"><label class="form-label">Segmento</label><input class="form-input" type="text" placeholder="Ex: Transporte, Saúde, Religioso..."></div>
+      <div>
+        <label class="crm-label">Telefone / WhatsApp <span class="req">*</span></label>
+        <input type="tel" id="crm-telefone" inputmode="numeric" maxlength="16" placeholder="(71) 99999-9999" class="crm-input" oninput="mascararTel(this)" onkeydown="if(event.key==='Enter')salvarLideranca()">
       </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">Votos estimados</label><input class="form-input" type="text" placeholder="Ex: ~200"></div>
-        <div class="form-group"><label class="form-label">Status</label><select class="form-select"><option>Prospecto</option><option>Negociando</option><option>Confirmado</option><option>Parceiro</option></select></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <label class="crm-label">Município <span class="req">*</span></label>
+          <input type="text" id="crm-municipio" placeholder="Município" class="crm-input" list="municipios-list" oninput="atualizarRegiaoLid()" onkeydown="if(event.key==='Enter')salvarLideranca()">
+        </div>
+        <div>
+          <label class="crm-label">Bairro / Localidade</label>
+          <input type="text" id="crm-bairro" placeholder="Bairro ou localidade" class="crm-input" list="bairros-list" onkeydown="if(event.key==='Enter')salvarLideranca()">
+        </div>
       </div>
-      <div class="form-group"><label class="form-label">Observações</label><textarea class="form-textarea" placeholder="Notas sobre esta liderança..."></textarea></div>
-      <div style="display:flex;gap:10px;margin-top:8px;">
-        <button class="btn btn-primary" style="flex:1">Salvar liderança</button>
-        <button class="btn btn-outline" onclick="fecharModal('modal-lideranca')">Cancelar</button>
+      <div>
+        <label class="crm-label">Região (automático)</label>
+        <input type="text" id="crm-regiao" placeholder="Detectada pelo município" class="crm-input" readonly style="opacity:0.6;cursor:default;">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <label class="crm-label">Segmento</label>
+          <select id="crm-segmento" class="crm-input">
+            <option value="">Selecione...</option>
+            <option>Político</option><option>Religioso</option><option>Comunitário</option>
+            <option>Transporte</option><option>Saúde</option><option>Educação</option>
+            <option>Empresarial</option><option>Sindical</option><option>Digital</option><option>Outro</option>
+          </select>
+        </div>
+        <div>
+          <label class="crm-label">Status</label>
+          <select id="crm-status" class="crm-input">
+            <option value="Prospecto">Prospecto</option>
+            <option value="Negociando">Negociando</option>
+            <option value="Confirmado">Confirmado</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <label class="crm-label">Votos comprometidos</label>
+          <input type="number" id="crm-votos" placeholder="Ex: 300" min="0" class="crm-input" onkeydown="if(event.key==='Enter')salvarLideranca()">
+        </div>
+        <div>
+          <label class="crm-label">Observação</label>
+          <input type="text" id="crm-obs" placeholder="Notas, contexto..." class="crm-input">
+        </div>
+      </div>
+      <button onclick="salvarLideranca()" id="crm-btn-salvar"
+        style="background:var(--ciano);color:#fff;border:none;border-radius:10px;padding:13px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);transition:background 0.2s;margin-top:4px;">
+        ➕ Cadastrar Liderança
+      </button>
+      <div id="crm-feedback" style="display:none;font-size:12px;text-align:center;padding:8px;border-radius:8px;font-weight:600;"></div>
+
+      <!-- Pós-cadastro: link de indicação na hora -->
+      <div id="crm-pos-cadastro" style="display:none;border:1px solid var(--ciano-borda);background:var(--ciano-glow);border-radius:12px;padding:14px;">
+        <div style="font-size:12.5px;font-weight:700;color:var(--ciano);margin-bottom:10px;">✅ <span id="crm-pos-nome">Liderança</span> cadastrada! Link de indicação dela:</div>
+        <div class="ld-share-box" style="margin-bottom:10px;">
+          <input id="crm-pos-link" readonly value="">
+          <button onclick="copiarCrmPosLink()">Copiar</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button onclick="waCrmPosLink()" style="flex:1;min-width:150px;background:#25D366;color:#fff;border:none;border-radius:9px;padding:10px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);">📲 Enviar link</button>
+          <button id="crm-pos-falar" onclick="falarCrmPos()" style="flex:1;min-width:150px;background:var(--ciano);color:#fff;border:none;border-radius:9px;padding:10px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);">💬 Falar com ela</button>
+        </div>
+        <button onclick="document.getElementById('crm-pos-cadastro').style.display='none'" style="width:100%;margin-top:8px;background:none;border:none;color:var(--cinza2);font-size:11px;cursor:pointer;font-family:var(--fonte);">fechar</button>
       </div>
     </div>
   </div>
@@ -2012,7 +1987,7 @@ function abrirProjeto(id) {
 
 // ── MODAIS ──
 function abrirModalProjeto(){document.getElementById('modal-projeto').classList.add('show');}
-function abrirModalLideranca(){document.getElementById('modal-lideranca').classList.add('show');}
+function abrirModalLideranca(){ abrirFormLideranca(); }
 function fecharModal(id){document.getElementById(id).classList.remove('show');}
 
 // ── CHAT IA (Claude API) ──
@@ -3673,8 +3648,8 @@ function abrirFormLideranca() {
   ['crm-nome','crm-municipio','crm-telefone'].forEach(id=>document.getElementById(id)?.classList.remove('invalido'));
   document.getElementById('crm-form-title').textContent = '➕ Nova Liderança';
   document.getElementById('crm-btn-salvar').textContent = '➕ Cadastrar Liderança';
-  document.getElementById('crm-form-panel').scrollIntoView({behavior:'smooth'});
-  setTimeout(()=>document.getElementById('crm-nome')?.focus(),300);
+  document.getElementById('modal-lideranca').classList.add('show');
+  setTimeout(()=>document.getElementById('crm-nome')?.focus(),200);
 }
 
 function limparFormLideranca() {
@@ -3703,7 +3678,7 @@ function editarLideranca(id) {
   document.getElementById('crm-btn-salvar').textContent   = '💾 Salvar Alterações';
   const pos = document.getElementById('crm-pos-cadastro'); if(pos) pos.style.display='none';
   ['crm-nome','crm-municipio','crm-telefone'].forEach(id=>document.getElementById(id)?.classList.remove('invalido'));
-  document.getElementById('crm-form-panel').scrollIntoView({behavior:'smooth'});
+  document.getElementById('modal-lideranca').classList.add('show');
 }
 
 async function apagarLideranca(id, nome) {
@@ -3804,6 +3779,7 @@ async function salvarLideranca() {
     if(editId) {
       await _db.collection('liderancas').doc(editId).update(payload);
       mostrarFeedbackCRM(`✅ ${escHtml(nome)} atualizado!`, true);
+      setTimeout(()=>fecharModal('modal-lideranca'),700);
     } else {
       const linkCode = gerarLinkCode();
       payload.created_at  = firebase.firestore.FieldValue.serverTimestamp();
