@@ -2723,9 +2723,19 @@ function renderPortal() {
   body.innerHTML = `
     <div style="background:linear-gradient(140deg,#0a1fb0 0%,#0525f7 48%,#070f44 100%);border-radius:20px;padding:24px;color:#fff;margin-bottom:20px;box-shadow:0 10px 30px rgba(5,37,247,0.22);">
       <img src="assets/talita-logo-branco.png" alt="Talita Oliveira" style="height:20px;opacity:0.92;margin-bottom:14px;">
-      <div style="font-size:25px;font-weight:800;letter-spacing:-0.5px;">Olá, ${prim}! 👋</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.82);margin-top:4px;">${me.municipio||'—'}${me.bairro?' · '+me.bairro:''} · Sua liderança na rede</div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="position:relative;flex-shrink:0;">
+          <div style="width:84px;height:84px;border-radius:50%;border:3px solid rgba(255,255,255,0.55);overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:800;color:#fff;box-shadow:0 6px 18px rgba(0,0,0,0.22);background:${me.foto_url?`url("${(me.foto_url||'').replace(/"/g,'%22')}") center/cover no-repeat`:'rgba(255,255,255,0.16)'};">${me.foto_url?'':((prim.charAt(0)||'?').toUpperCase())}</div>
+          <button onclick="mudarFotoPortal()" title="Mudar minha foto" style="position:absolute;right:-3px;bottom:-3px;width:30px;height:30px;border-radius:50%;border:2px solid #0525f7;background:#fff;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;box-shadow:0 2px 6px rgba(0,0,0,0.25);">📷</button>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:25px;font-weight:800;letter-spacing:-0.5px;">Olá, ${prim}! 👋</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.82);margin-top:4px;">${me.municipio||'—'}${me.bairro?' · '+me.bairro:''} · Sua liderança na rede</div>
+        </div>
+      </div>
       <div style="margin-top:16px;background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:11px 14px;font-size:13.5px;font-weight:600;">${motiv}</div>
+      <div id="portal-foto-fb" style="font-size:12px;margin-top:8px;display:none;"></div>
+      <input type="file" id="portal-foto-input" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="_fotoPortalArquivo(this)">
     </div>
     <div class="stats-grid">
       <div class="stat-card azul"><div class="stat-num">${diretas}</div><div class="stat-label">Indicados diretos</div></div>
@@ -2913,6 +2923,49 @@ async function salvarApoiadorPortal() {
     ['pa-nome','pa-tel','pa-bairro'].forEach(x=>{ const e=g(x); if(e) e.value=''; });
     // a lista se atualiza sozinha pelo snapshot (renderPortal)
   } catch(e) { fb.style.color='var(--vermelho2)'; fb.textContent='Erro: '+e.message; }
+}
+
+// ── Foto de perfil da liderança (no portal dela) ──
+function mudarFotoPortal(){ const i=document.getElementById('portal-foto-input'); if(i) i.click(); }
+function _fbFotoPortal(msg, ok){ const el=document.getElementById('portal-foto-fb'); if(!el) return; el.style.display='block'; el.textContent=msg; el.style.color = ok ? '#bbf7d0' : '#fecaca'; }
+// Comprime e recorta a foto em um quadrado 400x400 (avatar leve pro círculo)
+function _comprimirAvatar(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const S=400, cv=document.createElement('canvas'); cv.width=S; cv.height=S;
+        const ctx=cv.getContext('2d');
+        const lado=Math.min(img.naturalWidth,img.naturalHeight);
+        const sx=(img.naturalWidth-lado)/2, sy=(img.naturalHeight-lado)/2;
+        ctx.drawImage(img, sx, sy, lado, lado, 0, 0, S, S);
+        resolve(cv.toDataURL('image/jpeg', 0.85));
+      };
+      img.onerror=()=>reject(new Error('Arquivo não é uma imagem válida.'));
+      img.src=e.target.result;
+    };
+    reader.onerror=()=>reject(new Error('Falha ao ler o arquivo.'));
+    reader.readAsDataURL(file);
+  });
+}
+async function _fotoPortalArquivo(input){
+  const file=input.files && input.files[0]; input.value='';
+  if(!file) return;
+  const id=_currentUser && _currentUser.liderancaId;
+  if(!id){ _fbFotoPortal('Sua conta não está vinculada a uma liderança.',false); return; }
+  if(!/^image\/(png|jpe?g|webp)$/i.test(file.type)){ _fbFotoPortal('Use uma imagem PNG, JPG ou WEBP.',false); return; }
+  if(file.size > 12*1024*1024){ _fbFotoPortal('Imagem grande demais (máx 12 MB).',false); return; }
+  try{
+    _fbFotoPortal('Otimizando sua foto…',true);
+    const dataUrl=await _comprimirAvatar(file);
+    await _db.collection('liderancas').doc(id).update({
+      foto_url: dataUrl,
+      updated_at: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    _fbFotoPortal('✅ Foto atualizada!',true);
+    // o snapshot de liderancas re-renderiza o portal sozinho com a nova foto
+  }catch(e){ _fbFotoPortal('❌ '+e.message,false); }
 }
 
 // ── Página "Rede de Indicações" (visão geral) ──
