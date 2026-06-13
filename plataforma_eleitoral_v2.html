@@ -193,6 +193,14 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 }
 .cadastro-feedback.ok{background:rgba(5,150,105,0.08);color:#047857;border:1px solid rgba(5,150,105,0.2);}
 .cadastro-feedback.err{background:rgba(239,68,68,0.08);color:#b91c1c;border:1px solid rgba(239,68,68,0.2);}
+/* Página de obrigado — cards de ação */
+.obg-card{display:flex;align-items:center;gap:14px;background:#fff;border:none;border-radius:14px;padding:14px 16px;text-decoration:none;cursor:pointer;font-family:var(--fonte);width:100%;box-shadow:0 4px 18px rgba(0,0,0,0.12);transition:transform .15s;text-align:left;}
+.obg-card:hover{transform:translateY(-2px);}
+.obg-card .obg-ic{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.obg-card .obg-tx{flex:1;display:flex;flex-direction:column;line-height:1.2;min-width:0;}
+.obg-card .obg-tx b{font-size:14px;color:#0d1326;font-weight:700;}
+.obg-card .obg-tx small{font-size:11.5px;color:#5b6478;margin-top:2px;}
+.obg-card .obg-ar{color:#0525f7;font-weight:800;font-size:18px;}
 
 /* PÁGINA DETALHE LIDERANÇA — árvore + lista */
 .ld-share-box{
@@ -1830,8 +1838,9 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 // ── LOGIN ──
 let _currentUser = null;
 let _contaRecemCriada = false; // true só logo após criar a conta (1º acesso) — pra mostrar "conta criada" uma vez
-// Número oficial do WhatsApp da campanha (DDD+número, ex: '71999998888'). Vazio = botão some.
-const WHATSAPP_CAMPANHA = '';
+// Links da página de obrigado (preencher). Vazio = o card não aparece.
+const INSTAGRAM_URL = '';            // ex: 'https://instagram.com/talitaoliveira'
+const COMUNIDADE_WHATSAPP_URL = '';  // ex: 'https://chat.whatsapp.com/XXXXXXXXXXXX'
 
 function toggleSidebar(forceClose) {
   const sidebar  = document.querySelector('.sidebar');
@@ -2270,29 +2279,56 @@ function verificarRotaCadastro() {
 window.addEventListener('hashchange', verificarRotaCadastro);
 
 // Página de OBRIGADO (após o cadastro público)
-function mostrarObrigado(nome){
-  const card = document.querySelector('#cadastro-screen .cadastro-card');
-  if (!card) return;
+let _meuQRUrl = '';
+function _icoIG(){ return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.1" fill="#fff" stroke="none"/></svg>'; }
+function _icoWA(){ return '<svg width="21" height="21" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.5 15.3L2 22l4.8-1.4A10 10 0 1 0 12 2zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1a10.9 10.9 0 0 1-4.9-4.3 5.6 5.6 0 0 1-1.2-3c0-.9.5-1.4.7-1.6a.8.8 0 0 1 .6-.3h.4c.2 0 .4 0 .5.4l.7 1.7c.1.1.1.3 0 .4l-.3.5-.3.3c-.1.1-.2.3-.1.5a8 8 0 0 0 1.3 1.6 7.3 7.3 0 0 0 1.9 1.2c.2.1.4.1.5-.1l.6-.8c.1-.2.3-.1.5-.1l1.6.8c.2.1.4.2.4.3z"/></svg>'; }
+function _icoQR(){ return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v3M21 21h.01M17 21h.01M14 18v3"/></svg>'; }
+function mostrarObrigado(nome, code){
+  const screen = document.getElementById('cadastro-screen');
+  if (!screen) return;
   const prim = (nome||'').trim().split(' ')[0] || '';
-  const waBtn = WHATSAPP_CAMPANHA
-    ? `<button onclick="falarWhatsAppObrigado()" style="width:100%;background:#25D366;color:#fff;border:none;border-radius:11px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fonte);">📲 Falar no WhatsApp</button>`
-    : '';
-  card.innerHTML = `
-    <div style="text-align:center;">
-      <img src="assets/talita-logo-azul.png" alt="Talita Oliveira" style="height:36px;margin-bottom:18px;">
-      <div style="font-size:52px;line-height:1;margin-bottom:8px;">🎉</div>
-      <div style="font-size:23px;font-weight:800;color:var(--branco);letter-spacing:-0.5px;">Obrigado${prim?', '+prim:''}!</div>
-      <div style="font-size:13.5px;color:var(--cinza);line-height:1.7;margin:14px 0 22px;">Seu cadastro foi confirmado com sucesso. Que bom ter você com a gente — juntos somos mais fortes! 💙💚</div>
-      ${waBtn}
-      <div style="font-size:12px;color:var(--cinza2);margin-top:16px;">Você já pode fechar esta página.</div>
-    </div>`;
+  _meuQRUrl = (typeof urlLinkAfiliado === 'function' && code) ? urlLinkAfiliado(code) : '';
+  screen.style.background = 'linear-gradient(160deg,#1230ff 0%,#0525f7 42%,#070f44 100%)';
+  const cardIG = INSTAGRAM_URL ? `<a href="${INSTAGRAM_URL}" target="_blank" rel="noopener" class="obg-card"><span class="obg-ic" style="background:linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7);">${_icoIG()}</span><span class="obg-tx"><b>Seguir no Instagram</b><small>Acompanhe a Talita</small></span><span class="obg-ar">→</span></a>` : '';
+  const cardWA = COMUNIDADE_WHATSAPP_URL ? `<a href="${COMUNIDADE_WHATSAPP_URL}" target="_blank" rel="noopener" class="obg-card"><span class="obg-ic" style="background:#25D366;">${_icoWA()}</span><span class="obg-tx"><b>Comunidade no WhatsApp</b><small>Entre e fique por dentro</small></span><span class="obg-ar">→</span></a>` : '';
+  const cardQR = `<button onclick="mostrarMeuQR()" class="obg-card"><span class="obg-ic" style="background:#0525f7;">${_icoQR()}</span><span class="obg-tx"><b>Pegar meu QR Code</b><small>Vire apoiador e traga gente</small></span><span class="obg-ar">→</span></button>`;
+  screen.innerHTML = `
+   <div style="width:100%;max-width:430px;text-align:center;color:#fff;padding:16px 6px 44px;">
+     <img src="assets/talita-foto.png" alt="Talita Oliveira" style="width:126px;height:126px;border-radius:50%;border:4px solid rgba(255,255,255,0.92);object-fit:cover;box-shadow:0 12px 34px rgba(0,0,0,0.30);">
+     <div style="font-size:26px;font-weight:800;margin-top:18px;letter-spacing:-0.5px;">Obrigado${prim?', '+prim:''}! 💙💚</div>
+     <div style="font-size:14px;color:rgba(255,255,255,0.92);line-height:1.6;margin:10px 22px 24px;">Seu cadastro foi confirmado! Agora dá mais um passo com a gente:</div>
+     <div style="display:flex;flex-direction:column;gap:12px;">${cardIG}${cardWA}${cardQR}</div>
+     <div id="obg-qr-area" style="display:none;background:#fff;border-radius:16px;padding:18px;margin-top:14px;color:#0d1326;text-align:center;">
+       <div style="font-size:13px;font-weight:800;margin-bottom:3px;">Seu QR / link de apoiador</div>
+       <div style="font-size:12px;color:#5b6478;margin-bottom:12px;">Mostre pra seus amigos — quem se cadastrar entra na <b>sua</b> rede!</div>
+       <div id="obg-qr" style="display:inline-block;line-height:0;"></div>
+       <div class="ld-share-box" style="margin:12px 0 0;"><input id="obg-link" readonly value="${_meuQRUrl}"><button onclick="copiarObgLink()">Copiar</button></div>
+       <button onclick="compartilharObgWA()" style="width:100%;margin-top:10px;background:#25D366;color:#fff;border:none;border-radius:9px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fonte);">📲 Enviar meu link</button>
+     </div>
+     <img src="assets/talita-logo-branco.png" alt="Talita Oliveira" style="height:22px;margin-top:30px;opacity:0.95;">
+   </div>`;
 }
-function falarWhatsAppObrigado(){
-  if (!WHATSAPP_CAMPANHA) return;
-  let num = WHATSAPP_CAMPANHA.replace(/\D/g,'');
-  if (num && !num.startsWith('55')) num = '55' + num;
-  const msg = 'Olá! Acabei de me cadastrar na rede da Talita Oliveira 😊';
-  window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg), '_blank');
+function mostrarMeuQR(){
+  const area = document.getElementById('obg-qr-area'); if (!area) return;
+  const showing = area.style.display !== 'none';
+  area.style.display = showing ? 'none' : 'block';
+  if (!showing) {
+    const el = document.getElementById('obg-qr');
+    if (el && !el.hasChildNodes() && typeof QRCode !== 'undefined' && _meuQRUrl) {
+      try { new QRCode(el, { text:_meuQRUrl, width:160, height:160, colorDark:'#0d1326', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
+    }
+    area.scrollIntoView({behavior:'smooth', block:'center'});
+  }
+}
+function copiarObgLink(){
+  const i = document.getElementById('obg-link'); if (!i) return;
+  i.select(); i.setSelectionRange(0,99999);
+  navigator.clipboard.writeText(i.value).then(()=>{ const b=document.querySelector('#obg-link + button'); const o=b.textContent; b.textContent='✓'; setTimeout(()=>b.textContent=o,1500); });
+}
+function compartilharObgWA(){
+  const i = document.getElementById('obg-link'); if (!i) return;
+  const msg = 'Faça parte da rede da *Talita Oliveira · Bahia*! Cadastre-se aqui:\n\n'+i.value;
+  window.open('https://wa.me/?text='+encodeURIComponent(msg), '_blank');
 }
 
 async function abrirCadastroPublico(code) {
@@ -2340,10 +2376,11 @@ async function salvarCadastroPublico() {
   const btn = document.getElementById('cadastro-btn');
   btn.disabled = true; btn.textContent = 'Salvando...';
   try {
+    const meuCode = gerarLinkCode();
     await _db.collection('liderancas').add({
       nome, telefone, municipio, bairro,
       regiao: (typeof REGIOES_MAP !== 'undefined' && REGIOES_MAP[municipio]) || '',
-      parent_id, link_code: gerarLinkCode(),
+      parent_id, link_code: meuCode,
       tipo: 'lead',
       status: 'Prospecto', votos_comprometidos: 0,
       segmento: '', obs: '',
@@ -2351,7 +2388,7 @@ async function salvarCadastroPublico() {
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       updated_at: firebase.firestore.FieldValue.serverTimestamp()
     });
-    mostrarObrigado(nome);
+    mostrarObrigado(nome, meuCode);
   } catch(e) {
     showFb('❌ Erro: ' + e.message, false);
     btn.disabled = false; btn.textContent = 'Confirmar cadastro →';
