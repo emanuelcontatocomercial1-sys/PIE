@@ -2657,10 +2657,15 @@ function renderPortal() {
       <div style="font-size:11px;color:var(--cinza2);">${d.municipio||'—'}${d.bairro?' · '+d.bairro:''}</div></div>
       <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:${isL?'rgba(37,99,235,0.15)':'rgba(5,150,105,0.15)'};color:${col};">${txt}</span></div>`;
   }).join('') : '<div style="text-align:center;color:var(--cinza2);font-size:13px;padding:24px;">Você ainda não indicou ninguém. Compartilhe seu link abaixo pra começar! 🚀</div>';
+  const motiv = desc.length === 0
+    ? '🚀 Compartilhe seu link e comece a montar a sua rede!'
+    : `💪 Sua rede já soma <b>${votos.toLocaleString('pt-BR')}</b> votos e <b>${desc.length}</b> ${desc.length===1?'pessoa':'pessoas'}!`;
   body.innerHTML = `
-    <div style="margin-bottom:24px;">
-      <div style="font-family:var(--serif);font-style:italic;font-size:27px;color:var(--branco);line-height:1.1;">Olá, ${prim} 👋</div>
-      <div style="font-size:13px;color:var(--cinza);margin-top:6px;">${me.municipio||'—'}${me.bairro?' · '+me.bairro:''} · Liderança</div>
+    <div style="background:linear-gradient(140deg,#0a1fb0 0%,#0525f7 48%,#070f44 100%);border-radius:20px;padding:24px;color:#fff;margin-bottom:20px;box-shadow:0 10px 30px rgba(5,37,247,0.22);">
+      <img src="assets/talita-logo-branco.png" alt="Talita Oliveira" style="height:20px;opacity:0.92;margin-bottom:14px;">
+      <div style="font-size:25px;font-weight:800;letter-spacing:-0.5px;">Olá, ${prim}! 👋</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.82);margin-top:4px;">${me.municipio||'—'}${me.bairro?' · '+me.bairro:''} · Sua liderança na rede</div>
+      <div style="margin-top:16px;background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:11px 14px;font-size:13.5px;font-weight:600;">${motiv}</div>
     </div>
     <div class="stats-grid">
       <div class="stat-card azul"><div class="stat-num">${diretas}</div><div class="stat-label">Indicados diretos</div></div>
