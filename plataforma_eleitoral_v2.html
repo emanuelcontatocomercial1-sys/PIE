@@ -30,6 +30,11 @@
   /* AMARELO VIVO Talita — acento */
   --amarelo:#a16207;--amarelo2:#ffb700;
 
+  /* VERDE de AÇÃO — cor dos botões/CTAs (combina com o azul + verde das fotos de campanha) */
+  --acao:#138a3e;--acao2:#1aa64a;
+  --acao-grad:linear-gradient(135deg,#22b455 0%,#149a45 100%);
+  --acao-glow:rgba(20,154,69,0.30);
+
   /* Azul (alias da marca para badges) */
   --azul:#0525f7;--azul2:#2a45f8;--azul3:#5e72fb;
   --azul-glow:rgba(5,37,247,0.07);
@@ -131,12 +136,12 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 .login-input:focus{border-color:var(--ciano2);box-shadow:0 0 0 3px var(--ciano-glow);}
 .login-input::placeholder{color:#94a3b8;}
 .login-btn{
-  width:100%;background:linear-gradient(135deg,var(--ciano) 0%,var(--ciano2) 100%);
+  width:100%;background:var(--acao-grad);
   color:#fff;border:none;border-radius:10px;padding:14px;font-size:14px;font-weight:700;
   cursor:pointer;font-family:var(--fonte);transition:all 0.2s;margin-top:4px;
-  box-shadow:0 4px 20px rgba(37,99,235,0.25);
+  box-shadow:0 4px 20px var(--acao-glow);
 }
-.login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(37,99,235,0.35);}
+.login-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px var(--acao-glow);}
 .login-err{font-size:12px;color:var(--vermelho2);margin-top:10px;display:none;}
 .crm-label{font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:5px;}
 .req{color:var(--rosa);font-weight:800;}
@@ -183,12 +188,12 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 .cadastro-input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.12);}
 .cadastro-input::placeholder{color:#94a3b8;}
 .cadastro-btn{
-  width:100%;background:linear-gradient(135deg,#ffc21a,#ff9e00);color:#1a1300;border:none;
+  width:100%;background:var(--acao-grad);color:#fff;border:none;
   border-radius:10px;padding:15px;font-size:14.5px;font-weight:800;cursor:pointer;
-  font-family:var(--fonte);margin-top:6px;box-shadow:0 6px 22px rgba(255,158,0,0.38);
+  font-family:var(--fonte);margin-top:6px;box-shadow:0 6px 22px var(--acao-glow);
   transition:transform 0.15s,box-shadow 0.15s;
 }
-.cadastro-btn:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(255,158,0,0.5);}
+.cadastro-btn:hover{transform:translateY(-1px);box-shadow:0 10px 30px var(--acao-glow);}
 .cadastro-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
 .cadastro-feedback{
   margin-top:14px;font-size:13px;padding:12px;border-radius:8px;text-align:center;font-weight:600;
@@ -489,7 +494,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 
 /* BOTOES */
 .btn{padding:10px 20px;border:none;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fonte);transition:all 0.2s;}
-.btn-primary{background:linear-gradient(135deg,var(--ciano) 0%,var(--ciano2) 100%);color:#fff;box-shadow:0 2px 12px rgba(11,163,204,0.2);}
+.btn-primary{background:var(--acao-grad);color:#fff;box-shadow:0 4px 16px var(--acao-glow);}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(11,163,204,0.35);}
 .btn-success{background:var(--verde);color:#fff;}
 .btn-success:hover{background:var(--verde2);}
@@ -1006,8 +1011,8 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
                   onfocus="this.style.borderColor='var(--azul2)'" onblur="this.style.borderColor='var(--borda)'">
               </div>
               <button onclick="registrarVotos()"
-                style="background:var(--azul2);color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fonte);transition:all 0.2s;"
-                onmouseover="this.style.background='var(--azul3)'" onmouseout="this.style.background='var(--azul2)'"
+                style="background:var(--acao2);color:#fff;border:none;border-radius:10px;padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fonte);transition:all 0.2s;"
+                onmouseover="this.style.background='var(--acao)'" onmouseout="this.style.background='var(--acao2)'"
                 id="btn-registrar">
                 Registrar no Mapa
               </button>
@@ -1781,7 +1786,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         </div>
       </div>
       <button onclick="salvarLideranca()" id="crm-btn-salvar"
-        style="background:var(--ciano);color:#fff;border:none;border-radius:10px;padding:13px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);transition:background 0.2s;margin-top:4px;">
+        style="background:var(--acao-grad);color:#fff;border:none;border-radius:10px;padding:13px;font-size:13.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);transition:background 0.2s;margin-top:4px;">
         ➕ Cadastrar Liderança
       </button>
       <div id="crm-feedback" style="display:none;font-size:12px;text-align:center;padding:8px;border-radius:8px;font-weight:600;"></div>
