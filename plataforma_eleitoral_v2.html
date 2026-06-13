@@ -2302,7 +2302,7 @@ function mostrarObrigado(nome, code){
   if (!screen) return;
   const prim = (nome||'').trim().split(' ')[0] || '';
   _meuQRUrl = (typeof urlLinkAfiliado === 'function' && code) ? urlLinkAfiliado(code) : '';
-  screen.style.background = 'linear-gradient(160deg,#1230ff 0%,#0525f7 42%,#070f44 100%)';
+  screen.style.background = _bgCapaCadastro();
   const cardIG = INSTAGRAM_URL ? `<a href="${INSTAGRAM_URL}" target="_blank" rel="noopener" class="obg-card"><span class="obg-ic" style="background:linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7);">${_icoIG()}</span><span class="obg-tx"><b>Seguir no Instagram</b><small>Acompanhe a Talita</small></span><span class="obg-ar">→</span></a>` : '';
   const cardWA = COMUNIDADE_WHATSAPP_URL ? `<a href="${COMUNIDADE_WHATSAPP_URL}" target="_blank" rel="noopener" class="obg-card"><span class="obg-ic" style="background:#25D366;">${_icoWA()}</span><span class="obg-tx"><b>Comunidade no WhatsApp</b><small>Entre e fique por dentro</small></span><span class="obg-ar">→</span></a>` : '';
   const cardQR = `<button onclick="mostrarMeuQR()" class="obg-card"><span class="obg-ic" style="background:#0525f7;">${_icoQR()}</span><span class="obg-tx"><b>Pegar meu QR Code</b><small>Vire apoiador e traga gente</small></span><span class="obg-ar">→</span></button>`;
@@ -2358,6 +2358,12 @@ async function abrirCadastroPublico(code) {
   try {
     if (!_auth.currentUser) await _auth.signInAnonymously();
   } catch(e) { console.warn('[cadastro] anônimo indisponível:', e.code); }
+  // Fundo: foto de capa (busca se não estiver no cache) com degradê azul por cima
+  try {
+    let c = localStorage.getItem(_CAPA_KEY) || '';
+    if (!c) { const cs = await _db.collection('config').doc('login').get(); c = cs.exists ? (cs.data().cover_url||'') : ''; if (c) localStorage.setItem(_CAPA_KEY, c); }
+  } catch(_){}
+  const cadScr = document.getElementById('cadastro-screen'); if (cadScr) cadScr.style.background = _bgCapaCadastro();
   try {
     const snap = await _db.collection('liderancas').where('link_code','==',code).limit(1).get();
     if (snap.empty) {
@@ -3246,6 +3252,14 @@ function atualizarPreviewCapa(url) {
   if (url) { preview.style.backgroundImage = `url("${url.replace(/"/g,'%22')}")`; preview.textContent = ''; }
   else     { preview.style.backgroundImage = ''; preview.textContent = 'Sem foto definida'; }
 }
+// Fundo do cadastro/obrigado: foto de capa (se houver) com degradê azul por cima; senão, só o degradê
+function _bgCapaCadastro(){
+  let c=''; try { c = localStorage.getItem(_CAPA_KEY) || ''; } catch(_){}
+  if (!c) return 'linear-gradient(160deg,#1230ff 0%,#0525f7 42%,#070f44 100%)';
+  const over = 'linear-gradient(160deg, rgba(10,31,176,0.74) 0%, rgba(5,37,247,0.80) 45%, rgba(7,15,68,0.92) 100%)';
+  return over + ', url("' + c.replace(/"/g,'%22') + '") center/cover no-repeat';
+}
+
 // Aplica imediatamente do cache local (instantâneo, sem rede)
 try { aplicarCapaLogin(localStorage.getItem(_CAPA_KEY) || ''); } catch(_) {}
 // E busca a capa do Firestore JÁ na tela de login — antes de o usuário logar.
