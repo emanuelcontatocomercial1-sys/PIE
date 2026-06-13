@@ -2848,7 +2848,8 @@ function _montarCard(t){
   ctx.restore();
   if (_cardFoto){
     ctx.save(); ctx.beginPath(); ctx.arc(fx,fy,d/2,0,Math.PI*2); ctx.clip();
-    ctx.drawImage(_cardFoto, fx-d/2, fy-d/2, d, d); ctx.restore();
+    const ds=d*1.12; // leve zoom: tira a margem branca da PNG e preenche 100% o circulo
+    ctx.drawImage(_cardFoto, fx-ds/2, fy-ds/2, ds, ds); ctx.restore();
   }
   // headline
   ctx.fillStyle=t.txt; ctx.font='800 90px Poppins, sans-serif'; ctx.fillText('Vem fazer parte!', W/2, 920);
