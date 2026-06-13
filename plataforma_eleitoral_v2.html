@@ -1830,6 +1830,8 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 // ── LOGIN ──
 let _currentUser = null;
 let _contaRecemCriada = false; // true só logo após criar a conta (1º acesso) — pra mostrar "conta criada" uma vez
+// Número oficial do WhatsApp da campanha (DDD+número, ex: '71999998888'). Vazio = botão some.
+const WHATSAPP_CAMPANHA = '';
 
 function toggleSidebar(forceClose) {
   const sidebar  = document.querySelector('.sidebar');
@@ -2267,6 +2269,32 @@ function verificarRotaCadastro() {
 }
 window.addEventListener('hashchange', verificarRotaCadastro);
 
+// Página de OBRIGADO (após o cadastro público)
+function mostrarObrigado(nome){
+  const card = document.querySelector('#cadastro-screen .cadastro-card');
+  if (!card) return;
+  const prim = (nome||'').trim().split(' ')[0] || '';
+  const waBtn = WHATSAPP_CAMPANHA
+    ? `<button onclick="falarWhatsAppObrigado()" style="width:100%;background:#25D366;color:#fff;border:none;border-radius:11px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--fonte);">📲 Falar no WhatsApp</button>`
+    : '';
+  card.innerHTML = `
+    <div style="text-align:center;">
+      <img src="assets/talita-logo-azul.png" alt="Talita Oliveira" style="height:36px;margin-bottom:18px;">
+      <div style="font-size:52px;line-height:1;margin-bottom:8px;">🎉</div>
+      <div style="font-size:23px;font-weight:800;color:var(--branco);letter-spacing:-0.5px;">Obrigado${prim?', '+prim:''}!</div>
+      <div style="font-size:13.5px;color:var(--cinza);line-height:1.7;margin:14px 0 22px;">Seu cadastro foi confirmado com sucesso. Que bom ter você com a gente — juntos somos mais fortes! 💙💚</div>
+      ${waBtn}
+      <div style="font-size:12px;color:var(--cinza2);margin-top:16px;">Você já pode fechar esta página.</div>
+    </div>`;
+}
+function falarWhatsAppObrigado(){
+  if (!WHATSAPP_CAMPANHA) return;
+  let num = WHATSAPP_CAMPANHA.replace(/\D/g,'');
+  if (num && !num.startsWith('55')) num = '55' + num;
+  const msg = 'Olá! Acabei de me cadastrar na rede da Talita Oliveira 😊';
+  window.open('https://wa.me/'+num+'?text='+encodeURIComponent(msg), '_blank');
+}
+
 async function abrirCadastroPublico(code) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('app').style.display = 'none';
@@ -2323,9 +2351,7 @@ async function salvarCadastroPublico() {
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       updated_at: firebase.firestore.FieldValue.serverTimestamp()
     });
-    showFb('✅ Cadastro confirmado! Muito obrigado.', true);
-    btn.style.display = 'none';
-    ['cadastro-nome','cadastro-telefone','cadastro-bairro'].forEach(id=>{ const e=document.getElementById(id); if(e) e.disabled=true; });
+    mostrarObrigado(nome);
   } catch(e) {
     showFb('❌ Erro: ' + e.message, false);
     btn.disabled = false; btn.textContent = 'Confirmar cadastro →';
