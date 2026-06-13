@@ -58,7 +58,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   position:fixed;inset:0;z-index:9999;display:flex;
 }
 .login-cover{
-  width:36%;max-width:440px;background:#1a1a1a center/cover no-repeat;
+  width:36%;max-width:440px;background:#1a1a1a url('assets/capa-talita.jpg') center/cover no-repeat;
   display:none;position:relative;flex-shrink:0;
 }
 .login-cover::after{
@@ -3238,13 +3238,8 @@ function aplicarCapaLogin(url) {
   const cover = document.getElementById('login-cover');
   const fallback = document.getElementById('login-cover-fallback');
   if (!cover) return;
-  if (url) {
-    cover.style.backgroundImage = `url("${url.replace(/"/g,'%22')}")`;
-    if (fallback) fallback.style.display = 'none';
-  } else {
-    cover.style.backgroundImage = '';
-    if (fallback) fallback.style.display = 'flex';
-  }
+  cover.style.backgroundImage = url ? `url("${url.replace(/"/g,'%22')}")` : '';
+  if (fallback) fallback.style.display = 'none'; // temos capa padrão (foto de campanha)
 }
 function atualizarPreviewCapa(url) {
   const preview = document.getElementById('cfg-capa-preview');
@@ -3255,9 +3250,9 @@ function atualizarPreviewCapa(url) {
 // Fundo do cadastro/obrigado: foto de capa (se houver) com degradê azul por cima; senão, só o degradê
 function _bgCapaCadastro(){
   let c=''; try { c = localStorage.getItem(_CAPA_KEY) || ''; } catch(_){}
-  if (!c) return 'linear-gradient(160deg,#1230ff 0%,#0525f7 42%,#070f44 100%)';
   const over = 'linear-gradient(160deg, rgba(10,31,176,0.74) 0%, rgba(5,37,247,0.80) 45%, rgba(7,15,68,0.92) 100%)';
-  return over + ', url("' + c.replace(/"/g,'%22') + '") center/cover no-repeat';
+  const foto = c ? c.replace(/"/g,'%22') : 'assets/capa-talita.jpg';
+  return over + ', url("' + foto + '") center/cover no-repeat';
 }
 
 // Aplica imediatamente do cache local (instantâneo, sem rede)
