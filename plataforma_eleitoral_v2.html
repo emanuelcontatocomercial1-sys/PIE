@@ -156,9 +156,11 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 
 /* CADASTRO PÚBLICO (link de afiliado) */
 #cadastro-screen{
-  position:fixed;inset:0;z-index:9000;display:none;background:#f7f8fc;
+  position:fixed;inset:0;z-index:9000;display:none;
+  background:linear-gradient(160deg,#1230ff 0%,#0525f7 42%,#070f44 100%);
   align-items:center;justify-content:center;padding:24px;overflow-y:auto;
 }
+.cad-label{font-size:11px;font-weight:700;color:#5b6478;display:block;margin-bottom:5px;margin-top:2px;letter-spacing:0.2px;}
 .cadastro-card{
   background:#fff;border:1px solid #e8ecf2;border-radius:18px;
   padding:36px 32px;width:440px;max-width:100%;
@@ -748,19 +750,31 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 
 <!-- ══════════════ CADASTRO PÚBLICO (link de afiliado) ══════════════ -->
 <div id="cadastro-screen">
-  <div class="cadastro-card">
-    <div class="cadastro-eyebrow">Talita Oliveira · Bahia</div>
-    <h2 class="cadastro-title">Indicação de <span id="cadastro-lider-nome">—</span></h2>
-    <div class="cadastro-sub">Preencha seus dados para se cadastrar na rede.</div>
-    <input type="hidden" id="cadastro-parent-id" value="">
-    <input type="hidden" id="cadastro-parent-mun" value="">
-    <input class="cadastro-input" type="text" id="cadastro-nome" placeholder="Seu nome completo" autocomplete="name">
-    <input class="cadastro-input" type="tel" id="cadastro-telefone" placeholder="Seu telefone / WhatsApp" autocomplete="tel">
-    <input class="cadastro-input" type="text" id="cadastro-municipio" placeholder="Município" list="municipios-list-pub">
-    <datalist id="municipios-list-pub"></datalist>
-    <input class="cadastro-input" type="text" id="cadastro-bairro" placeholder="Bairro / localidade">
-    <button class="cadastro-btn" id="cadastro-btn" onclick="salvarCadastroPublico()">Confirmar cadastro →</button>
-    <div id="cadastro-feedback" class="cadastro-feedback" style="display:none;"></div>
+  <div style="width:100%;max-width:430px;">
+    <div style="text-align:center;color:#fff;margin-bottom:18px;">
+      <img src="assets/talita-foto.png" alt="Talita Oliveira" style="width:88px;height:88px;border-radius:50%;border:3px solid rgba(255,255,255,0.92);object-fit:cover;box-shadow:0 8px 26px rgba(0,0,0,0.28);">
+      <div style="font-size:12.5px;color:rgba(255,255,255,0.85);margin-top:12px;">Você foi convidado(a) por</div>
+      <div style="font-size:18px;font-weight:800;letter-spacing:-0.3px;"><span id="cadastro-lider-nome">—</span></div>
+    </div>
+    <div class="cadastro-card">
+      <div class="cadastro-eyebrow">Cadastre-se na rede</div>
+      <div class="cadastro-title" style="font-style:normal;font-family:var(--fonte);font-weight:800;font-size:20px;">Talita Oliveira · Bahia</div>
+      <div class="cadastro-sub" style="margin-bottom:18px;">Leva 30 segundos. Preencha e participe! 💙💚</div>
+      <input type="hidden" id="cadastro-parent-id" value="">
+      <input type="hidden" id="cadastro-parent-mun" value="">
+      <label class="cad-label">Nome completo <span class="req">*</span></label>
+      <input class="cadastro-input" type="text" id="cadastro-nome" placeholder="Seu nome" autocomplete="name">
+      <label class="cad-label">Telefone / WhatsApp <span class="req">*</span></label>
+      <input class="cadastro-input" type="tel" id="cadastro-telefone" inputmode="numeric" maxlength="16" placeholder="(71) 99999-9999" autocomplete="tel" oninput="mascararTel(this)">
+      <label class="cad-label">Município <span class="req">*</span></label>
+      <input class="cadastro-input" type="text" id="cadastro-municipio" placeholder="Sua cidade" list="municipios-list-pub">
+      <datalist id="municipios-list-pub"></datalist>
+      <label class="cad-label">Bairro / localidade</label>
+      <input class="cadastro-input" type="text" id="cadastro-bairro" placeholder="Seu bairro">
+      <button class="cadastro-btn" id="cadastro-btn" onclick="salvarCadastroPublico()" style="margin-top:8px;">Confirmar cadastro →</button>
+      <div id="cadastro-feedback" class="cadastro-feedback" style="display:none;"></div>
+    </div>
+    <img src="assets/talita-logo-branco.png" alt="Talita Oliveira" style="height:20px;display:block;margin:18px auto 0;opacity:0.9;">
   </div>
 </div>
 
@@ -2371,7 +2385,9 @@ async function salvarCadastroPublico() {
   const municipio = document.getElementById('cadastro-municipio').value.trim();
   const bairro    = document.getElementById('cadastro-bairro').value.trim();
   const parent_id = document.getElementById('cadastro-parent-id').value;
-  if (!nome || !municipio) { showFb('Informe nome e município.', false); return; }
+  if (!nome) { showFb('Informe seu nome.', false); return; }
+  if (telefone.replace(/\D/g,'').length < 10) { showFb('Informe um telefone/WhatsApp válido (com DDD).', false); return; }
+  if (!municipio) { showFb('Informe seu município.', false); return; }
   if (!parent_id) { showFb('Link inválido.', false); return; }
   const btn = document.getElementById('cadastro-btn');
   btn.disabled = true; btn.textContent = 'Salvando...';
