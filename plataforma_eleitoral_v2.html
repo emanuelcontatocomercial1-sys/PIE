@@ -1169,6 +1169,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
           </div>
           <div style="display:flex;gap:8px;">
             <button class="btn btn-outline" onclick="abrirImportPlanilha()" style="font-size:12px;">📥 Importar planilha</button>
+            <button class="btn btn-outline" onclick="abrirFotoIA('leads')" style="font-size:12px;">📷 Foto (IA)</button>
             <button class="btn btn-primary" onclick="abrirNovoLead()" style="font-size:12px;">+ Novo lead</button>
           </div>
         </div>
@@ -1831,6 +1832,38 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   </div>
 </div>
 
+<!-- ══ MODAL: CADASTRAR POR FOTO (IA) ══ -->
+<div class="modal-overlay" id="modal-foto-ia">
+  <div class="modal" style="max-width:540px;">
+    <div class="modal-header">
+      <div class="modal-title">📷 Cadastrar por foto (IA)</div>
+      <button class="modal-close" onclick="fecharModal('modal-foto-ia')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Passo 1: foto -->
+      <div id="fia-step1">
+        <div style="font-size:13px;color:var(--cinza);line-height:1.6;margin-bottom:14px;">Tire uma foto da <b style="color:var(--branco)">ficha</b> (ou escolha da galeria). A IA lê os dados e preenche pra você — se a ficha tiver várias pessoas, cadastra todas de uma vez.</div>
+        <input type="file" id="fia-file" accept="image/*" capture="environment" style="display:none;" onchange="fiaArquivo(this)">
+        <button class="btn btn-primary" onclick="document.getElementById('fia-file').click()" style="width:100%;padding:13px;">📷 Tirar / escolher foto</button>
+        <div id="fia-preview" style="margin-top:14px;display:none;text-align:center;">
+          <img id="fia-img" alt="" style="max-width:100%;max-height:260px;border-radius:12px;border:1px solid var(--borda);">
+          <button class="btn btn-primary" id="fia-ler" onclick="fiaLer()" style="width:100%;margin-top:12px;padding:13px;">🤖 Ler dados com IA</button>
+        </div>
+      </div>
+      <!-- Passo 2: revisar -->
+      <div id="fia-step2" style="display:none;">
+        <div style="font-size:13px;color:var(--cinza);margin-bottom:12px;">✅ Dados lidos! Confira/corrija e confirme pra cadastrar.</div>
+        <div id="fia-lista" style="max-height:340px;overflow-y:auto;"></div>
+        <div style="display:flex;gap:10px;margin-top:14px;">
+          <button class="btn btn-outline" onclick="fiaVoltar()">← Outra foto</button>
+          <button class="btn btn-primary" id="fia-confirmar" onclick="fiaConfirmar()" style="flex:1;">✓ Cadastrar <span id="fia-count"></span></button>
+        </div>
+      </div>
+      <div id="fia-feedback" style="display:none;margin-top:12px;font-size:13px;text-align:center;padding:10px;border-radius:8px;font-weight:600;"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ MODAL: QR CODE AMPLIADO ══ -->
 <div class="modal-overlay" id="modal-qr">
   <div class="modal" style="max-width:360px;">
@@ -2217,6 +2250,7 @@ document.addEventListener('keydown', e => {
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-functions-compat.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
@@ -2231,6 +2265,9 @@ const _fbConfig = {
 const _fbApp = firebase.initializeApp(_fbConfig, 'plataforma');
 const _db   = firebase.firestore(_fbApp);
 const _auth = firebase.auth(_fbApp);
+// Cloud Functions (região São Paulo) — usado pela leitura de ficha por foto (IA)
+let _functions = null;
+try { _functions = _fbApp.functions('southamerica-east1'); } catch(e){ console.warn('functions SDK:', e); }
 
 // App secundário para criar usuários sem deslogar o admin
 const _fbApp2 = firebase.initializeApp(_fbConfig, 'secondary');
@@ -2700,7 +2737,10 @@ function renderPortal() {
         <div class="form-group"><label class="form-label">Telefone</label><input class="form-input" id="pa-tel" placeholder="71 99999-9999"></div></div>
         <div class="form-row"><div class="form-group"><label class="form-label">Município *</label><input class="form-input" id="pa-mun" placeholder="Ex: Salvador" value="${me.municipio||''}"></div>
         <div class="form-group"><label class="form-label">Bairro</label><input class="form-input" id="pa-bairro" placeholder="Bairro"></div></div>
-        <button class="btn btn-primary" onclick="salvarApoiadorPortal()">Adicionar à minha rede</button>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-primary" onclick="salvarApoiadorPortal()">Adicionar à minha rede</button>
+          <button class="btn btn-outline" onclick="abrirFotoIA('portal')">📷 Por foto (IA)</button>
+        </div>
         <span id="pa-fb" style="margin-left:12px;font-size:13px;"></span>
       </div>
     </div>
@@ -3278,6 +3318,90 @@ async function sincronizarCapaLogin() {
     try { url ? localStorage.setItem(_CAPA_KEY, url) : localStorage.removeItem(_CAPA_KEY); } catch(_) {}
   } catch (e) { console.warn('[capa] falha ao sincronizar:', e.message); }
 }
+
+// ════════ CADASTRAR POR FOTO (IA — Claude visão via Cloud Function) ════════
+let _fiaImg = '', _fiaCtx = 'leads', _fiaPessoas = [];
+function abrirFotoIA(ctx){
+  _fiaCtx = ctx || 'leads'; _fiaImg = ''; _fiaPessoas = [];
+  document.getElementById('fia-step1').style.display = 'block';
+  document.getElementById('fia-step2').style.display = 'none';
+  document.getElementById('fia-preview').style.display = 'none';
+  document.getElementById('fia-feedback').style.display = 'none';
+  const f = document.getElementById('fia-file'); if (f) f.value = '';
+  document.getElementById('modal-foto-ia').classList.add('show');
+}
+function fiaArquivo(input){
+  const f = input.files && input.files[0]; if (!f) return;
+  const mostra = (dataUrl) => { _fiaImg = dataUrl; document.getElementById('fia-img').src = dataUrl; document.getElementById('fia-preview').style.display = 'block'; document.getElementById('fia-feedback').style.display='none'; };
+  try {
+    comprimirImagem(f).then(mostra).catch(() => { const r = new FileReader(); r.onload = () => mostra(r.result); r.readAsDataURL(f); });
+  } catch(e) { const r = new FileReader(); r.onload = () => mostra(r.result); r.readAsDataURL(f); }
+}
+async function fiaLer(){
+  if (!_fiaImg) return;
+  const btn = document.getElementById('fia-ler');
+  btn.disabled = true; btn.textContent = '🤖 Lendo... (alguns segundos)';
+  document.getElementById('fia-feedback').style.display = 'none';
+  try {
+    if (!_functions) throw new Error('IA indisponível neste momento.');
+    const res = await _functions.httpsCallable('lerFicha')({ image: _fiaImg });
+    const pessoas = (res && res.data && res.data.pessoas) || [];
+    if (!pessoas.length) { fiaFb('A IA não encontrou dados nesta foto. Tente uma foto mais nítida e reta.', false); }
+    else {
+      _fiaPessoas = pessoas;
+      fiaRenderLista();
+      document.getElementById('fia-step1').style.display = 'none';
+      document.getElementById('fia-step2').style.display = 'block';
+    }
+  } catch(e){
+    const code = e && (e.code || '');
+    const msg = (code === 'functions/not-found' || code === 'internal' || /not-?found/i.test(e.message||''))
+      ? '⚙️ A leitura por IA ainda não foi ativada (aguardando configuração do servidor + chave). Em breve!'
+      : ('Erro: ' + (e.message || code || 'tente novamente'));
+    fiaFb(msg, false);
+  }
+  btn.disabled = false; btn.textContent = '🤖 Ler dados com IA';
+}
+function fiaRenderLista(){
+  const el = document.getElementById('fia-lista');
+  document.getElementById('fia-count').textContent = '(' + _fiaPessoas.length + ')';
+  el.innerHTML = _fiaPessoas.map((p,i) => `
+    <div style="border:1px solid var(--borda);border-radius:12px;padding:12px;margin-bottom:10px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <input class="crm-input" placeholder="Nome" value="${escHtml(p.nome||'')}" oninput="_fiaPessoas[${i}].nome=this.value">
+        <input class="crm-input" placeholder="Telefone" value="${escHtml(p.telefone||'')}" oninput="_fiaPessoas[${i}].telefone=this.value">
+        <input class="crm-input" placeholder="Município" value="${escHtml(p.municipio||'')}" oninput="_fiaPessoas[${i}].municipio=this.value">
+        <input class="crm-input" placeholder="Bairro" value="${escHtml(p.bairro||'')}" oninput="_fiaPessoas[${i}].bairro=this.value">
+      </div>
+      <button onclick="_fiaPessoas.splice(${i},1);fiaRenderLista();" style="margin-top:8px;background:none;border:none;color:var(--vermelho2);font-size:11px;cursor:pointer;font-family:var(--fonte);">✕ remover</button>
+    </div>`).join('');
+}
+async function fiaConfirmar(){
+  const validos = _fiaPessoas.filter(p => (p.nome||'').trim());
+  if (!validos.length) { fiaFb('Nenhum nome pra cadastrar.', false); return; }
+  const btn = document.getElementById('fia-confirmar'); btn.disabled = true; btn.textContent = 'Cadastrando...';
+  const parent_id = (_fiaCtx === 'portal' && _currentUser) ? (_currentUser.liderancaId || null) : null;
+  let ok = 0;
+  for (const p of validos){
+    const mun = (p.municipio||'').trim();
+    try {
+      await _db.collection('liderancas').add({
+        nome: (p.nome||'').trim(), telefone: (p.telefone||'').trim(), municipio: mun, bairro: (p.bairro||'').trim(),
+        regiao: (typeof REGIOES_MAP !== 'undefined' && REGIOES_MAP[mun]) || '',
+        parent_id: parent_id, link_code: gerarLinkCode(), tipo: 'lead',
+        status: 'Prospecto', votos_comprometidos: 0, segmento: '', obs: 'Cadastrado por foto (IA)',
+        created_via: 'foto-ia',
+        created_at: firebase.firestore.FieldValue.serverTimestamp(),
+        updated_at: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      ok++;
+    } catch(e){ console.error('fia add:', e); }
+  }
+  fiaFb('✅ ' + ok + ' cadastrado(s) com sucesso!', true);
+  setTimeout(() => fecharModal('modal-foto-ia'), 1500);
+}
+function fiaVoltar(){ document.getElementById('fia-step1').style.display='block'; document.getElementById('fia-step2').style.display='none'; document.getElementById('fia-preview').style.display = _fiaImg ? 'block':'none'; }
+function fiaFb(msg, ok){ const el = document.getElementById('fia-feedback'); el.innerHTML = msg; el.style.display='block'; el.style.background = ok?'rgba(16,185,129,0.12)':'rgba(239,68,68,0.10)'; el.style.color = ok?'#10B981':'#b91c1c'; el.style.border = '1px solid '+(ok?'rgba(16,185,129,0.3)':'rgba(239,68,68,0.25)'); }
 
 function comprimirImagem(file) {
   return new Promise((resolve, reject) => {

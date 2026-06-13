@@ -8,12 +8,16 @@
  *   - infoLink:          devolve só o nome da liderança pra exibir na tela
  */
 const { onCall, HttpsError } = require('firebase-functions/v2/https');
+const { defineSecret } = require('firebase-functions/params');
 const { initializeApp } = require('firebase-admin/app');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 
 initializeApp();
 const db = getFirestore();
 const REGION = 'southamerica-east1'; // São Paulo
+
+// Chave da API do Claude (definir via: firebase functions:secrets:set ANTHROPIC_API_KEY)
+const ANTHROPIC_KEY = defineSecret('ANTHROPIC_API_KEY');
 
 function gerarLinkCode() {
   const chars = 'abcdefghjkmnpqrstuvwxyz23456789'; // sem 0/o/1/i/l
@@ -95,4 +99,53 @@ exports.infoLink = onCall({ region: REGION }, async (request) => {
   if (snap.empty) throw new HttpsError('not-found', 'Link inválido.');
   const l = snap.docs[0].data();
   return { nome: l.nome || '', municipio: l.municipio || '' };
+});
+
+/* ───────── 4. Ler ficha por foto (Claude visão) — extrai dados de cadastro ───────── */
+exports.lerFicha = onCall({ region: REGION, secrets: [ANTHROPIC_KEY], timeoutSeconds: 70, memory: '512MiB' }, async (request) => {
+  const uid = request.auth && request.auth.uid;
+  if (!uid) throw new HttpsError('unauthenticated', 'Faça login.');
+  // Só usuário ATIVO pode usar (admin/usuário/liderança aprovados)
+  const u = await db.collection('usuarios').doc(uid).get();
+  if (!u.exists || u.data().status !== 'ativo') throw new HttpsError('permission-denied', 'Conta não autorizada.');
+
+  let img = str(request.data && request.data.image);
+  if (!img) throw new HttpsError('invalid-argument', 'Envie uma imagem.');
+  let media = 'image/jpeg', b64 = img;
+  const m = img.match(/^data:(image\/[a-zA-Z]+);base64,([\s\S]+)$/);
+  if (m) { media = m[1]; b64 = m[2]; }
+
+  const prompt = `Esta é a foto de uma ficha de cadastro (pode ter uma ou várias pessoas). Extraia os dados de cada pessoa.
+Responda SOMENTE com um JSON array (sem texto antes/depois), neste formato:
+[{"nome":"...","telefone":"...","municipio":"...","bairro":"..."}]
+Regras: telefone só com dígitos (com DDD); se um campo não aparecer use ""; inclua TODAS as pessoas da ficha; se não conseguir ler nada, responda [].`;
+
+  let resp;
+  try {
+    resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-api-key': ANTHROPIC_KEY.value(), 'anthropic-version': '2023-06-01' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: { type: 'base64', media_type: media, data: b64 } },
+          { type: 'text', text: prompt }
+        ]}]
+      })
+    });
+  } catch (e) { throw new HttpsError('internal', 'Falha ao chamar a IA: ' + e.message); }
+  if (!resp.ok) { const t = await resp.text().catch(() => ''); throw new HttpsError('internal', 'IA retornou ' + resp.status + ': ' + t.slice(0, 180)); }
+
+  const data = await resp.json();
+  let txt = (data.content && data.content[0] && data.content[0].text) || '[]';
+  const jm = txt.match(/\[[\s\S]*\]/);
+  let pessoas = [];
+  try { pessoas = JSON.parse(jm ? jm[0] : txt); } catch (e) { pessoas = []; }
+  if (!Array.isArray(pessoas)) pessoas = [];
+  pessoas = pessoas.slice(0, 80).map(p => ({
+    nome: str(p && p.nome), telefone: str(p && p.telefone).replace(/\D/g, ''),
+    municipio: str(p && p.municipio), bairro: str(p && p.bairro)
+  })).filter(p => p.nome);
+  return { pessoas };
 });
