@@ -2848,17 +2848,17 @@ function _montarCard(t){
   ctx.restore();
   if (_cardFoto){
     ctx.save(); ctx.beginPath(); ctx.arc(fx,fy,d/2,0,Math.PI*2); ctx.clip();
-    const ds=d*1.12; // leve zoom: tira a margem branca da PNG e preenche 100% o circulo
-    ctx.drawImage(_cardFoto, fx-ds/2, fy-ds/2, ds, ds); ctx.restore();
+    // zoom no ROSTO da Talita pra preencher o circulo (foco ~50% x / 35% y = nao corta a testa)
+    const ds=d*1.52; ctx.drawImage(_cardFoto, fx-ds*0.50, fy-ds*0.35, ds, ds); ctx.restore();
   }
   // headline
   ctx.fillStyle=t.txt; ctx.font='800 90px Poppins, sans-serif'; ctx.fillText('Vem fazer parte!', W/2, 920);
   ctx.fillStyle=t.sub; ctx.font='600 46px Poppins, sans-serif'; ctx.fillText('Cadastre-se na minha rede', W/2, 996);
   // cartão branco do QR
-  const cw=760, cx=(W-cw)/2, cy=1058, ch=700; ctx.fillStyle='#fff'; rr(cx,cy,cw,ch,44); ctx.fill();
-  if (_cardQR){ const qs=520; ctx.drawImage(_cardQR,(W-qs)/2,cy+56,qs,qs); }
-  ctx.fillStyle='#0d1326'; ctx.font='700 46px Poppins, sans-serif'; ctx.fillText('Aponte a câmera do celular', W/2, cy+ch-108);
-  ctx.fillStyle='#5b6478'; ctx.font='500 36px Poppins, sans-serif'; ctx.fillText('e faça seu cadastro', W/2, cy+ch-50);
+  const cw=760, cx=(W-cw)/2, cy=1052, ch=740; ctx.fillStyle='#fff'; rr(cx,cy,cw,ch,44); ctx.fill();
+  if (_cardQR){ const qs=470; ctx.drawImage(_cardQR,(W-qs)/2,cy+52,qs,qs); }
+  ctx.fillStyle='#0d1326'; ctx.font='700 44px Poppins, sans-serif'; ctx.fillText('Aponte a câmera do celular', W/2, cy+ch-98);
+  ctx.fillStyle='#5b6478'; ctx.font='500 36px Poppins, sans-serif'; ctx.fillText('e faça seu cadastro', W/2, cy+ch-44);
   // assinatura
   if (_portalNome){ ctx.fillStyle=t.txt; ctx.font='700 50px Poppins, sans-serif'; ctx.fillText('Indicação de '+_portalNome, W/2, 1828); }
   ctx.fillStyle=t.sub; ctx.font='600 40px Poppins, sans-serif'; ctx.fillText('Talita Oliveira · Bahia', W/2, 1890);
