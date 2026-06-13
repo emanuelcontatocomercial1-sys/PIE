@@ -1864,6 +1864,20 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   </div>
 </div>
 
+<!-- ══ MODAL: CARDS PRA DIVULGAR ══ -->
+<div class="modal-overlay" id="modal-cards">
+  <div class="modal" style="max-width:700px;">
+    <div class="modal-header">
+      <div class="modal-title">🎨 Cards pra divulgar</div>
+      <button class="modal-close" onclick="fecharModal('modal-cards')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:13px;color:var(--cinza);line-height:1.6;margin-bottom:16px;">Escolha um modelo, baixe e poste no <b style="color:var(--branco)">Story / Status</b> (ou imprima). Cada card já vem com o <b style="color:var(--branco)">SEU QR Code</b> — quem escanear entra na sua rede!</div>
+      <div id="cards-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ══ MODAL: QR CODE AMPLIADO ══ -->
 <div class="modal-overlay" id="modal-qr">
   <div class="modal" style="max-width:360px;">
@@ -2684,6 +2698,7 @@ function renderPortal() {
   const code = me.link_code || '';
   const url = urlLinkAfiliado(code);
   const prim = (me.nome||'?').split(' ')[0];
+  _portalNome = me.nome || '';
   function nivel(x, lvl=0){ const l=_lidPorId.get(x); if(!l||!l.parent_id||l.parent_id===id) return lvl+(l&&l.parent_id===id?1:0); return nivel(l.parent_id, lvl+1); }
   const lista = desc.length ? desc.map(d => {
     const lv = nivel(d.id); const isL = tipoDe(d)==='lideranca';
@@ -2718,7 +2733,7 @@ function renderPortal() {
             <div id="portal-qr" style="background:#fff;padding:10px;border:1px solid var(--borda);border-radius:14px;display:inline-block;line-height:0;min-width:150px;min-height:150px;"></div>
             <div style="display:flex;gap:8px;margin-top:10px;justify-content:center;">
               <button onclick="ampliarQRPortal()" style="background:var(--ciano);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fonte);">🔍 Ampliar</button>
-              <button onclick="baixarQRPortal()" style="background:var(--bg4);color:var(--branco);border:1px solid var(--borda);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fonte);">⬇️ Baixar</button>
+              <button onclick="abrirCardsPortal()" style="background:var(--bg4);color:var(--branco);border:1px solid var(--borda);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fonte);">🎨 Cards</button>
             </div>
           </div>
           <div style="flex:1;min-width:230px;">
@@ -2782,6 +2797,54 @@ function ampliarQRPortal(){
     try { new QRCode(cont, { text: _portalQRUrl, width: 280, height: 280, colorDark: '#0d1326', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
   }
   document.getElementById('modal-qr').classList.add('show');
+}
+
+// ── CARDS pra divulgar (variados, com o QR da liderança) ──
+let _portalNome = '';
+const _CARD_TEMAS = [
+  { id:'azul',    grad:['#1230ff','#0525f7','#070f44'], txt:'#ffffff', sub:'rgba(255,255,255,0.90)', logo:'branco' },
+  { id:'verde',   grad:['#22b455','#138a3e','#073d1c'], txt:'#ffffff', sub:'rgba(255,255,255,0.90)', logo:'branco' },
+  { id:'rosa',    grad:['#f25ba2','#eb388a','#7d1846'], txt:'#ffffff', sub:'rgba(255,255,255,0.92)', logo:'branco' },
+  { id:'amarelo', grad:['#ffd34d','#ffb700','#b87f00'], txt:'#14210a', sub:'#473500', logo:'azul' },
+];
+let _cardLogos = {}, _cardQR = null;
+function abrirCardsPortal(){
+  if (!_portalQRUrl) return;
+  const grid = document.getElementById('cards-grid');
+  if (grid) grid.innerHTML = '<div style="grid-column:1/-1;padding:30px;text-align:center;color:var(--cinza2);">Gerando seus cards…</div>';
+  document.getElementById('modal-cards').classList.add('show');
+  const tmp = document.createElement('div');
+  try { new QRCode(tmp, { text:_portalQRUrl, width:620, height:620, colorDark:'#0d1326', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
+  _cardQR = tmp.querySelector('canvas');
+  const load = src => new Promise(r=>{ const im=new Image(); im.onload=()=>r(im); im.onerror=()=>r(null); im.src=src; });
+  Promise.all([ load('assets/talita-logo-branco.png'), load('assets/talita-logo-azul.png'), (document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve() ]).then(arr=>{
+    _cardLogos = { branco:arr[0], azul:arr[1] };
+    if (!grid) return;
+    grid.innerHTML = _CARD_TEMAS.map(t=>`<div style="text-align:center;"><img src="${_montarCard(t)}" alt="" style="width:100%;border-radius:12px;border:1px solid var(--borda);box-shadow:0 4px 14px rgba(0,0,0,0.10);"><button onclick="_baixarCard('${t.id}')" class="btn btn-primary" style="width:100%;margin-top:8px;font-size:12px;padding:9px;">📥 Baixar</button></div>`).join('');
+  });
+}
+function _montarCard(t){
+  const W=1080,H=1920, cv=document.createElement('canvas'); cv.width=W; cv.height=H; const ctx=cv.getContext('2d');
+  const g=ctx.createLinearGradient(0,0,W*0.35,H); g.addColorStop(0,t.grad[0]); g.addColorStop(0.5,t.grad[1]); g.addColorStop(1,t.grad[2]);
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+  ctx.textAlign='center';
+  const logo=_cardLogos[t.logo];
+  if (logo){ const lw=360, lh=lw*logo.height/logo.width; ctx.drawImage(logo,(W-lw)/2,140,lw,lh); }
+  ctx.fillStyle=t.txt; ctx.font='800 86px Poppins, sans-serif'; ctx.fillText('Vem fazer parte!', W/2, 480);
+  ctx.fillStyle=t.sub; ctx.font='500 44px Poppins, sans-serif'; ctx.fillText('Cadastre-se na minha rede', W/2, 558);
+  const cw=780, cx=(W-cw)/2, cy=650, ch=920; ctx.fillStyle='#fff'; rr(cx,cy,cw,ch,46); ctx.fill();
+  if (_cardQR){ const qs=640; ctx.drawImage(_cardQR,(W-qs)/2,cy+70,qs,qs); }
+  ctx.fillStyle='#0d1326'; ctx.font='700 48px Poppins, sans-serif'; ctx.fillText('Aponte a câmera do celular', W/2, cy+ch-130);
+  ctx.fillStyle='#5b6478'; ctx.font='500 36px Poppins, sans-serif'; ctx.fillText('e faça seu cadastro', W/2, cy+ch-65);
+  if (_portalNome){ ctx.fillStyle=t.txt; ctx.font='700 52px Poppins, sans-serif'; ctx.fillText('Indicação de '+_portalNome, W/2, 1710); }
+  ctx.fillStyle=t.sub; ctx.font='600 42px Poppins, sans-serif'; ctx.fillText('Talita Oliveira · Bahia', W/2, 1820);
+  return cv.toDataURL('image/png');
+}
+function _baixarCard(id){
+  const t=_CARD_TEMAS.find(x=>x.id===id); if(!t) return;
+  const a=document.createElement('a'); a.href=_montarCard(t); a.download='card-talita-'+id+'.png';
+  document.body.appendChild(a); a.click(); a.remove();
 }
 
 function copiarLinkPortal() {
