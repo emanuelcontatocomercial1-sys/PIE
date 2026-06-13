@@ -1812,6 +1812,20 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   </div>
 </div>
 
+<!-- ══ MODAL: QR CODE AMPLIADO ══ -->
+<div class="modal-overlay" id="modal-qr">
+  <div class="modal" style="max-width:360px;">
+    <div class="modal-header">
+      <div class="modal-title">📷 Escaneie para se cadastrar</div>
+      <button class="modal-close" onclick="fecharModal('modal-qr')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center;">
+      <div id="modal-qr-big" style="display:inline-block;background:#fff;padding:14px;border-radius:16px;line-height:0;"></div>
+      <div style="font-size:13px;color:var(--cinza);margin-top:16px;line-height:1.65;">Aponte a câmera do celular para este código e faça seu cadastro — você entra direto na rede. 💙💚</div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ── LOGIN ──
 let _currentUser = null;
@@ -2182,6 +2196,7 @@ document.addEventListener('keydown', e => {
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const _fbConfig = {
   apiKey: "AIzaSyDmJFXVO3BQFU8NmbYPEkOTvhJrrgcrPVU",
@@ -2571,12 +2586,24 @@ function renderPortal() {
       <div class="stat-card verde"><div class="stat-num">${leads}</div><div class="stat-label">Cadastrados</div></div>
       <div class="stat-card amarelo"><div class="stat-num">${votos.toLocaleString('pt-BR')}</div><div class="stat-label">Votos comprometidos</div></div>
     </div>
-    <div class="panel" style="margin-bottom:20px;"><div class="panel-header"><div class="panel-title">🔗 Seu link de indicação</div></div>
+    <div class="panel" style="margin-bottom:20px;"><div class="panel-header"><div class="panel-title">🔗 Seu link & QR Code</div></div>
       <div class="panel-body">
-        <div style="font-size:12px;color:var(--cinza);margin-bottom:10px;">Compartilhe este link — quem se cadastrar entra na <b style="color:var(--branco)">sua</b> rede.</div>
-        <div class="ld-share-box"><input id="portal-link" readonly value="${url}">
-          <button onclick="copiarLinkPortal()">Copiar</button>
-          <button class="wa" onclick="compartilharWAPortal()">WhatsApp</button>
+        <div style="font-size:12px;color:var(--cinza);margin-bottom:16px;">Traga gente de 2 jeitos: mande o <b style="color:var(--branco)">link</b> ou mostre o <b style="color:var(--branco)">QR Code</b> (a pessoa aponta a câmera). Quem se cadastrar entra na <b style="color:var(--branco)">sua</b> rede.</div>
+        <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;">
+          <div style="text-align:center;">
+            <div id="portal-qr" style="background:#fff;padding:10px;border:1px solid var(--borda);border-radius:14px;display:inline-block;line-height:0;min-width:150px;min-height:150px;"></div>
+            <div style="display:flex;gap:8px;margin-top:10px;justify-content:center;">
+              <button onclick="ampliarQRPortal()" style="background:var(--ciano);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fonte);">🔍 Ampliar</button>
+              <button onclick="baixarQRPortal()" style="background:var(--bg4);color:var(--branco);border:1px solid var(--borda);border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:var(--fonte);">⬇️ Baixar</button>
+            </div>
+          </div>
+          <div style="flex:1;min-width:230px;">
+            <div style="font-size:11px;font-weight:700;color:var(--cinza);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Seu link</div>
+            <div class="ld-share-box" style="margin-bottom:10px;"><input id="portal-link" readonly value="${url}">
+              <button onclick="copiarLinkPortal()">Copiar</button>
+            </div>
+            <button onclick="compartilharWAPortal()" style="width:100%;background:#25D366;color:#fff;border:none;border-radius:9px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fonte);">📲 Enviar link no WhatsApp</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2593,6 +2620,41 @@ function renderPortal() {
     <div class="panel"><div class="panel-header"><div class="panel-title">👥 Sua rede (${desc.length})</div></div>
       <div class="panel-body" style="max-height:420px;overflow-y:auto;">${lista}</div>
     </div>`;
+  gerarQRPortal(url);
+}
+
+// ── QR Code do portal (link de indicação da liderança) ──
+let _portalQRUrl = '';
+function gerarQRPortal(url){
+  _portalQRUrl = url || '';
+  const el = document.getElementById('portal-qr');
+  if (!el) return;
+  el.innerHTML = '';
+  if (typeof QRCode === 'undefined') { el.innerHTML = '<div style="font-size:11px;color:#999;padding:20px;">QR indisponível</div>'; return; }
+  try {
+    new QRCode(el, { text: url, width: 150, height: 150, colorDark: '#0d1326', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  } catch(e){ console.error('QR portal:', e); }
+}
+function _qrDataUrl(containerId){
+  const c = document.querySelector('#'+containerId+' canvas');
+  if (c) return c.toDataURL('image/png');
+  const img = document.querySelector('#'+containerId+' img');
+  return img ? img.src : '';
+}
+function baixarQRPortal(){
+  const data = _qrDataUrl('portal-qr');
+  if (!data) return;
+  const a = document.createElement('a');
+  a.href = data; a.download = 'meu-qrcode.png';
+  document.body.appendChild(a); a.click(); a.remove();
+}
+function ampliarQRPortal(){
+  const cont = document.getElementById('modal-qr-big');
+  if (cont && typeof QRCode !== 'undefined' && _portalQRUrl) {
+    cont.innerHTML = '';
+    try { new QRCode(cont, { text: _portalQRUrl, width: 280, height: 280, colorDark: '#0d1326', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
+  }
+  document.getElementById('modal-qr').classList.add('show');
 }
 
 function copiarLinkPortal() {
