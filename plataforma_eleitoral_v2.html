@@ -72,6 +72,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   opacity:0.5;
 }
 .login-cover-overlay{
+  display:none; /* sem texto sobre a foto — a marca fica no card (evita duplicação) */
   position:absolute;left:28px;right:28px;bottom:28px;z-index:2;color:#fff;
 }
 .login-cover-name{
@@ -99,10 +100,9 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
     min-height:200px;max-height:300px;flex-shrink:0;
     background-position:center 28%;
   }
-  .login-cover-overlay{left:22px;right:22px;bottom:16px;}
-  .login-cover-name{font-size:28px;}
-  .login-cover-sub{display:none;}
-  .login-right{flex:1;min-height:0;}
+  .login-cover{height:34vh;min-height:210px;max-height:320px;}
+  .login-right{flex:1;min-height:0;margin-top:-26px;border-radius:26px 26px 0 0;position:relative;z-index:3;padding-top:34px;background:#f7f8fc;box-shadow:0 -8px 24px rgba(0,0,0,0.10);}
+  .login-card{border:none;box-shadow:none;padding:8px 26px 30px;}
 }
 .login-right{
   flex:1;background:#f7f8fc;display:flex;align-items:center;justify-content:center;
@@ -183,12 +183,12 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 .cadastro-input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,0.12);}
 .cadastro-input::placeholder{color:#94a3b8;}
 .cadastro-btn{
-  width:100%;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border:none;
-  border-radius:10px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;
-  font-family:var(--fonte);margin-top:6px;box-shadow:0 4px 20px rgba(37,99,235,0.25);
+  width:100%;background:linear-gradient(135deg,#ffc21a,#ff9e00);color:#1a1300;border:none;
+  border-radius:10px;padding:15px;font-size:14.5px;font-weight:800;cursor:pointer;
+  font-family:var(--fonte);margin-top:6px;box-shadow:0 6px 22px rgba(255,158,0,0.38);
   transition:transform 0.15s,box-shadow 0.15s;
 }
-.cadastro-btn:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(37,99,235,0.32);}
+.cadastro-btn:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(255,158,0,0.5);}
 .cadastro-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
 .cadastro-feedback{
   margin-top:14px;font-size:13px;padding:12px;border-radius:8px;text-align:center;font-weight:600;
