@@ -3230,8 +3230,8 @@ _auth.onAuthStateChanged(async user => {
           msg = 'Conta desativada. Entre em contato com o administrador.';
         }
         _contaRecemCriada = false;    // não repete a mensagem de "criada" nas próximas vezes
-        showLoginErr('login-err', msg);
-        mostrarView('view-login');
+        mostrarView('view-login');         // troca de tela PRIMEIRO (ela limpa mensagens)...
+        showLoginErr('login-err', msg);    // ...e só então mostra a mensagem (senão era apagada)
         await _auth.signOut();
         return;
       }
