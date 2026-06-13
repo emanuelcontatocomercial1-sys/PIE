@@ -1,0 +1,13 @@
+{
+  "name": "pie-functions",
+  "description": "Cloud Functions da Plataforma de Inteligência (Talita Oliveira)",
+  "engines": {
+    "node": "20"
+  },
+  "main": "index.js",
+  "private": true,
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^5.1.1"
+  }
+}

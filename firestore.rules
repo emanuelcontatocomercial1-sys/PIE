@@ -1,0 +1,44 @@
+rules_version = '2';
+// ─────────────────────────────────────────────────────────────────────────────
+// REGRAS FINAIS (travadas) — usar SOMENTE depois que as Cloud Functions
+// (vincularLideranca / cadastroPublico / infoLink) estiverem publicadas e o app
+// atualizado para usá-las. Antes disso, use as regras INTERINAS.
+// Cloud Functions usam o Admin SDK e IGNORAM estas regras.
+// ─────────────────────────────────────────────────────────────────────────────
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function anon()      { return signedIn() && request.auth.token.firebase.sign_in_provider == 'anonymous'; }
+    function meExists()  { return signedIn() && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)); }
+    function meDoc()     { return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data; }
+    function ativo()     { return meExists() && !anon() && meDoc().status == 'ativo'; }
+    function isAdmin()   { return ativo() && meDoc().role == 'admin'; }
+
+    match /usuarios/{uid} {
+      allow read:   if isAdmin() || (signedIn() && request.auth.uid == uid);
+      // Auto-cadastro só como usuário pendente. Liderança é criada pela Cloud Function.
+      allow create: if signedIn() && !anon() && request.auth.uid == uid
+                    && request.resource.data.role == 'usuario'
+                    && request.resource.data.status == 'pendente';
+      // Mudar status/nível: SÓ admin (impede auto-aprovação).
+      allow update: if isAdmin()
+                    || (signedIn() && request.auth.uid == uid
+                        && request.resource.data.status == resource.data.status
+                        && request.resource.data.role == resource.data.role);
+      allow delete: if isAdmin();
+    }
+
+    // Dados sensíveis: só usuários ATIVOS. Cadastro público e vínculo de liderança
+    // passam por Cloud Functions (Admin SDK), que ignoram estas regras.
+    match /liderancas/{doc}   { allow read, write: if ativo(); }
+    match /municipios/{doc}   { allow read, write: if ativo(); }
+    match /eventos/{doc}      { allow read, write: if ativo(); }
+    match /concorrentes/{doc} { allow read, write: if ativo(); }
+
+    match /config/{doc} {
+      allow read:  if true;        // capa do login (não sensível)
+      allow write: if isAdmin();
+    }
+  }
+}

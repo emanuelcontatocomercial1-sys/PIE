@@ -40,3 +40,10 @@ ChatGPT*.jpg
 *.xlsx
 *.xls
 _tmp_*
+
+# ── Firebase Cloud Functions (em STANDBY até ativar o Blaze) ──
+functions/node_modules/
+.firebase/
+firebase-debug.log
+*-debug.log
+PREVIEW-*.png
