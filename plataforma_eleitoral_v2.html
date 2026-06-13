@@ -60,15 +60,16 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 
 /* LOGIN */
 #login-screen{
-  position:fixed;inset:0;z-index:9999;display:flex;
+  position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;
 }
+/* Foto ocupa TODO o fundo da tela; o card flutua por cima (mais harmônico) */
 .login-cover{
-  width:36%;max-width:440px;background:#1a1a1a center/cover no-repeat;
-  display:none;position:relative;flex-shrink:0;
+  position:absolute;inset:0;width:100%;background:#0a1430 center/cover no-repeat;
+  display:block;z-index:0;
 }
 .login-cover::after{
   content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,0) 55%,rgba(0,0,0,0.72) 100%);
+  background:linear-gradient(150deg,rgba(5,37,247,0.42) 0%,rgba(7,12,48,0.80) 100%);
   pointer-events:none;
 }
 .login-cover-fallback{
@@ -96,27 +97,18 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,0.65);
   margin-top:10px;
 }
-@media(min-width:900px){.login-cover{display:block;}}
-/* Celular — capa vira banner no topo (foto da Talita visível acima do formulário) */
 @media(max-width:899px){
-  #login-screen{flex-direction:column;}
-  .login-cover{
-    display:block;width:100%;max-width:none;height:38vh;
-    min-height:200px;max-height:300px;flex-shrink:0;
-    background-position:center 28%;
-  }
-  .login-cover{height:34vh;min-height:210px;max-height:320px;}
-  .login-right{flex:1;min-height:0;margin-top:-26px;border-radius:26px 26px 0 0;position:relative;z-index:3;padding-top:34px;background:#f7f8fc;box-shadow:0 -8px 24px rgba(0,0,0,0.10);}
-  .login-card{border:none;box-shadow:none;padding:8px 26px 30px;}
+  #login-screen{padding:16px;}
+  .login-card{padding:30px 24px;}
 }
 .login-right{
-  flex:1;background:#f7f8fc;display:flex;align-items:center;justify-content:center;
-  padding:30px 20px;overflow-y:auto;
+  position:relative;z-index:2;display:flex;align-items:center;justify-content:center;
+  width:100%;max-width:420px;background:transparent;padding:0;
 }
 .login-card{
-  background:#ffffff;border:1px solid #e8ecf2;border-radius:20px;
-  padding:40px 36px;width:400px;max-width:100%;text-align:center;
-  box-shadow:0 4px 32px rgba(0,0,0,0.08);
+  background:#ffffff;border:none;border-radius:22px;
+  padding:38px 34px;width:100%;max-width:420px;text-align:center;
+  box-shadow:0 24px 64px rgba(0,0,0,0.40);
   position:relative;overflow:hidden;
 }
 .login-logo{margin-bottom:28px;}
