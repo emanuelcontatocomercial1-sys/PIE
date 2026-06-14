@@ -104,8 +104,12 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   margin-top:10px;
 }
 @media(max-width:899px){
-  #login-screen{padding:16px;}
-  .login-card{padding:30px 24px;}
+  /* No celular a foto vira um BANNER no topo e o card desce embaixo
+     (no desktop a foto fica atras e o card flutua). Assim a capa aparece. */
+  #login-screen{flex-direction:column;align-items:stretch;justify-content:flex-start;padding:0;overflow-y:auto;}
+  .login-cover{position:relative;height:38vh;min-height:220px;width:100%;}
+  .login-right{position:relative;z-index:2;max-width:none;width:100%;padding:18px 16px 32px;margin-top:-30px;align-items:stretch;}
+  .login-card{max-width:none;padding:30px 24px;}
 }
 .login-right{
   position:relative;z-index:2;display:flex;align-items:center;justify-content:center;
