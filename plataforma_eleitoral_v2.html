@@ -2365,7 +2365,7 @@ function mostrarObrigado(nome, code){
   screen.innerHTML = `
    <div style="width:100%;max-width:430px;text-align:center;color:#fff;padding:16px 6px 44px;">
      <img src="assets/talita-foto.png" alt="Talita Oliveira" style="width:126px;height:126px;border-radius:50%;border:4px solid rgba(255,255,255,0.92);object-fit:cover;box-shadow:0 12px 34px rgba(0,0,0,0.30);">
-     <div style="font-size:26px;font-weight:800;margin-top:18px;letter-spacing:-0.5px;">Obrigado${prim?', '+prim:''}! 💙💚</div>
+     <div style="font-size:26px;font-weight:800;margin-top:18px;letter-spacing:-0.5px;">Obrigado${prim?', '+escHtml(prim):''}! 💙💚</div>
      <div style="font-size:14px;color:rgba(255,255,255,0.92);line-height:1.6;margin:10px 22px 24px;">Seu cadastro foi confirmado! Agora dá mais um passo com a gente:</div>
      <div style="display:flex;flex-direction:column;gap:12px;">${cardIG}${cardWA}${cardQR}</div>
      <div id="obg-qr-area" style="display:none;background:#fff;border-radius:16px;padding:18px;margin-top:14px;color:#0d1326;text-align:center;">
@@ -2528,8 +2528,8 @@ function renderArvore(lider) {
     const tag   = isLider ? 'liderança' : 'lead';
     return `
       <div class="tree-node">
-        <div class="tree-bubble ${klass}" onclick="abrirDetalheLideranca('${n.id}')" style="cursor:pointer;" title="${n.nome} (${tag})">${inicial}</div>
-        <div class="tree-label">${n.nome.split(' ')[0]}<small>${sub?sub+' indic.':tag}</small></div>
+        <div class="tree-bubble ${klass}" onclick="abrirDetalheLideranca('${n.id}')" style="cursor:pointer;" title="${escHtml(n.nome)} (${tag})">${escHtml(inicial)}</div>
+        <div class="tree-label">${escHtml(n.nome.split(' ')[0])}<small>${sub?sub+' indic.':tag}</small></div>
         ${fs.length ? `<div class="tree-children">${fs.map(c => nodeHtml(c)).join('')}</div>` : ''}
       </div>`;
   }
@@ -2556,8 +2556,8 @@ function renderListaRede(lider) {
       <div class="ld-list-item" onclick="abrirDetalheLideranca('${d.id}')" style="cursor:pointer;padding-left:${12 + lv*14}px;">
         <span class="ld-list-bullet" style="background:${tagCol};"></span>
         <div style="flex:1;min-width:0;">
-          <div style="font-weight:600;color:var(--branco);font-size:13px;">${d.nome||'—'} <small style="color:var(--cinza2);font-weight:400;">· nível ${lv}</small></div>
-          <div style="font-size:11px;color:var(--cinza2);">${d.municipio||'—'}${d.bairro?' · '+d.bairro:''}</div>
+          <div style="font-weight:600;color:var(--branco);font-size:13px;">${escHtml(d.nome||'—')} <small style="color:var(--cinza2);font-weight:400;">· nível ${lv}</small></div>
+          <div style="font-size:11px;color:var(--cinza2);">${escHtml(d.municipio||'—')}${d.bairro?' · '+escHtml(d.bairro):''}</div>
         </div>
         <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:${tagBg};color:${tagCol};">${tagTxt}</span>
       </div>`;
@@ -2713,8 +2713,8 @@ function renderPortal() {
     const col = isL ? '#3b82f6' : '#10b981'; const txt = isL ? 'liderança' : 'cadastrado';
     return `<div class="ld-list-item" style="padding-left:${12+lv*14}px;">
       <span class="ld-list-bullet" style="background:${col};"></span>
-      <div style="flex:1;min-width:0;"><div style="font-weight:600;color:var(--branco);font-size:13px;">${d.nome||'—'} <small style="color:var(--cinza2);font-weight:400;">· nível ${lv}</small></div>
-      <div style="font-size:11px;color:var(--cinza2);">${d.municipio||'—'}${d.bairro?' · '+d.bairro:''}</div></div>
+      <div style="flex:1;min-width:0;"><div style="font-weight:600;color:var(--branco);font-size:13px;">${escHtml(d.nome||'—')} <small style="color:var(--cinza2);font-weight:400;">· nível ${lv}</small></div>
+      <div style="font-size:11px;color:var(--cinza2);">${escHtml(d.municipio||'—')}${d.bairro?' · '+escHtml(d.bairro):''}</div></div>
       <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:${isL?'rgba(37,99,235,0.15)':'rgba(5,150,105,0.15)'};color:${col};">${txt}</span></div>`;
   }).join('') : '<div style="text-align:center;color:var(--cinza2);font-size:13px;padding:24px;">Você ainda não indicou ninguém. Compartilhe seu link abaixo pra começar! 🚀</div>';
   const motiv = desc.length === 0
@@ -2730,7 +2730,7 @@ function renderPortal() {
         </div>
         <div style="flex:1;min-width:0;">
           <div style="font-size:25px;font-weight:800;letter-spacing:-0.5px;">Olá, ${prim}! 👋</div>
-          <div style="font-size:13px;color:rgba(255,255,255,0.82);margin-top:4px;">${me.municipio||'—'}${me.bairro?' · '+me.bairro:''} · Sua liderança na rede</div>
+          <div style="font-size:13px;color:rgba(255,255,255,0.82);margin-top:4px;">${escHtml(me.municipio||'—')}${me.bairro?' · '+escHtml(me.bairro):''} · Sua liderança na rede</div>
         </div>
       </div>
       <div style="margin-top:16px;background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:11px 14px;font-size:13.5px;font-weight:600;">${motiv}</div>
@@ -2768,7 +2768,7 @@ function renderPortal() {
       <div class="panel-body">
         <div class="form-row"><div class="form-group"><label class="form-label">Nome *</label><input class="form-input" id="pa-nome" placeholder="Nome completo"></div>
         <div class="form-group"><label class="form-label">Telefone</label><input class="form-input" id="pa-tel" placeholder="71 99999-9999"></div></div>
-        <div class="form-row"><div class="form-group"><label class="form-label">Município *</label><input class="form-input" id="pa-mun" placeholder="Ex: Salvador" value="${me.municipio||''}"></div>
+        <div class="form-row"><div class="form-group"><label class="form-label">Município *</label><input class="form-input" id="pa-mun" placeholder="Ex: Salvador" value="${escHtml(me.municipio||'')}"></div>
         <div class="form-group"><label class="form-label">Bairro</label><input class="form-input" id="pa-bairro" placeholder="Bairro"></div></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
           <button class="btn btn-primary" onclick="salvarApoiadorPortal()">Adicionar à minha rede</button>
@@ -3009,10 +3009,10 @@ function renderPaginaRede() {
     return `
       <div class="rede-card" onclick="abrirDetalheLideranca('${r.id}')">
         <div class="rede-card-head">
-          <div class="rede-card-bub">${inicial}</div>
+          <div class="rede-card-bub">${escHtml(inicial)}</div>
           <div style="flex:1;min-width:0;">
-            <div class="rede-card-name">${r.nome||'—'}</div>
-            <div class="rede-card-mun">${r.municipio||'—'}${r.bairro?' · '+r.bairro:''}</div>
+            <div class="rede-card-name">${escHtml(r.nome||'—')}</div>
+            <div class="rede-card-mun">${escHtml(r.municipio||'—')}${r.bairro?' · '+escHtml(r.bairro):''}</div>
           </div>
         </div>
         <div class="rede-card-stats">
@@ -3053,7 +3053,7 @@ function renderDashboard() {
   el('dash-ranking').innerHTML = ranking.length ? ranking.map((r,i) => `
     <div class="lista-item">
       <div class="li-rank">${i+1}</div>
-      <div class="li-info"><div class="li-name">${r.l.nome||'—'}</div><div class="li-sub">${r.l.municipio||'—'} · ${fmt(r.votos)} votos</div></div>
+      <div class="li-info"><div class="li-name">${escHtml(r.l.nome||'—')}</div><div class="li-sub">${escHtml(r.l.municipio||'—')} · ${fmt(r.votos)} votos</div></div>
       <div class="li-val">${fmt(r.rede)}</div>
       <div class="li-bar-wrap"><div class="li-bar" style="width:${Math.round(r.rede/maxRede*100)}%"></div></div>
     </div>`).join('') : vazio('Cadastre lideranças para ver o ranking.');
@@ -3077,7 +3077,7 @@ function renderDashboard() {
   el('dash-municipios').innerHTML = tops.length ? tops.map(([m,c],i) => `
     <div class="lista-item">
       <div class="li-rank">${i+1}</div>
-      <div class="li-info"><div class="li-name">${m}</div></div>
+      <div class="li-info"><div class="li-name">${escHtml(m)}</div></div>
       <div class="li-val">${fmt(c)}</div>
       <div class="li-bar-wrap"><div class="li-bar" style="width:${Math.round(c/maxMun*100)}%"></div></div>
     </div>`).join('') : vazio('Sem dados de município.');
@@ -3095,7 +3095,7 @@ function renderDashboard() {
   const recentes = leads.filter(l => l.created_at).sort((a,b) => b.created_at.seconds - a.created_at.seconds).slice(0, 6);
   el('dash-recentes').innerHTML = recentes.length ? recentes.map(l => {
     const pai = l.parent_id ? (_lidPorId.get(l.parent_id)?.nome || '—') : 'Solto';
-    return `<div class="lista-item"><div class="li-info"><div class="li-name">${l.nome||'—'}</div><div class="li-sub">${l.municipio||'—'} · ${pai}</div></div></div>`;
+    return `<div class="lista-item"><div class="li-info"><div class="li-name">${escHtml(l.nome||'—')}</div><div class="li-sub">${escHtml(l.municipio||'—')} · ${escHtml(pai)}</div></div></div>`;
   }).join('') : vazio('Nenhum cadastro recente.');
 }
 
@@ -3157,18 +3157,18 @@ function renderLeads() {
       const dt = l.created_at?.toDate ? l.created_at.toDate().toLocaleDateString('pt-BR') : '—';
       return `
         <tr>
-          <td data-label="Nome"><span class="crm-avatar" style="background:linear-gradient(135deg,#059669,#10b981);">${(l.nome||'?')[0].toUpperCase()}</span>${l.nome||'—'}</td>
+          <td data-label="Nome"><span class="crm-avatar" style="background:linear-gradient(135deg,#059669,#10b981);">${escHtml((l.nome||'?')[0].toUpperCase())}</span>${escHtml(l.nome||'—')}</td>
           <td data-label="Município">
-            <div style="font-weight:600;color:var(--branco);font-size:12px;">${l.municipio||'—'}</div>
-            ${l.bairro?`<div style="font-size:11px;color:var(--cinza2);">${l.bairro}</div>`:''}
+            <div style="font-weight:600;color:var(--branco);font-size:12px;">${escHtml(l.municipio||'—')}</div>
+            ${l.bairro?`<div style="font-size:11px;color:var(--cinza2);">${escHtml(l.bairro)}</div>`:''}
           </td>
-          <td data-label="Contato" style="font-size:12px;color:var(--cinza);">${l.telefone||'—'}</td>
-          <td data-label="Liderança" style="font-size:12px;">${pai ? `<a onclick="abrirDetalheLideranca('${pai.id}')" style="cursor:pointer;color:var(--ciano);">${pai.nome}</a>` : '<span style="color:var(--cinza2);">— solto —</span>'}</td>
+          <td data-label="Contato" style="font-size:12px;color:var(--cinza);">${escHtml(l.telefone||'—')}</td>
+          <td data-label="Liderança" style="font-size:12px;">${pai ? `<a onclick="abrirDetalheLideranca('${pai.id}')" style="cursor:pointer;color:var(--ciano);">${escHtml(pai.nome)}</a>` : '<span style="color:var(--cinza2);">— solto —</span>'}</td>
           <td data-label="Origem">${origem}</td>
           <td data-label="Cadastro" style="font-size:11px;color:var(--cinza2);">${dt}</td>
           <td data-label="Ações" style="white-space:nowrap;">
             <button onclick="editarLead('${l.id}')" style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">✏️</button>
-            <button onclick="apagarLead('${l.id}','${(l.nome||'').replace(/'/g,"\\'")}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">🗑️</button>
+            <button onclick="apagarLead('${l.id}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">🗑️</button>
           </td>
         </tr>`;
     }).join('');
@@ -3194,7 +3194,7 @@ function abrirNovoLead() {
   const sel = document.getElementById('lead-parent');
   const lideres = _liderancasData.filter(l => tipoDe(l) === 'lideranca').sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
   sel.innerHTML = '<option value="">— Sem vínculo (lead solto) —</option>' +
-    lideres.map(l => `<option value="${l.id}">${l.nome} · ${l.municipio||''}</option>`).join('');
+    lideres.map(l => `<option value="${l.id}">${escHtml(l.nome||'')} · ${escHtml(l.municipio||'')}</option>`).join('');
   sel.value = '';
   document.getElementById('modal-lead').classList.add('show');
 }
@@ -3248,7 +3248,8 @@ function feedbackLead(msg, ok) {
   el.style.color = ok ? '#10B981' : '#EF4444';
 }
 
-async function apagarLead(id, nome) {
+async function apagarLead(id) {
+  const nome = (_lidPorId.get(id) || {}).nome || 'este lead';
   if (!confirm(`Apagar o lead "${nome}"?`)) return;
   try { await _db.collection('liderancas').doc(id).delete(); }
   catch(e) { alert('Erro: '+e.message); }
@@ -3264,7 +3265,7 @@ function abrirImportPlanilha() {
   const sel = document.getElementById('import-parent');
   const lideres = _liderancasData.filter(l => tipoDe(l) === 'lideranca').sort((a,b) => (a.nome||'').localeCompare(b.nome||''));
   sel.innerHTML = '<option value="">— Deixar soltos (sem liderança pai) —</option>' +
-    lideres.map(l => `<option value="${l.id}">${l.nome} · ${l.municipio||''}</option>`).join('');
+    lideres.map(l => `<option value="${l.id}">${escHtml(l.nome||'')} · ${escHtml(l.municipio||'')}</option>`).join('');
   document.getElementById('modal-import').classList.add('show');
 }
 
@@ -3826,14 +3827,14 @@ function renderAprovacoes(){
   lista.innerHTML = _usuariosPendentes.map(u => {
     const dt = u.created_at?.toDate ? u.created_at.toDate().toLocaleString('pt-BR') : '';
     return `<div class="usr-row" style="flex-wrap:wrap;gap:10px;">
-      <div class="usr-avt" style="background:var(--amarelo2);">${(u.nome||u.email||'?')[0].toUpperCase()}</div>
+      <div class="usr-avt" style="background:var(--amarelo2);">${escHtml((u.nome||u.email||'?')[0].toUpperCase())}</div>
       <div class="usr-inf">
         <div class="usr-name">${escHtml(u.nome||'—')}</div>
         <div class="usr-email">${escHtml(u.email||'—')}${dt?` · pediu em ${dt}`:''}</div>
       </div>
       <div style="display:flex;gap:8px;margin-left:auto;">
         <button onclick="aprovarUsuario('${u.uid}')" style="background:var(--verde2);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);">✓ Aprovar</button>
-        <button onclick="recusarUsuario('${u.uid}','${escHtml(u.nome||'')}')" style="background:rgba(239,68,68,0.1);color:#EF4444;border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:8px 16px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);">Recusar</button>
+        <button onclick="recusarUsuario('${u.uid}')" style="background:rgba(239,68,68,0.1);color:#EF4444;border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:8px 16px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:var(--fonte);">Recusar</button>
       </div>
     </div>`;
   }).join('');
@@ -3843,7 +3844,8 @@ async function aprovarUsuario(uid){
   try { await _db.collection('usuarios').doc(uid).update({ status:'ativo' }); }
   catch(e){ alert('Erro ao aprovar: '+e.message); }
 }
-async function recusarUsuario(uid, nome){
+async function recusarUsuario(uid){
+  const nome = (_usuariosPendentes.find(u => u.uid === uid) || {}).nome;
   if(!confirm(`Recusar o acesso de "${nome||'esta conta'}"? Ela ficará bloqueada e não poderá entrar.`)) return;
   try { await _db.collection('usuarios').doc(uid).update({ status:'inativo' }); }
   catch(e){ alert('Erro ao recusar: '+e.message); }
@@ -3861,10 +3863,10 @@ async function carregarUsuarios() {
       const u = doc.data(); const uid = doc.id;
       const isMe = _currentUser && _currentUser.uid === uid;
       return `<div class="usr-row">
-        <div class="usr-avt">${(u.nome||u.email||'?')[0].toUpperCase()}</div>
+        <div class="usr-avt">${escHtml((u.nome||u.email||'?')[0].toUpperCase())}</div>
         <div class="usr-inf">
-          <div class="usr-name">${u.nome||'—'}${isMe?' <span style="font-size:10px;color:var(--cinza2);">(você)</span>':''}</div>
-          <div class="usr-email">${u.email||'—'}</div>
+          <div class="usr-name">${escHtml(u.nome||'—')}${isMe?' <span style="font-size:10px;color:var(--cinza2);">(você)</span>':''}</div>
+          <div class="usr-email">${escHtml(u.email||'—')}</div>
         </div>
         <span class="badge ${stColor[u.status]||'azul'}" style="font-size:10px;">${u.status||'—'}</span>
         <span class="badge azul" style="font-size:10px;">${roleLabel[u.role]||u.role}</span>
@@ -4006,23 +4008,25 @@ _db.collection('municipios').onSnapshot(snapshot => {
     if(docs.length === 0){
       hist.innerHTML = '<div style="font-size:12px;color:var(--cinza2);">Nenhum registro ainda.</div>';
     } else {
+      _votosCache = {};
       hist.innerHTML = docs.map(d => {
         const data = d.data();
         const docId = d.id;
+        _votosCache[docId] = data;
         const ts = data.updated_at?.toDate?.();
         const timeStr = ts ? ts.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
         return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:var(--bg3);border-radius:8px;font-size:12px;gap:8px;">
           <div style="flex:1;min-width:0;">
-            <span style="font-weight:700;color:var(--branco)">${data.nome}</span>
-            ${data.obs ? `<div style="color:var(--cinza2);font-size:11px;margin-top:2px;">${data.obs}</div>` : ''}
+            <span style="font-weight:700;color:var(--branco)">${escHtml(data.nome)}</span>
+            ${data.obs ? `<div style="color:var(--cinza2);font-size:11px;margin-top:2px;">${escHtml(data.obs)}</div>` : ''}
             <div style="font-size:10px;color:var(--cinza2);margin-top:2px;">${timeStr}</div>
           </div>
           <div style="font-weight:800;color:var(--verde2);font-family:var(--mono);white-space:nowrap;">${(data.votos_atual||0).toLocaleString('pt-BR')}</div>
           <div style="display:flex;gap:4px;flex-shrink:0;">
-            <button onclick="editarVoto('${docId}','${data.nome.replace(/'/g,"\\'")}',${data.votos_atual||0},'${(data.obs||'').replace(/'/g,"\\'")}')"
+            <button onclick="editarVoto('${docId}')"
               style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;font-family:var(--fonte);font-weight:600;"
               title="Editar">✏️</button>
-            <button onclick="apagarVoto('${docId}','${data.nome.replace(/'/g,"\\'")}')"
+            <button onclick="apagarVoto('${docId}')"
               style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;font-family:var(--fonte);font-weight:600;"
               title="Apagar">🗑️</button>
           </div>
@@ -4075,10 +4079,13 @@ async function registrarVotos() {
   btn.textContent = '📍 Registrar no Mapa';
 }
 
-function editarVoto(docId, nome, votos, obs) {
+let _votosCache = {};
+function editarVoto(docId) {
+  const data = _votosCache[docId] || {};
+  const nome = data.nome || '';
   document.getElementById('votos-municipio').value = nome;
-  document.getElementById('votos-quantidade').value = votos;
-  document.getElementById('votos-obs').value = obs;
+  document.getElementById('votos-quantidade').value = data.votos_atual || 0;
+  document.getElementById('votos-obs').value = data.obs || '';
   // Guarda o docId para sobrescrever no save
   document.getElementById('btn-registrar')._editDocId = docId;
   document.getElementById('btn-registrar').textContent = '✏️ Atualizar Registro';
@@ -4086,7 +4093,8 @@ function editarVoto(docId, nome, votos, obs) {
   mostrarFeedback(`Editando: ${nome}. Ajuste e clique em Atualizar.`, true);
 }
 
-async function apagarVoto(docId, nome) {
+async function apagarVoto(docId) {
+  const nome = (_votosCache[docId] || {}).nome || 'este município';
   if(!confirm(`Apagar os votos de "${nome}"? Esta ação não pode ser desfeita.`)) return;
   try {
     await _db.collection('municipios').doc(docId).delete();
@@ -4196,8 +4204,8 @@ function atualizarStatsCRM() {
       <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--borda);">
         <span style="font-size:11px;color:var(--cinza2);width:16px;">${i+1}</span>
         <div style="flex:1;min-width:0;">
-          <div style="font-size:12px;font-weight:700;color:var(--branco);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${l.nome||'—'}</div>
-          <div style="font-size:10px;color:var(--cinza2);">${l.municipio||''}${l.bairro?' · '+l.bairro:''}</div>
+          <div style="font-size:12px;font-weight:700;color:var(--branco);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(l.nome||'—')}</div>
+          <div style="font-size:10px;color:var(--cinza2);">${escHtml(l.municipio||'')}${l.bairro?' · '+escHtml(l.bairro):''}</div>
         </div>
         <span style="font-size:12px;font-weight:800;color:var(--verde2);font-family:var(--mono);">${(l.votos_comprometidos||0).toLocaleString('pt-BR')}</span>
       </div>`).join('');
@@ -4209,7 +4217,7 @@ function atualizarFiltroMun() {
   if(!sel) return;
   const atual = sel.value;
   const municipios = [...new Set(_lideres.map(l=>l.municipio).filter(Boolean))].sort();
-  sel.innerHTML = '<option value="">Todos os municípios</option>' + municipios.map(m=>`<option value="${m}"${m===atual?' selected':''}>${m}</option>`).join('');
+  sel.innerHTML = '<option value="">Todos os municípios</option>' + municipios.map(m=>`<option value="${escHtml(m)}"${m===atual?' selected':''}>${escHtml(m)}</option>`).join('');
 }
 
 function filtrarLiderancas() { renderCRM(); }
@@ -4234,18 +4242,18 @@ function renderCRM() {
     return `
     <tr>
       <td data-label="Nome">
-        <span class="crm-avatar" onclick="abrirDetalheLideranca('${l.id}')" style="cursor:pointer;">${(l.nome||'?')[0].toUpperCase()}</span>
-        <a onclick="abrirDetalheLideranca('${l.id}')" style="cursor:pointer;text-decoration:none;color:var(--branco);font-weight:600;">${l.nome||'—'}</a>
+        <span class="crm-avatar" onclick="abrirDetalheLideranca('${l.id}')" style="cursor:pointer;">${escHtml((l.nome||'?')[0].toUpperCase())}</span>
+        <a onclick="abrirDetalheLideranca('${l.id}')" style="cursor:pointer;text-decoration:none;color:var(--branco);font-weight:600;">${escHtml(l.nome||'—')}</a>
       </td>
       <td data-label="Município">
-        <div style="font-weight:600;color:var(--branco);font-size:12px;">${l.municipio||'—'}</div>
-        ${l.bairro?`<div style="font-size:11px;color:var(--cinza2);">${l.bairro}</div>`:''}
+        <div style="font-weight:600;color:var(--branco);font-size:12px;">${escHtml(l.municipio||'—')}</div>
+        ${l.bairro?`<div style="font-size:11px;color:var(--cinza2);">${escHtml(l.bairro)}</div>`:''}
       </td>
-      <td data-label="Segmento">${l.segmento||'—'}</td>
+      <td data-label="Segmento">${escHtml(l.segmento||'—')}</td>
       <td data-label="Votos" style="font-weight:800;color:var(--verde);font-family:var(--mono);">${(l.votos_comprometidos||0).toLocaleString('pt-BR')}</td>
-      <td data-label="Status"><span class="badge ${statusColor[l.status]||'azul'}">${l.status||'—'}</span></td>
+      <td data-label="Status"><span class="badge ${statusColor[l.status]||'azul'}">${escHtml(l.status||'—')}</span></td>
       <td data-label="Rede" style="font-size:11px;color:var(--cinza);font-family:var(--mono);">${diretas}${rede>diretas?` <small style="color:var(--cinza2);">(${rede})</small>`:''}</td>
-      <td data-label="Contato" style="font-size:12px;color:var(--cinza);">${l.telefone||'—'}</td>
+      <td data-label="Contato" style="font-size:12px;color:var(--cinza);">${escHtml(l.telefone||'—')}</td>
       <td data-label="Ações" style="white-space:nowrap;">
         <button onclick="abrirDetalheLideranca('${l.id}')" title="Ver rede de indicações"
           style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--ciano3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">🔗</button>
@@ -4255,7 +4263,7 @@ function renderCRM() {
           style="background:rgba(37,211,102,0.13);border:1px solid rgba(37,211,102,0.4);color:#1da851;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">📲</button>
         <button onclick="editarLideranca('${l.id}')"
           style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;margin-right:4px;">✏️</button>
-        <button onclick="apagarLideranca('${l.id}','${(l.nome||'').replace(/'/g,"\\'")}')"
+        <button onclick="apagarLideranca('${l.id}')"
           style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:3px 7px;font-size:11px;cursor:pointer;">🗑️</button>
       </td>
     </tr>`;
@@ -4301,7 +4309,8 @@ function editarLideranca(id) {
   document.getElementById('modal-lideranca').classList.add('show');
 }
 
-async function apagarLideranca(id, nome) {
+async function apagarLideranca(id) {
+  const nome = (_lidPorId.get(id) || {}).nome || 'esta liderança';
   if(!confirm(`Apagar a liderança "${nome}"? Esta ação não pode ser desfeita.`)) return;
   try {
     await _db.collection('liderancas').doc(id).delete();
@@ -4920,18 +4929,17 @@ function renderEventoItem(e, passado) {
   const hora = dt ? dt.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
   const cor  = _TIPO_COR[e.tipo] || '';
   const op   = passado ? 'opacity:0.5;' : '';
-  const titulo_safe = (e.titulo||'').replace(/'/g,"\\'");
   return `<div class="agenda-item${cor?' '+cor:''}" style="${op}position:relative;margin-bottom:10px;">
     <div class="ag-date"><div class="ag-day">${dia}</div><div class="ag-month">${mes}</div></div>
     <div class="ag-info" style="flex:1;">
-      <div class="ag-title">${e.titulo||'—'}</div>
-      ${e.local?`<div class="ag-local">📍 ${e.local}</div>`:''}
-      <div class="ag-time">${hora}${e.tipo?' · '+e.tipo:''}</div>
-      ${e.obs?`<div style="font-size:11px;color:var(--cinza2);margin-top:3px;">${e.obs}</div>`:''}
+      <div class="ag-title">${escHtml(e.titulo||'—')}</div>
+      ${e.local?`<div class="ag-local">📍 ${escHtml(e.local)}</div>`:''}
+      <div class="ag-time">${hora}${e.tipo?' · '+escHtml(e.tipo):''}</div>
+      ${e.obs?`<div style="font-size:11px;color:var(--cinza2);margin-top:3px;">${escHtml(e.obs)}</div>`:''}
     </div>
     <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
       <button onclick="editarEvento('${e.id}')" style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.3);color:var(--azul3);border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;">✏️</button>
-      <button onclick="apagarEvento('${e.id}','${titulo_safe}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;">🗑️</button>
+      <button onclick="apagarEvento('${e.id}')" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:#EF4444;border-radius:6px;padding:3px 8px;font-size:11px;cursor:pointer;">🗑️</button>
     </div>
   </div>`;
 }
@@ -4982,7 +4990,8 @@ function editarEvento(id) {
   document.getElementById('agenda-form-panel').scrollIntoView({behavior:'smooth'});
 }
 
-async function apagarEvento(id, titulo) {
+async function apagarEvento(id) {
+  const titulo = (_eventosData.find(x => x.id === id) || {}).titulo || 'este evento';
   if(!confirm(`Apagar o evento "${titulo}"? Esta ação não pode ser desfeita.`)) return;
   try { await _db.collection('eventos').doc(id).delete(); }
   catch(e) { console.error(e); }
