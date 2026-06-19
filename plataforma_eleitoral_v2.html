@@ -1564,6 +1564,16 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
               </div>
             </div>
 
+            <!-- Limpeza de cadastros de teste (admin) -->
+            <div class="settings-card">
+              <div class="settings-section-title">🧹 Limpeza de cadastros</div>
+              <div style="font-size:12px;color:var(--cinza);margin-bottom:14px;line-height:1.5;">
+                Remove cadastros de <b>teste</b> da rede (lideranças e leads). Clique em <b>Analisar</b> para ver a prévia — os que parecem teste já vêm marcados, mas <b>nada é apagado sem você confirmar</b>. Desmarque o que quiser manter.
+              </div>
+              <button onclick="abrirLimpeza()" class="btn btn-outline" style="width:100%;">🔎 Analisar cadastros</button>
+              <div id="limpeza-area" style="display:none;margin-top:14px;"></div>
+            </div>
+
             <div class="settings-card" id="cfg-criar-usuario-form" style="display:none;">
               <div class="settings-section-title">✉️ Novo Usuário</div>
               <div style="display:flex;flex-direction:column;gap:12px;">
@@ -4326,6 +4336,76 @@ async function apagarLideranca(id) {
 }
 
 function escHtml(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ── 🧹 Limpeza de cadastros de teste (admin) ──
+// Heurística: marca como provável teste cadastros com nome vazio/curtinho, nomes
+// genéricos (teste/asdf/fulano…) ou telefone falso (repetido/sequencial).
+function _pareceTeste(l){
+  const nome=(l.nome||'').trim().toLowerCase();
+  const tel=(l.telefone||'').replace(/\D/g,'');
+  if(!nome) return true;
+  if(nome.length<=2) return true;
+  if(/^(teste|test|tst|asdf?|qwert?y?|zxc|aaa+|bbb+|ccc+|xxx+|abc|abcd|fulano|ciclano|beltrano|sem ?nome|nome|tester|exemplo|sample|123+)$/.test(nome)) return true;
+  if(/\b(teste|test)\b/.test(nome)) return true;
+  if(tel && /^(\d)\1{4,}$/.test(tel)) return true;
+  if(/^(0123456789|123456|1234567|7654321|0000000|1111111|9999999)/.test(tel)) return true;
+  return false;
+}
+function abrirLimpeza(){
+  const area=document.getElementById('limpeza-area'); if(!area) return;
+  area.style.display='block';
+  const meuUid=(typeof _auth!=='undefined'&&_auth.currentUser&&_auth.currentUser.uid)||null;
+  // ordena os prováveis testes primeiro
+  const docs=(_liderancasData||[]).slice().sort((a,b)=>(_pareceTeste(b)?1:0)-(_pareceTeste(a)?1:0));
+  if(!docs.length){ area.innerHTML='<div style="font-size:13px;color:var(--cinza2);text-align:center;padding:14px;">Nenhum cadastro na rede.</div>'; return; }
+  let nPre=0;
+  const rows=docs.map(l=>{
+    const t=_pareceTeste(l), vinc=!!l.auth_uid, eu=(l.auth_uid&&l.auth_uid===meuUid);
+    const pre = t && !vinc && !eu;           // não pré-marca contas com login (gente real) nem você
+    if(pre) nPre++;
+    const tipo=(typeof tipoDe==='function'?tipoDe(l):(l.parent_id?'lead':'lideranca'));
+    const badges=(eu?' <span class="badge azul" style="font-size:9px;">você</span>':'')+(vinc&&!eu?' <span class="badge" style="font-size:9px;background:#fde68a;color:#7c5b00;">login vinculado</span>':'');
+    return '<label style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-bottom:1px solid var(--borda);font-size:12px;cursor:pointer;'+(pre?'background:rgba(227,36,126,0.07);':'')+'">'
+      +'<input type="checkbox" class="limpeza-chk" value="'+escHtml(l.id)+'" '+(pre?'checked':'')+' onchange="_limpezaContar()" style="width:16px;height:16px;flex-shrink:0;">'
+      +'<div style="flex:1;min-width:0;">'
+        +'<div style="font-weight:700;color:var(--branco);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escHtml(l.nome||'(sem nome)')+badges+'</div>'
+        +'<div style="color:var(--cinza2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+escHtml(tipo)+' · '+escHtml(l.telefone||'sem tel')+' · '+escHtml(l.municipio||'sem município')+(l.created_via?' · '+escHtml(l.created_via):'')+'</div>'
+      +'</div>'
+      +(t?'<span style="font-size:9px;color:#e3247e;font-weight:700;flex-shrink:0;">TESTE?</span>':'')
+    +'</label>';
+  }).join('');
+  area.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;font-size:12px;flex-wrap:wrap;gap:8px;">'
+    +'<div style="color:var(--cinza);">'+docs.length+' cadastro(s) · <b style="color:#e3247e;">'+nPre+'</b> marcado(s)</div>'
+    +'<div style="display:flex;gap:8px;"><button onclick="_limpezaTodos(true)" class="btn btn-outline" style="font-size:11px;padding:5px 10px;">Marcar todos</button>'
+    +'<button onclick="_limpezaTodos(false)" class="btn btn-outline" style="font-size:11px;padding:5px 10px;">Limpar seleção</button></div></div>'
+    +'<div style="max-height:340px;overflow:auto;border:1px solid var(--borda);border-radius:10px;">'+rows+'</div>'
+    +'<button id="limpeza-btn-apagar" onclick="executarLimpeza()" class="btn" style="width:100%;margin-top:12px;background:#e3247e;color:#fff;font-weight:700;">🗑️ Apagar selecionados ('+nPre+')</button>'
+    +'<div id="limpeza-feedback" style="display:none;font-size:12px;padding:10px;border-radius:8px;text-align:center;font-weight:600;margin-top:10px;"></div>';
+}
+function _limpezaTodos(check){ document.querySelectorAll('.limpeza-chk').forEach(c=>c.checked=check); _limpezaContar(); }
+function _limpezaContar(){ const n=document.querySelectorAll('.limpeza-chk:checked').length; const b=document.getElementById('limpeza-btn-apagar'); if(b) b.textContent='🗑️ Apagar selecionados ('+n+')'; }
+async function executarLimpeza(){
+  const ids=Array.prototype.map.call(document.querySelectorAll('.limpeza-chk:checked'), c=>c.value);
+  const fb=document.getElementById('limpeza-feedback');
+  const setFb=(bg,col,txt)=>{ if(fb){fb.style.display='block';fb.style.background=bg;fb.style.color=col;fb.textContent=txt;} };
+  if(!ids.length){ setFb('#fef3c7','#92400e','Nada selecionado.'); return; }
+  if(!confirm('Apagar '+ids.length+' cadastro(s)? Esta ação é IRREVERSÍVEL.')) return;
+  const btn=document.getElementById('limpeza-btn-apagar'); if(btn) btn.disabled=true;
+  setFb('#eff6ff','#1e40af','Apagando 0/'+ids.length+'...');
+  try{
+    for(let i=0;i<ids.length;i+=400){
+      const batch=_db.batch();
+      ids.slice(i,i+400).forEach(id=>batch.delete(_db.collection('liderancas').doc(id)));
+      await batch.commit();
+      setFb('#eff6ff','#1e40af','Apagando '+Math.min(ids.length,i+400)+'/'+ids.length+'...');
+    }
+    setFb('#dcfce7','#166534','✅ '+ids.length+' cadastro(s) apagado(s).');
+    setTimeout(abrirLimpeza, 1000); // o snapshot já atualizou _liderancasData; recarrega a prévia
+  }catch(e){
+    setFb('#fee2e2','#991b1b','Erro: '+((e&&e.message)||e));
+    if(btn) btn.disabled=false;
+  }
+}
 
 // Máscara (DD) 99999-9999 / (DD) 9999-9999
 function mascararTel(input){
