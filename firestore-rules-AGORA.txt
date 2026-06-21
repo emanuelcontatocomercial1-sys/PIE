@@ -1,0 +1,74 @@
+rules_version = '2';
+// ─────────────────────────────────────────────────────────────────────────────
+// REGRAS "AGORA" — versão SEGURA pro plano grátis (Spark), SEM Cloud Functions.
+// Fecha a leitura ANÔNIMA da coleção `liderancas` (vazamento de PII) e protege os
+// códigos de acesso. O app espelha o mínimo necessário em `links` (lookup público
+// do cadastro) e `acessos` (validação do código de login).
+//
+// COMO USAR (ordem importa, pra não quebrar o cadastro):
+//   1) Cole estas regras em Firestore → Regras → Publicar
+//   2) Logado como ADMIN, vá em Configurações → "Preparar blindagem"
+//   3) Teste: abra um link de cadastro e crie um login de liderança de teste
+// ─────────────────────────────────────────────────────────────────────────────
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function nonanon()  { return signedIn() && request.auth.token.firebase.sign_in_provider != 'anonymous'; }
+    function meExists() { return signedIn() && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)); }
+    function meDoc()    { return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data; }
+    function ativo()    { return meExists() && nonanon() && meDoc().status == 'ativo'; }
+    function isAdmin()  { return ativo() && meDoc().role == 'admin'; }
+
+    match /usuarios/{uid} {
+      allow read:   if isAdmin() || (signedIn() && request.auth.uid == uid);
+      // Auto-cadastro de usuário (pendente) OU self-register de liderança (role lideranca).
+      allow create: if nonanon() && request.auth.uid == uid
+                    && (
+                         (request.resource.data.role == 'usuario' && request.resource.data.status == 'pendente')
+                         || request.resource.data.role == 'lideranca'
+                       );
+      // Mudar status/role: só admin (impede auto-aprovação).
+      allow update: if isAdmin()
+                    || (signedIn() && request.auth.uid == uid
+                        && request.resource.data.status == resource.data.status
+                        && request.resource.data.role == resource.data.role);
+      allow delete: if isAdmin();
+    }
+
+    match /liderancas/{doc} {
+      allow read:   if ativo();                       // anônimo NÃO lê mais (fecha o dump)
+      allow create: if signedIn();                    // cadastro público (anônimo) cria lead
+      // update normal só admin/ativo; OU "claim" único: não-anônimo vincula uma
+      // liderança ainda sem login, setando o próprio auth_uid.
+      allow update: if ativo()
+                    || ( nonanon()
+                         && resource.data.auth_uid == null
+                         && request.resource.data.auth_uid == request.auth.uid );
+      allow delete: if ativo();
+    }
+
+    // Lookup público do cadastro (sem PII sensível: só owner_id, nome, município).
+    match /links/{code} {
+      allow read:           if true;
+      allow create:         if signedIn();            // o próprio cadastrando cria seu link
+      allow update, delete: if ativo();               // alterar/backfill só usuário ativo
+    }
+
+    // Validação do código de login: get por id (não dá pra LISTAR/enumerar).
+    match /acessos/{code} {
+      allow get:            if signedIn();
+      allow list:           if false;
+      allow create, update, delete: if ativo();
+    }
+
+    match /municipios/{doc}   { allow read, write: if ativo(); }
+    match /eventos/{doc}      { allow read, write: if ativo(); }
+    match /concorrentes/{doc} { allow read, write: if ativo(); }
+
+    match /config/{doc} {
+      allow read:  if true;            // capa do login (não sensível)
+      allow write: if isAdmin();
+    }
+  }
+}

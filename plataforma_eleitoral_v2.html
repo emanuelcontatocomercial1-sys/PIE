@@ -1578,6 +1578,16 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
               <div id="limpeza-area" style="display:none;margin-top:14px;"></div>
             </div>
 
+            <!-- Blindagem de segurança: gera as coleções links/acessos (admin) -->
+            <div class="settings-card">
+              <div class="settings-section-title">🔐 Blindagem de segurança</div>
+              <div style="font-size:12px;color:var(--cinza);margin-bottom:14px;line-height:1.5;">
+                Prepara as coleções <b>links</b> e <b>acessos</b> pros cadastros que já existem, pra fechar a leitura anônima do banco. <b>Rode depois de publicar as regras novas</b> (eu te passo o passo a passo).
+              </div>
+              <button onclick="prepararBlindagem()" class="btn btn-outline" style="width:100%;">🔐 Preparar blindagem</button>
+              <div id="blindagem-fb" style="display:none;font-size:12px;padding:10px;border-radius:8px;text-align:center;font-weight:600;margin-top:10px;"></div>
+            </div>
+
             <div class="settings-card" id="cfg-criar-usuario-form" style="display:none;">
               <div class="settings-section-title">✉️ Novo Usuário</div>
               <div style="display:flex;flex-direction:column;gap:12px;">
@@ -2330,6 +2340,26 @@ function gerarLinkCode() {
   for (let i = 0; i < 6; i++) c += chars[Math.floor(Math.random() * chars.length)];
   return c;
 }
+// ── Blindagem (plano grátis): espelha o mínimo que o público/anônimo precisa em
+// coleções próprias, pra podermos FECHAR a leitura anônima de `liderancas` nas
+// regras sem quebrar nada. 'links' = lookup público do cadastro (sem PII sensível);
+// 'acessos' = validação do código de login (get por id, sem permitir listar).
+// Best-effort: se as regras atuais ainda não permitem, falha em silêncio e o app
+// segue funcionando como hoje (o backfill + as regras novas completam depois).
+function _escreverLinkPublico(code, ownerId, nome, municipio){
+  if(!code || !ownerId) return Promise.resolve();
+  return _db.collection('links').doc(code).set({
+    owner_id: ownerId, nome: nome||'', municipio: municipio||'',
+    updated_at: firebase.firestore.FieldValue.serverTimestamp()
+  }).catch(e=>console.warn('[links] não gravou (regras?):', e.code||e));
+}
+function _escreverAcesso(code, liderancaId){
+  if(!code || !liderancaId) return Promise.resolve();
+  return _db.collection('acessos').doc(code).set({
+    lideranca_id: liderancaId,
+    updated_at: firebase.firestore.FieldValue.serverTimestamp()
+  }).catch(e=>console.warn('[acessos] não gravou (regras?):', e.code||e));
+}
 // Tipo: prioriza campo explícito; fallback usa parent_id (lead se tiver pai)
 function tipoDe(l) {
   if (l && l.tipo === 'lead') return 'lead';
@@ -2435,18 +2465,25 @@ async function abrirCadastroPublico(code) {
   } catch(_){}
   const cadScr = document.getElementById('cadastro-screen'); if (cadScr) cadScr.style.background = _bgCapaCadastro();
   try {
-    const snap = await _db.collection('liderancas').where('link_code','==',code).limit(1).get();
-    if (snap.empty) {
+    // 1º tenta a coleção pública 'links' (não expõe a base). Fallback: query antiga.
+    let pid=null, pnome=null, pmun=null;
+    try {
+      const lk = await _db.collection('links').doc(code).get();
+      if (lk.exists){ const x=lk.data(); pid=x.owner_id; pnome=x.nome; pmun=x.municipio; }
+    } catch(_){}
+    if (!pid) {
+      const snap = await _db.collection('liderancas').where('link_code','==',code).limit(1).get();
+      if (!snap.empty){ const d=snap.docs[0]; pid=d.id; pnome=d.data().nome; pmun=d.data().municipio; }
+    }
+    if (!pid) {
       document.getElementById('cadastro-lider-nome').textContent = 'Link inválido';
       document.getElementById('cadastro-btn').disabled = true;
       return;
     }
-    const d = snap.docs[0];
-    const lid = { id: d.id, ...d.data() };
-    document.getElementById('cadastro-lider-nome').textContent = lid.nome || '—';
-    document.getElementById('cadastro-parent-id').value = lid.id;
-    document.getElementById('cadastro-parent-mun').value = lid.municipio || '';
-    if (lid.municipio) document.getElementById('cadastro-municipio').value = lid.municipio;
+    document.getElementById('cadastro-lider-nome').textContent = pnome || '—';
+    document.getElementById('cadastro-parent-id').value = pid;
+    document.getElementById('cadastro-parent-mun').value = pmun || '';
+    if (pmun) document.getElementById('cadastro-municipio').value = pmun;
   } catch(e) {
     console.error('[cadastro] erro ao buscar líder:', e);
     document.getElementById('cadastro-lider-nome').textContent = 'Erro ao carregar';
@@ -2470,7 +2507,7 @@ async function salvarCadastroPublico() {
   btn.disabled = true; btn.textContent = 'Salvando...';
   try {
     const meuCode = gerarLinkCode();
-    await _db.collection('liderancas').add({
+    const ref = await _db.collection('liderancas').add({
       nome, telefone, municipio, bairro,
       regiao: (typeof REGIOES_MAP !== 'undefined' && REGIOES_MAP[municipio]) || '',
       parent_id, link_code: meuCode,
@@ -2483,6 +2520,7 @@ async function salvarCadastroPublico() {
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       updated_at: firebase.firestore.FieldValue.serverTimestamp()
     });
+    await _escreverLinkPublico(meuCode, ref.id, nome, municipio);
     mostrarObrigado(nome, meuCode);
   } catch(e) {
     showFb('❌ Erro: ' + e.message, false);
@@ -2620,6 +2658,7 @@ async function gerarCodAcesso(id) {
     try { await _db.collection('liderancas').doc(id).update({ cod_acesso: code }); l.cod_acesso = code; }
     catch(e){ alert('Erro ao gerar código: '+e.message); return; }
   }
+  await _escreverAcesso(code, id);
   _codAcessoData = { code, nome: l.nome||'', tel: (l.telefone||'').replace(/\D/g,'') };
   document.getElementById('cod-nome').textContent   = l.nome || '—';
   document.getElementById('cod-codigo').textContent = code;
@@ -2654,6 +2693,7 @@ async function enviarCodWhatsApp(id){
     try { await _db.collection('liderancas').doc(id).update({ cod_acesso: code }); l.cod_acesso = code; }
     catch(e){ if(win) win.close(); alert('Erro ao gerar código: '+e.message); return; }
   }
+  await _escreverAcesso(code, id);
   const url = 'https://wa.me/'+_waNumLid(tel)+'?text='+encodeURIComponent(_msgAcessoLideranca(l.nome||'', code));
   if(win) win.location.href = url; else window.open(url,'_blank');
 }
@@ -2672,14 +2712,26 @@ async function cadastrarLideranca() {
   let cred = null;
   try {
     cred = await _auth.createUserWithEmailAndPassword(email, senha);
-    const snap = await _db.collection('liderancas').where('cod_acesso','==',codigo).limit(1).get();
-    if (snap.empty) { await cred.user.delete(); throw { code:'cod-invalido' }; }
-    const ld = snap.docs[0];
-    if (ld.data().auth_uid) { await cred.user.delete(); throw { code:'ja-vinculada' }; }
+    // 1º tenta 'acessos' (get por id; funciona mesmo com a leitura de liderancas fechada).
+    let ldId = null;
+    try { const ac = await _db.collection('acessos').doc(codigo).get(); if (ac.exists) ldId = ac.data().lideranca_id; } catch(_){}
+    if (!ldId) {
+      const snap = await _db.collection('liderancas').where('cod_acesso','==',codigo).limit(1).get();
+      if (snap.empty) { await cred.user.delete(); throw { code:'cod-invalido' }; }
+      ldId = snap.docs[0].id;
+    }
+    // "já vinculada?": sob as regras atuais a leitura funciona; sob as novas pode ser
+    // negada — aí a própria regra de claim protege e o update abaixo falha.
+    try {
+      const ld = await _db.collection('liderancas').doc(ldId).get();
+      if (ld.exists && ld.data().auth_uid) { await cred.user.delete(); throw { code:'ja-vinculada' }; }
+    } catch(e){ if (e && e.code==='ja-vinculada') throw e; }
     await cred.user.updateProfile({ displayName: nome }).catch(()=>{});
-    await _db.collection('liderancas').doc(ld.id).update({ auth_uid: cred.user.uid });
+    try {
+      await _db.collection('liderancas').doc(ldId).update({ auth_uid: cred.user.uid });
+    } catch(e){ await cred.user.delete(); throw { code:'ja-vinculada' }; }
     await _db.collection('usuarios').doc(cred.user.uid).set({
-      nome, email, role:'lideranca', liderancaId: ld.id, status:'ativo',
+      nome, email, role:'lideranca', liderancaId: ldId, status:'ativo',
       created_at: firebase.firestore.FieldValue.serverTimestamp()
     });
     _fluxoLideranca = false;
@@ -2966,15 +3018,17 @@ async function salvarApoiadorPortal() {
   if (!nome || !mun) { fb.style.color='var(--vermelho2)'; fb.textContent='Informe nome e município.'; return; }
   fb.style.color='var(--cinza)'; fb.textContent='Salvando...';
   try {
-    await _db.collection('liderancas').add({
+    const meuCode = gerarLinkCode();
+    const ref = await _db.collection('liderancas').add({
       nome, telefone:tel, municipio:mun, bairro,
       regiao: (typeof REGIOES_MAP !== 'undefined' && REGIOES_MAP[mun]) || '',
-      parent_id: id, link_code: gerarLinkCode(), tipo:'lead',
+      parent_id: id, link_code: meuCode, tipo:'lead',
       status:'Prospecto', votos_comprometidos:0, segmento:'', obs:'',
       created_via:'lideranca',
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       updated_at: firebase.firestore.FieldValue.serverTimestamp()
     });
+    await _escreverLinkPublico(meuCode, ref.id, nome, mun);
     fb.style.color='var(--verde2)'; fb.textContent='✅ Adicionado!';
     ['pa-nome','pa-tel','pa-bairro'].forEach(x=>{ const e=g(x); if(e) e.value=''; });
     carregarSubarvorePortal();   // recarrega só a subárvore já com o novo cadastro
@@ -3290,7 +3344,8 @@ async function salvarLeadManual() {
       payload.created_at = firebase.firestore.FieldValue.serverTimestamp();
       payload.created_via = 'manual';
       payload.link_code = gerarLinkCode();
-      await _db.collection('liderancas').add(payload);
+      const ref = await _db.collection('liderancas').add(payload);
+      await _escreverLinkPublico(payload.link_code, ref.id, nome, municipio);
     }
     fecharModal('modal-lead');
   } catch(e) { feedbackLead('❌ '+e.message, false); }
@@ -3595,15 +3650,17 @@ async function fiaConfirmar(){
   for (const p of validos){
     const mun = (p.municipio||'').trim();
     try {
-      await _db.collection('liderancas').add({
+      const fcode = gerarLinkCode();
+      const ref = await _db.collection('liderancas').add({
         nome: (p.nome||'').trim(), telefone: (p.telefone||'').trim(), municipio: mun, bairro: (p.bairro||'').trim(),
         regiao: (typeof REGIOES_MAP !== 'undefined' && REGIOES_MAP[mun]) || '',
-        parent_id: parent_id, link_code: gerarLinkCode(), tipo: 'lead',
+        parent_id: parent_id, link_code: fcode, tipo: 'lead',
         status: 'Prospecto', votos_comprometidos: 0, segmento: '', obs: 'Cadastrado por foto (IA)',
         created_via: 'foto-ia',
         created_at: firebase.firestore.FieldValue.serverTimestamp(),
         updated_at: firebase.firestore.FieldValue.serverTimestamp()
       });
+      await _escreverLinkPublico(fcode, ref.id, (p.nome||'').trim(), mun);
       ok++;
     } catch(e){ console.error('fia add:', e); }
   }
@@ -4455,6 +4512,33 @@ async function executarLimpeza(){
   }
 }
 
+// ── 🔐 Backfill da blindagem: cria links/acessos pros cadastros já existentes ──
+async function prepararBlindagem(){
+  const fb=document.getElementById('blindagem-fb');
+  const set=(bg,col,txt)=>{ if(fb){fb.style.display='block';fb.style.background=bg;fb.style.color=col;fb.textContent=txt;} };
+  const docs=_liderancasData||[];
+  if(!docs.length){ set('#fef3c7','#92400e','Nenhum cadastro carregado.'); return; }
+  const ts=()=>firebase.firestore.FieldValue.serverTimestamp();
+  const ops=[];
+  docs.forEach(l=>{
+    if(l.link_code) ops.push(['links',   l.link_code,  { owner_id:l.id, nome:l.nome||'', municipio:l.municipio||'', updated_at:ts() }]);
+    if(l.cod_acesso) ops.push(['acessos', l.cod_acesso, { lideranca_id:l.id, updated_at:ts() }]);
+  });
+  if(!ops.length){ set('#fef3c7','#92400e','Nada a preparar (sem link_code/cod_acesso).'); return; }
+  set('#eff6ff','#1e40af','Preparando 0/'+ops.length+'...');
+  try{
+    for(let i=0;i<ops.length;i+=400){
+      const batch=_db.batch();
+      ops.slice(i,i+400).forEach(([col,docId,data])=>batch.set(_db.collection(col).doc(docId), data));
+      await batch.commit();
+      set('#eff6ff','#1e40af','Preparando '+Math.min(ops.length,i+400)+'/'+ops.length+'...');
+    }
+    set('#dcfce7','#166534','✅ Blindagem preparada ('+ops.length+' registros). Pode testar o cadastro e o login de liderança.');
+  }catch(e){
+    set('#fee2e2','#991b1b','Erro: '+((e&&e.message)||e)+' — publique as regras de links/acessos primeiro.');
+  }
+}
+
 // Máscara (DD) 99999-9999 / (DD) 9999-9999
 function mascararTel(input){
   let d = (input.value||'').replace(/\D/g,'').slice(0,11);
@@ -4551,7 +4635,8 @@ async function salvarLideranca() {
       payload.parent_id   = null;
       payload.tipo        = 'lideranca';
       payload.created_via = 'manual';
-      await _db.collection('liderancas').add(payload);
+      const ref = await _db.collection('liderancas').add(payload);
+      await _escreverLinkPublico(linkCode, ref.id, nome, mun);
       mostrarFeedbackCRM(`✅ ${escHtml(nome)} cadastrada!`, true);
       mostrarPosCadastro(nome, linkCode, telDig);
     }
