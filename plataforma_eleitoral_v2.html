@@ -776,6 +776,10 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
       <datalist id="municipios-list-pub"></datalist>
       <label class="cad-label">Bairro / localidade</label>
       <input class="cadastro-input" type="text" id="cadastro-bairro" placeholder="Seu bairro">
+      <label style="display:flex;gap:9px;align-items:flex-start;margin:15px 0 6px;font-size:11.5px;line-height:1.5;color:#475569;cursor:pointer;">
+        <input type="checkbox" id="cadastro-consent" style="width:17px;height:17px;flex-shrink:0;margin-top:1px;accent-color:#0525f7;">
+        <span>Autorizo o uso dos meus dados (nome, telefone e localidade) para contato e participação na rede da Talita Oliveira, conforme a <b>LGPD</b>. Posso pedir a remoção dos meus dados quando quiser.</span>
+      </label>
       <button class="cadastro-btn" id="cadastro-btn" onclick="salvarCadastroPublico()" style="margin-top:8px;">Confirmar cadastro →</button>
       <div id="cadastro-feedback" class="cadastro-feedback" style="display:none;"></div>
     </div>
@@ -2461,6 +2465,7 @@ async function salvarCadastroPublico() {
   if (telefone.replace(/\D/g,'').length < 10) { showFb('Informe um telefone/WhatsApp válido (com DDD).', false); return; }
   if (!municipio) { showFb('Informe seu município.', false); return; }
   if (!parent_id) { showFb('Link inválido.', false); return; }
+  if (!document.getElementById('cadastro-consent')?.checked) { showFb('Marque a autorização de uso dos dados (LGPD) para continuar.', false); return; }
   const btn = document.getElementById('cadastro-btn');
   btn.disabled = true; btn.textContent = 'Salvando...';
   try {
@@ -2473,6 +2478,8 @@ async function salvarCadastroPublico() {
       status: 'Prospecto', votos_comprometidos: 0,
       segmento: '', obs: '',
       created_via: 'afiliado',
+      consent_lgpd: true,
+      consent_ts: firebase.firestore.FieldValue.serverTimestamp(),
       created_at: firebase.firestore.FieldValue.serverTimestamp(),
       updated_at: firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -2699,7 +2706,39 @@ function entrarPortalLideranca() {
   const p = document.getElementById('portal-lideranca'); if (p) p.style.display = 'block';
   const nm = document.getElementById('portal-user-nome');
   if (nm) nm.textContent = _currentUser?.nome || '';
-  if (!_portalListener) { _portalListener = true; try { iniciarListener_liderancas(); } catch(e){ console.error('[portal] listener:', e); } }
+  renderPortal();                // mostra "carregando…"
+  carregarSubarvorePortal();     // puxa SÓ a rede dela (não baixa a coleção inteira)
+}
+
+// Portal: carrega SÓ a subárvore da liderança via parent_id, em vez de baixar a
+// coleção `liderancas` inteira a cada sessão. Corta as leituras do Firestore em
+// 10–100× (essencial no plano grátis) e garante que ela só enxergue a própria rede.
+async function carregarSubarvorePortal(){
+  const id = _currentUser && _currentUser.liderancaId;
+  if(!id){ renderPortal(); return; }
+  try{
+    const docs = [], vistos = new Set();
+    const meSnap = await _db.collection('liderancas').doc(id).get();
+    if(meSnap.exists){ docs.push({ id: meSnap.id, ...meSnap.data() }); vistos.add(id); }
+    // BFS pelos descendentes (lotes de 10 por causa do limite do operador 'in')
+    let fronteira = [id], guarda = 0;
+    while(fronteira.length && guarda++ < 60){
+      const proxima = [];
+      for(let i=0;i<fronteira.length;i+=10){
+        const lote = fronteira.slice(i,i+10);
+        const qs = await _db.collection('liderancas').where('parent_id','in',lote).get();
+        qs.forEach(d=>{
+          if(vistos.has(d.id)) return;
+          vistos.add(d.id);
+          docs.push({ id:d.id, ...d.data() });
+          proxima.push(d.id);
+        });
+      }
+      fronteira = proxima;
+    }
+    _liderancasData = docs;
+    reconstruirCaches();
+  }catch(e){ console.error('[portal] erro ao carregar subárvore:', e); }
   renderPortal();
 }
 
@@ -2938,7 +2977,7 @@ async function salvarApoiadorPortal() {
     });
     fb.style.color='var(--verde2)'; fb.textContent='✅ Adicionado!';
     ['pa-nome','pa-tel','pa-bairro'].forEach(x=>{ const e=g(x); if(e) e.value=''; });
-    // a lista se atualiza sozinha pelo snapshot (renderPortal)
+    carregarSubarvorePortal();   // recarrega só a subárvore já com o novo cadastro
   } catch(e) { fb.style.color='var(--vermelho2)'; fb.textContent='Erro: '+e.message; }
 }
 
@@ -2981,7 +3020,7 @@ async function _fotoPortalArquivo(input){
       updated_at: firebase.firestore.FieldValue.serverTimestamp()
     });
     _fbFotoPortal('✅ Foto atualizada!',true);
-    // o snapshot de liderancas re-renderiza o portal sozinho com a nova foto
+    const me=_lidPorId.get(id); if(me) me.foto_url=dataUrl; renderPortal();  // atualiza local (sem rebaixar a rede)
   }catch(e){ _fbFotoPortal('❌ '+e.message,false); }
 }
 
@@ -3384,6 +3423,15 @@ async function confirmarImportPlanilha() {
   const validos = _importLinhas.filter(r => (r[mapNome]||'').trim());
   let importados = 0, erros = 0;
   const total = validos.length;
+  // Proteção: plano grátis tem ~20.000 gravações/dia. Acima disso o import pode
+  // falhar no meio e travar os cadastros do dia. Avisa o admin antes de seguir.
+  if (total > 15000) {
+    if (!confirm('Você vai importar ' + total.toLocaleString('pt-BR') + ' cadastros.\n\nNo plano grátis o limite é ~20.000 gravações/dia — acima disso o import pode falhar pela metade e travar novos cadastros até o dia seguinte. O ideal é dividir em dias (ou ativar o Blaze).\n\nContinuar mesmo assim?')) {
+      document.getElementById('import-etapa-progresso').style.display = 'none';
+      document.getElementById('import-etapa-preview').style.display = 'block';
+      return;
+    }
+  }
   const BATCH_SIZE = 400; // limite Firestore é 500 ops/batch
 
   try {
