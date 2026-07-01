@@ -691,7 +691,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
         Não tem conta? <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);text-decoration:underline;" onclick="mostrarView('view-criar')">Criar conta</button>
       </div>
       <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--borda);text-align:center;">
-        <button style="background:none;border:none;color:var(--verde2);cursor:pointer;font-size:12.5px;font-family:var(--fonte);font-weight:700;" onclick="mostrarView('view-lideranca')">🔑 Sou liderança — acessar meu painel</button>
+        <button style="background:none;border:none;color:var(--verde2);cursor:pointer;font-size:12.5px;font-family:var(--fonte);font-weight:700;" onclick="mostrarView('view-lideranca');lidModoLogin()">🔑 Sou liderança — acessar meu painel</button>
       </div>
     </div>
 
@@ -732,21 +732,29 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
       </div>
     </div>
 
-    <!-- VIEW: Liderança (auto-cadastro com código de vínculo) -->
+    <!-- VIEW: Liderança (login do painel + primeiro acesso via código de vínculo) -->
     <div class="login-view" id="view-lideranca">
-      <div style="font-size:13px;color:var(--cinza);margin-bottom:18px;line-height:1.6;">Crie seu acesso de liderança usando o <b style="color:var(--branco)">código de vínculo</b> que a equipe te passou.</div>
-      <input class="login-input" type="text" id="lid-nome" placeholder="Seu nome completo" autocomplete="name" autocapitalize="words">
-      <input class="login-input" type="email" id="lid-email" placeholder="Seu e-mail" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false">
+      <div style="font-size:13px;color:var(--cinza);margin-bottom:18px;line-height:1.6;" id="lid-intro">Entre no <b style="color:var(--branco)">seu painel</b> com o e-mail e a senha que você cadastrou.</div>
+      <input class="login-input" type="text" id="lid-nome" placeholder="Seu nome completo" autocomplete="name" autocapitalize="words" style="display:none;">
+      <input class="login-input" type="email" id="lid-email" placeholder="Seu e-mail" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')lidSubmit()">
       <div class="pass-wrap">
-        <input class="login-input" type="password" id="lid-senha" placeholder="Crie uma senha (mín. 6)" style="margin-bottom:0;padding-right:44px;" autocapitalize="none" autocorrect="off" spellcheck="false">
+        <input class="login-input" type="password" id="lid-senha" placeholder="Sua senha" style="margin-bottom:0;padding-right:44px;" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')lidSubmit()">
         <button class="pass-toggle" type="button" onclick="toggleSenha('lid-senha','ptb4')" id="ptb4"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
       </div>
-      <input class="login-input" type="text" id="lid-codigo" placeholder="Código de vínculo (ex: a7k2m9)" style="margin-top:12px;font-family:var(--mono);letter-spacing:2px;" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')cadastrarLideranca()">
-      <button class="login-btn" id="btn-lid" onclick="cadastrarLideranca()" style="margin-top:16px;">Criar acesso e entrar →</button>
+      <input class="login-input" type="text" id="lid-codigo" placeholder="Código de vínculo (ex: a7k2m9)" style="display:none;margin-top:12px;font-family:var(--mono);letter-spacing:2px;" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')cadastrarLideranca()">
+      <button class="login-btn" id="btn-lid-entrar" onclick="entrarLideranca()" style="margin-top:16px;">Entrar no meu painel →</button>
+      <button class="login-btn" id="btn-lid" onclick="cadastrarLideranca()" style="margin-top:16px;display:none;">Criar acesso e entrar →</button>
       <div class="login-err" id="lid-err"></div>
       <div class="login-success" id="lid-success"></div>
-      <div style="text-align:center;margin-top:16px;">
-        <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);text-decoration:underline;" onclick="mostrarView('view-login')">← Já tenho acesso (entrar)</button>
+      <div id="lid-modo-criar" style="margin-top:18px;text-align:center;">
+        <div style="display:flex;align-items:center;gap:10px;margin:0 0 14px;color:var(--cinza2);font-size:11px;font-weight:600;"><div style="flex:1;height:1px;background:var(--borda);"></div>ou<div style="flex:1;height:1px;background:var(--borda);"></div></div>
+        <button style="background:none;border:none;color:var(--verde2);cursor:pointer;font-size:12.5px;font-family:var(--fonte);font-weight:700;" onclick="lidModoCriar()">Primeiro acesso? Criar com código de vínculo →</button>
+      </div>
+      <div id="lid-modo-login" style="display:none;margin-top:16px;text-align:center;">
+        <button style="background:none;border:none;color:var(--azul3);cursor:pointer;font-size:12px;font-family:var(--fonte);text-decoration:underline;" onclick="lidModoLogin()">← Já tenho acesso (entrar)</button>
+      </div>
+      <div style="text-align:center;margin-top:16px;padding-top:14px;border-top:1px solid var(--borda);">
+        <button style="background:none;border:none;color:var(--cinza);cursor:pointer;font-size:12px;font-family:var(--fonte);" onclick="mostrarView('view-login')">← Voltar para o login geral</button>
       </div>
     </div>
   </div><!-- /.login-card -->
@@ -1904,7 +1912,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
       <button class="modal-close" onclick="fecharModal('modal-cards')">✕</button>
     </div>
     <div class="modal-body">
-      <div style="font-size:13px;color:var(--cinza);line-height:1.6;margin-bottom:16px;">Escolha um modelo, baixe e poste no <b style="color:var(--branco)">Story / Status</b> (ou imprima). Cada card já vem com o <b style="color:var(--branco)">SEU QR Code</b> — quem escanear entra na sua rede!</div>
+      <div style="font-size:13px;color:var(--cinza);line-height:1.6;margin-bottom:16px;">Escolha um modelo, baixe e poste no <b style="color:var(--branco)">Story / Status</b> (ou imprima). Cada card já vem com o <b style="color:var(--branco)">QR Code</b> — quem escanear cai direto no nosso WhatsApp.</div>
       <div id="cards-grid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:14px;"></div>
     </div>
   </div>
@@ -1914,12 +1922,12 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 <div class="modal-overlay" id="modal-qr">
   <div class="modal" style="max-width:360px;">
     <div class="modal-header">
-      <div class="modal-title">📷 Escaneie para se cadastrar</div>
+      <div class="modal-title">📷 Escaneie e fale no WhatsApp</div>
       <button class="modal-close" onclick="fecharModal('modal-qr')">✕</button>
     </div>
     <div class="modal-body" style="text-align:center;">
       <div id="modal-qr-big" style="display:inline-block;background:#fff;padding:14px;border-radius:16px;line-height:0;"></div>
-      <div style="font-size:13px;color:var(--cinza);margin-top:16px;line-height:1.65;">Aponte a câmera do celular para este código e faça seu cadastro — você entra direto na rede. 💙💚</div>
+      <div style="font-size:13px;color:var(--cinza);margin-top:16px;line-height:1.65;">Aponte a câmera do celular para o código e você já cai no nosso WhatsApp pra conversar. 💙💚</div>
     </div>
   </div>
 </div>
@@ -1931,6 +1939,14 @@ let _contaRecemCriada = false; // true só logo após criar a conta (1º acesso)
 // Links da página de obrigado (preencher). Vazio = o card não aparece.
 const INSTAGRAM_URL = 'https://www.instagram.com/talitaoliveiraoficial/';
 const COMUNIDADE_WHATSAPP_URL = '';  // ex: 'https://chat.whatsapp.com/XXXXXXXXXXXX'
+
+// Destino do QR Code: ao escanear, a pessoa cai DIRETO no WhatsApp do atendimento
+// (mensagem já escrita) e a atendente converte — sem passar pelo cadastro. SÓ o QR
+// usa isto; os links de copiar/compartilhar continuam levando ao cadastro de afiliado.
+// Pra trocar o número ou o texto, edite só estas duas linhas.
+const ATENDIMENTO_WA_NUM = '557192330000';                       // +55 71 9233-0000
+const ATENDIMENTO_WA_MSG = 'Oii Talita, tudo bem? Vim pelo QR code 🙂';
+const QR_DESTINO_URL = 'https://wa.me/' + ATENDIMENTO_WA_NUM + '?text=' + encodeURIComponent(ATENDIMENTO_WA_MSG);
 
 function toggleSidebar(forceClose) {
   const sidebar  = document.querySelector('.sidebar');
@@ -2429,7 +2445,7 @@ function mostrarMeuQR(){
   if (!showing) {
     const el = document.getElementById('obg-qr');
     if (el && !el.hasChildNodes() && typeof QRCode !== 'undefined' && _meuQRUrl) {
-      try { new QRCode(el, { text:_meuQRUrl, width:160, height:160, colorDark:'#0d1326', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
+      try { new QRCode(el, { text:QR_DESTINO_URL, width:160, height:160, colorDark:'#0d1326', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
     }
     area.scrollIntoView({behavior:'smooth', block:'center'});
   }
@@ -2699,6 +2715,67 @@ async function enviarCodWhatsApp(id){
 }
 
 // Auto-cadastro da liderança com código de vínculo
+// Tela "Sou liderança": começa no modo LOGIN (e-mail+senha). O "primeiro acesso"
+// (cadastro com código de vínculo) fica atrás de um toggle — _lidModoCriar controla
+// qual fluxo o Enter/botão dispara.
+let _lidModoCriar = false;
+
+function lidModoCriar() {
+  _lidModoCriar = true;
+  const g = x => document.getElementById(x);
+  g('lid-nome').style.display = '';
+  g('lid-codigo').style.display = '';
+  g('lid-senha').placeholder = 'Crie uma senha (mín. 6)';
+  g('lid-intro').innerHTML = 'Crie seu acesso de liderança usando o <b style="color:var(--branco)">código de vínculo</b> que a equipe te passou.';
+  g('btn-lid-entrar').style.display = 'none';
+  g('btn-lid').style.display = '';
+  g('lid-modo-criar').style.display = 'none';
+  g('lid-modo-login').style.display = '';
+  g('lid-err').style.display = 'none'; g('lid-success').style.display = 'none';
+  g('lid-nome').focus();
+}
+
+function lidModoLogin() {
+  _lidModoCriar = false;
+  const g = x => document.getElementById(x);
+  g('lid-nome').style.display = 'none';
+  g('lid-codigo').style.display = 'none';
+  g('lid-senha').placeholder = 'Sua senha';
+  g('lid-intro').innerHTML = 'Entre no <b style="color:var(--branco)">seu painel</b> com o e-mail e a senha que você cadastrou.';
+  g('btn-lid-entrar').style.display = '';
+  g('btn-lid').style.display = 'none';
+  g('lid-modo-criar').style.display = '';
+  g('lid-modo-login').style.display = 'none';
+  g('lid-err').style.display = 'none'; g('lid-success').style.display = 'none';
+}
+
+function lidSubmit() { if (_lidModoCriar) cadastrarLideranca(); else entrarLideranca(); }
+
+// Login da liderança que JÁ tem acesso. O onAuthStateChanged roteia sozinho:
+// role 'lideranca' -> portal; admin/usuario -> app normal.
+async function entrarLideranca() {
+  const g = x => document.getElementById(x);
+  const email = g('lid-email').value.trim(), senha = g('lid-senha').value;
+  g('lid-err').style.display = 'none'; g('lid-success').style.display = 'none';
+  if (!email || !senha) { showLoginErr('lid-err', 'Preencha e-mail e senha.'); return; }
+  const btn = g('btn-lid-entrar');
+  btn.disabled = true; btn.textContent = 'Entrando...';
+  try {
+    await _auth.signInWithEmailAndPassword(email, senha);
+  } catch (e) {
+    const msgs = {
+      'auth/user-not-found':'E-mail não cadastrado. Se é seu primeiro acesso, toque em "Primeiro acesso".',
+      'auth/wrong-password':'Senha incorreta. Verifique maiúsculas/minúsculas.',
+      'auth/invalid-email':'E-mail inválido.',
+      'auth/too-many-requests':'Muitas tentativas. Aguarde alguns minutos e tente novamente.',
+      'auth/invalid-credential':'E-mail ou senha incorretos. Verifique maiúsculas/minúsculas.',
+      'auth/invalid-login-credentials':'E-mail ou senha incorretos. Verifique maiúsculas/minúsculas.'
+    };
+    showLoginErr('lid-err', msgs[e.code] || ('Erro ao entrar: ' + e.message));
+    btn.disabled = false; btn.textContent = 'Entrar no meu painel →';
+  }
+}
+
 async function cadastrarLideranca() {
   const g = x => document.getElementById(x);
   const nome = g('lid-nome').value.trim(), email = g('lid-email').value.trim();
@@ -2846,7 +2923,7 @@ function renderPortal() {
     </div>
     <div class="panel" style="margin-bottom:20px;"><div class="panel-header"><div class="panel-title">🔗 Seu link & QR Code</div></div>
       <div class="panel-body">
-        <div style="font-size:12px;color:var(--cinza);margin-bottom:16px;">Traga gente de 2 jeitos: mande o <b style="color:var(--branco)">link</b> ou mostre o <b style="color:var(--branco)">QR Code</b> (a pessoa aponta a câmera). Quem se cadastrar entra na <b style="color:var(--branco)">sua</b> rede.</div>
+        <div style="font-size:12px;color:var(--cinza);margin-bottom:16px;">Traga gente de 2 jeitos: mande o <b style="color:var(--branco)">link</b> (a pessoa se cadastra e entra na <b style="color:var(--branco)">sua</b> rede) ou mostre o <b style="color:var(--branco)">QR Code</b> (a pessoa aponta a câmera e cai direto no nosso WhatsApp de atendimento).</div>
         <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;">
           <div style="text-align:center;">
             <div id="portal-qr" style="background:#fff;padding:10px;border:1px solid var(--borda);border-radius:14px;display:inline-block;line-height:0;min-width:150px;min-height:150px;"></div>
@@ -2893,7 +2970,7 @@ function gerarQRPortal(url){
   el.innerHTML = '';
   if (typeof QRCode === 'undefined') { el.innerHTML = '<div style="font-size:11px;color:#999;padding:20px;">QR indisponível</div>'; return; }
   try {
-    new QRCode(el, { text: url, width: 150, height: 150, colorDark: '#0d1326', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+    new QRCode(el, { text: QR_DESTINO_URL, width: 150, height: 150, colorDark: '#0d1326', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
   } catch(e){ console.error('QR portal:', e); }
 }
 function _qrDataUrl(containerId){
@@ -2913,7 +2990,7 @@ function ampliarQRPortal(){
   const cont = document.getElementById('modal-qr-big');
   if (cont && typeof QRCode !== 'undefined' && _portalQRUrl) {
     cont.innerHTML = '';
-    try { new QRCode(cont, { text: _portalQRUrl, width: 280, height: 280, colorDark: '#0d1326', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
+    try { new QRCode(cont, { text: QR_DESTINO_URL, width: 280, height: 280, colorDark: '#0d1326', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
   }
   document.getElementById('modal-qr').classList.add('show');
 }
@@ -2934,7 +3011,7 @@ function abrirCardsPortal(){
   if (grid) grid.innerHTML = '<div style="grid-column:1/-1;padding:30px;text-align:center;color:var(--cinza2);">Gerando seus cards…</div>';
   document.getElementById('modal-cards').classList.add('show');
   const tmp = document.createElement('div');
-  try { new QRCode(tmp, { text:_portalQRUrl, width:620, height:620, colorDark:'#0d1326', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
+  try { new QRCode(tmp, { text:QR_DESTINO_URL, width:620, height:620, colorDark:'#0d1326', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
   _cardQR = tmp.querySelector('canvas');
   const load = src => new Promise(r=>{ const im=new Image(); im.onload=()=>r(im); im.onerror=()=>r(null); im.src=src; });
   Promise.all([ load('assets/talita-logo-branco.png'), load('assets/talita-logo-azul.png'), load('assets/talita-foto.png'), load('assets/capa-talita.jpg'), (document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve() ]).then(arr=>{
@@ -2979,13 +3056,13 @@ function _montarCard(t){
   }
   // headline (acima do cartão)
   ctx.fillStyle=t.txt; ctx.font='800 84px Poppins, sans-serif'; ctx.fillText('Vem fazer parte!', W/2, 732);
-  ctx.fillStyle=t.sub; ctx.font='600 44px Poppins, sans-serif'; ctx.fillText('Cadastre-se na minha rede', W/2, 792);
+  ctx.fillStyle=t.sub; ctx.font='600 44px Poppins, sans-serif'; ctx.fillText('Fale com a gente no WhatsApp', W/2, 792);
   // cartão branco do QR (sombra suave) + QR centralizado
   ctx.save(); ctx.shadowColor='rgba(0,0,0,0.22)'; ctx.shadowBlur=40; ctx.shadowOffsetY=14;
   ctx.fillStyle='#fff'; rr(cx,cy,cw,ch,46); ctx.fill(); ctx.restore();
   if (_cardQR){ ctx.drawImage(_cardQR,qx,qy,qs,qs); }
   ctx.fillStyle='#0d1326'; ctx.font='700 42px Poppins, sans-serif'; ctx.fillText('Aponte a câmera do celular', W/2, qy+qs+86);
-  ctx.fillStyle='#5b6478'; ctx.font='500 34px Poppins, sans-serif'; ctx.fillText('e faça seu cadastro', W/2, qy+qs+140);
+  ctx.fillStyle='#5b6478'; ctx.font='500 34px Poppins, sans-serif'; ctx.fillText('e chame no nosso WhatsApp', W/2, qy+qs+140);
   // assinatura (abaixo do cartão)
   ctx.fillStyle=t.sub; ctx.font='600 40px Poppins, sans-serif'; ctx.fillText('Talita Oliveira · Bahia', W/2, cy+ch+78);
   return cv.toDataURL('image/png');
