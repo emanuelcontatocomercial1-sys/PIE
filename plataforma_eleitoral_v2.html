@@ -795,6 +795,14 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
   </div>
 </div>
 
+<!-- ══ PONTE: indicação → WhatsApp (registra o contato e redireciona) ══ -->
+<div id="ponte-wa" style="display:none;position:fixed;inset:0;z-index:9999;flex-direction:column;align-items:center;justify-content:center;background:#0525f7;color:#fff;font-family:var(--fonte);text-align:center;padding:24px;">
+  <img src="assets/talita-logo-branco.png" alt="Talita Oliveira" style="height:26px;margin-bottom:24px;opacity:0.95;">
+  <div style="width:34px;height:34px;border:3px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <div style="margin-top:18px;font-size:15px;font-weight:600;">Abrindo o WhatsApp…</div>
+  <div style="margin-top:6px;font-size:12.5px;opacity:0.85;">Talita Oliveira · Bahia</div>
+</div>
+
 <!-- ══════════════ PORTAL DA LIDERANÇA ══════════════ -->
 <div id="portal-lideranca" style="display:none;min-height:100vh;background:var(--bg);">
   <div class="topbar" style="position:sticky;top:0;">
@@ -1275,9 +1283,9 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 
         <!-- Link de afiliado -->
         <div class="panel" style="margin-bottom:20px;">
-          <div class="panel-header"><div class="panel-title">🔗 Link de cadastro</div></div>
+          <div class="panel-header"><div class="panel-title">🔗 Link do WhatsApp</div></div>
           <div class="panel-body" style="display:flex;flex-direction:column;gap:12px;">
-            <div style="font-size:12px;color:var(--cinza);line-height:1.5;">Compartilhe esse link no WhatsApp. Quem se cadastrar por ele entra automaticamente na rede dessa liderança.</div>
+            <div style="font-size:12px;color:var(--cinza);line-height:1.5;">Compartilhe esse link. Quem tocar nele cai direto no WhatsApp do atendimento da Talita.</div>
             <div class="ld-share-box">
               <input id="ld-link" type="text" readonly value="—">
               <button onclick="copiarLink()">📋 Copiar</button>
@@ -1292,6 +1300,13 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
           <div class="stat-card verde"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><circle cx="9" cy="7" r="4"/><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/></svg></div><div class="stat-num" id="ld-rede">0</div><div class="stat-label">Total na rede</div></div>
           <div class="stat-card amarelo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div class="stat-num" id="ld-votos">0</div><div class="stat-label">Votos da rede</div></div>
           <div class="stat-card roxo"><div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div class="stat-num" id="ld-nivel">0</div><div class="stat-label">Profundidade</div></div>
+        </div>
+
+        <!-- Contatos via WhatsApp (pings da ponte #/ir) -->
+        <div id="ld-contatos-box" style="display:none;margin-bottom:20px;background:rgba(37,211,102,0.10);border:1px solid rgba(37,211,102,0.35);border-radius:12px;padding:12px 16px;align-items:center;gap:12px;">
+          <span style="font-size:20px;">📲</span>
+          <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--branco);">Contatos via WhatsApp</div><div style="font-size:11.5px;color:var(--cinza);">Pessoas que chamaram no zap pelo link/QR desta liderança</div></div>
+          <span id="ld-contatos" style="font-size:22px;font-weight:800;color:#128C4B;">0</span>
         </div>
 
         <!-- Árvore + Lista -->
@@ -1826,7 +1841,7 @@ body{font-family:var(--fonte);background:#f7f8fc;color:#0f172a;min-height:100vh;
 
       <!-- Pós-cadastro: link de indicação na hora -->
       <div id="crm-pos-cadastro" style="display:none;border:1px solid var(--ciano-borda);background:var(--ciano-glow);border-radius:12px;padding:14px;">
-        <div style="font-size:12.5px;font-weight:700;color:var(--ciano);margin-bottom:10px;">✅ <span id="crm-pos-nome">Liderança</span> cadastrada! Link de indicação dela:</div>
+        <div style="font-size:12.5px;font-weight:700;color:var(--ciano);margin-bottom:10px;">✅ <span id="crm-pos-nome">Liderança</span> cadastrada! Link do WhatsApp pra ela divulgar:</div>
         <div class="ld-share-box" style="margin-bottom:10px;">
           <input id="crm-pos-link" readonly value="">
           <button onclick="copiarCrmPosLink()">Copiar</button>
@@ -1945,7 +1960,7 @@ const COMUNIDADE_WHATSAPP_URL = '';  // ex: 'https://chat.whatsapp.com/XXXXXXXXX
 // usa isto; os links de copiar/compartilhar continuam levando ao cadastro de afiliado.
 // Pra trocar o número ou o texto, edite só estas duas linhas.
 const ATENDIMENTO_WA_NUM = '557192330000';                       // +55 71 9233-0000
-const ATENDIMENTO_WA_MSG = 'Oii Talita, tudo bem? Vim pelo QR code 🙂';
+const ATENDIMENTO_WA_MSG = 'Oii Talita, tudo bem? Vim pelo QR code.';
 const QR_DESTINO_URL = 'https://wa.me/' + ATENDIMENTO_WA_NUM + '?text=' + encodeURIComponent(ATENDIMENTO_WA_MSG);
 
 function toggleSidebar(forceClose) {
@@ -2378,13 +2393,18 @@ function _escreverAcesso(code, liderancaId){
 }
 // Tipo: prioriza campo explícito; fallback usa parent_id (lead se tiver pai)
 function tipoDe(l) {
+  if (l && l.tipo === 'contato') return 'contato';   // ping de WhatsApp (ponte #/ir) — não é pessoa cadastrada
   if (l && l.tipo === 'lead') return 'lead';
   if (l && l.tipo === 'lideranca') return 'lideranca';
   if (l && l.parent_id) return 'lead';
   return 'lideranca';
 }
 function urlLinkAfiliado(code) {
-  return location.origin + location.pathname + '#/cadastro/' + code;
+  // O link/QR da liderança leva a uma PONTE no próprio site (#/ir/<code>) que registra
+  // um "Contato via WhatsApp" creditado a ela e redireciona pro WhatsApp do atendimento.
+  // Assim dá pra ver quantos contatos cada liderança gerou, mantendo o destino no zap.
+  // (O fluxo antigo de cadastro #/cadastro/<code> continua existindo para links antigos.)
+  return location.origin + location.pathname + '#/ir/' + code;
 }
 function descendentesDe(id) {
   const out = [];
@@ -2403,10 +2423,50 @@ function filhosDe(id) {
 
 // ── Hash router (#/cadastro/<code>) ──
 function verificarRotaCadastro() {
-  const m = (location.hash || '').match(/^#\/cadastro\/([a-z0-9]+)/i);
-  if (m) abrirCadastroPublico(m[1]);
+  const h = location.hash || '';
+  let m = h.match(/^#\/cadastro\/([a-z0-9]+)/i);
+  if (m) { abrirCadastroPublico(m[1]); return; }
+  m = h.match(/^#\/ir\/([a-z0-9]+)/i);
+  if (m) { irParaWhatsapp(m[1]); return; }
 }
 window.addEventListener('hashchange', verificarRotaCadastro);
+
+// PONTE de indicação (#/ir/<code>): registra na rede um "Contato via WhatsApp" creditado
+// à liderança dona do code e redireciona pro WhatsApp do atendimento. Redirect invisível
+// (opção A) — mostra só um aviso mínimo enquanto registra. Se o registro travar, um
+// fallback garante o redirect mesmo assim; se falhar tudo, ainda cai no WhatsApp.
+async function irParaWhatsapp(code) {
+  try { document.getElementById('login-screen').style.display = 'none'; } catch(_){}
+  try { document.getElementById('app').style.display = 'none'; } catch(_){}
+  const ov = document.getElementById('ponte-wa'); if (ov) ov.style.display = 'flex';
+
+  let jaFoi = false;
+  const irPraWA = () => { if (jaFoi) return; jaFoi = true; window.location.replace(QR_DESTINO_URL); };
+  const fallback = setTimeout(irPraWA, 3000);
+
+  try {
+    if (!_auth.currentUser) await _auth.signInAnonymously();
+    // Descobre a liderança dona do code (mesma lógica do cadastro: 'links' e fallback).
+    let ownerId = null, ownerMun = '';
+    try { const lk = await _db.collection('links').doc(code).get(); if (lk.exists){ ownerId = lk.data().owner_id; ownerMun = lk.data().municipio || ''; } } catch(_){}
+    if (!ownerId) {
+      const snap = await _db.collection('liderancas').where('link_code','==',code).limit(1).get();
+      if (!snap.empty){ ownerId = snap.docs[0].id; ownerMun = snap.docs[0].data().municipio || ''; }
+    }
+    if (ownerId) {
+      await _db.collection('liderancas').add({
+        parent_id: ownerId,
+        tipo: 'contato',
+        nome: 'Contato via WhatsApp',
+        municipio: ownerMun,
+        created_via: 'wa',
+        created_at: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+  } catch(e) { console.warn('[ponte] registro do contato falhou:', e); }
+  clearTimeout(fallback);
+  irPraWA();
+}
 
 // Página de OBRIGADO (após o cadastro público)
 let _meuQRUrl = '';
@@ -2421,7 +2481,7 @@ function mostrarObrigado(nome, code){
   screen.style.background = _bgCapaCadastro();
   const cardIG = INSTAGRAM_URL ? `<a href="${INSTAGRAM_URL}" target="_blank" rel="noopener" class="obg-card"><span class="obg-ic" style="background:linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7);">${_icoIG()}</span><span class="obg-tx"><b>Seguir no Instagram</b><small>Acompanhe a Talita</small></span><span class="obg-ar">→</span></a>` : '';
   const cardWA = COMUNIDADE_WHATSAPP_URL ? `<a href="${COMUNIDADE_WHATSAPP_URL}" target="_blank" rel="noopener" class="obg-card"><span class="obg-ic" style="background:#25D366;">${_icoWA()}</span><span class="obg-tx"><b>Comunidade no WhatsApp</b><small>Entre e fique por dentro</small></span><span class="obg-ar">→</span></a>` : '';
-  const cardQR = `<button onclick="mostrarMeuQR()" class="obg-card"><span class="obg-ic" style="background:var(--acao2);">${_icoQR()}</span><span class="obg-tx"><b>Pegar meu QR Code</b><small>Vire apoiador e traga gente</small></span><span class="obg-ar">→</span></button>`;
+  const cardQR = `<button onclick="mostrarMeuQR()" class="obg-card"><span class="obg-ic" style="background:var(--acao2);">${_icoQR()}</span><span class="obg-tx"><b>Pegar meu QR Code</b><small>Compartilhe e traga gente</small></span><span class="obg-ar">→</span></button>`;
   screen.innerHTML = `
    <div style="width:100%;max-width:430px;text-align:center;color:#fff;padding:16px 6px 44px;">
      <div role="img" aria-label="Talita Oliveira" style="width:126px;height:126px;border-radius:50%;border:4px solid rgba(255,255,255,0.92);box-shadow:0 12px 34px rgba(0,0,0,0.30);background:url('assets/talita-foto.png') 50% 6% / 152% no-repeat;display:inline-block;"></div>
@@ -2429,8 +2489,8 @@ function mostrarObrigado(nome, code){
      <div style="font-size:14px;color:rgba(255,255,255,0.92);line-height:1.6;margin:10px 22px 24px;">Seu cadastro foi confirmado! Agora dá mais um passo com a gente:</div>
      <div style="display:flex;flex-direction:column;gap:12px;">${cardIG}${cardWA}${cardQR}</div>
      <div id="obg-qr-area" style="display:none;background:#fff;border-radius:16px;padding:18px;margin-top:14px;color:#0d1326;text-align:center;">
-       <div style="font-size:13px;font-weight:800;margin-bottom:3px;">Seu QR / link de apoiador</div>
-       <div style="font-size:12px;color:#5b6478;margin-bottom:12px;">Mostre pra seus amigos — quem se cadastrar entra na <b>sua</b> rede!</div>
+       <div style="font-size:13px;font-weight:800;margin-bottom:3px;">Seu QR / link pra divulgar</div>
+       <div style="font-size:12px;color:#5b6478;margin-bottom:12px;">Mostre pra seus amigos — quem tocar cai direto no nosso WhatsApp! 💙💚</div>
        <div id="obg-qr" style="display:inline-block;line-height:0;"></div>
        <div class="ld-share-box" style="margin:12px 0 0;"><input id="obg-link" readonly value="${_meuQRUrl}"><button onclick="copiarObgLink()">Copiar</button></div>
        <button onclick="compartilharObgWA()" style="width:100%;margin-top:10px;background:#25D366;color:#fff;border:none;border-radius:9px;padding:11px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--fonte);">📲 Enviar meu link</button>
@@ -2445,7 +2505,7 @@ function mostrarMeuQR(){
   if (!showing) {
     const el = document.getElementById('obg-qr');
     if (el && !el.hasChildNodes() && typeof QRCode !== 'undefined' && _meuQRUrl) {
-      try { new QRCode(el, { text:QR_DESTINO_URL, width:160, height:160, colorDark:'#0d1326', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
+      try { new QRCode(el, { text:_meuQRUrl, width:160, height:160, colorDark:'#0d1326', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
     }
     area.scrollIntoView({behavior:'smooth', block:'center'});
   }
@@ -2457,7 +2517,7 @@ function copiarObgLink(){
 }
 function compartilharObgWA(){
   const i = document.getElementById('obg-link'); if (!i) return;
-  const msg = 'Faça parte da rede da *Talita Oliveira · Bahia*! Cadastre-se aqui:\n\n'+i.value;
+  const msg = 'Fale com a equipe da *Talita Oliveira · Bahia* no WhatsApp:\n\n'+i.value;
   window.open('https://wa.me/?text='+encodeURIComponent(msg), '_blank');
 }
 
@@ -2568,12 +2628,14 @@ function abrirDetalheLideranca(id) {
 }
 
 function renderEstatisticasRede(lider) {
-  const desc = descendentesDe(lider.id);
-  const diretas = filhosDe(lider.id).length;
+  const descAll = descendentesDe(lider.id);
+  const desc = descAll.filter(d => tipoDe(d) !== 'contato');   // rede "real" (lideranças + leads)
+  const contatos = descAll.length - desc.length;               // pings de WhatsApp via ponte
+  const diretas = filhosDe(lider.id).filter(d => tipoDe(d) !== 'contato').length;
   const votos = desc.reduce((s,d) => s + (d.votos_comprometidos||0), 0);
-  // Profundidade máxima
+  // Profundidade máxima (ignora contatos, que são folhas)
   function profundidade(id, lvl=0) {
-    const fs = filhosDe(id);
+    const fs = filhosDe(id).filter(c => tipoDe(c) !== 'contato');
     if (!fs.length) return lvl;
     return Math.max(...fs.map(c => profundidade(c.id, lvl+1)));
   }
@@ -2581,19 +2643,21 @@ function renderEstatisticasRede(lider) {
   document.getElementById('ld-rede').textContent    = desc.length;
   document.getElementById('ld-votos').textContent   = votos.toLocaleString('pt-BR');
   document.getElementById('ld-nivel').textContent   = profundidade(lider.id);
+  const elC = document.getElementById('ld-contatos'); if (elC) elC.textContent = contatos;
+  const boxC = document.getElementById('ld-contatos-box'); if (boxC) boxC.style.display = contatos ? 'flex' : 'none';
 }
 
 function renderArvore(lider) {
   const cont = document.getElementById('ld-arvore');
-  const fs = filhosDe(lider.id);
+  const fs = filhosDe(lider.id).filter(c => tipoDe(c) !== 'contato');
   if (!fs.length) {
-    cont.innerHTML = '<div style="text-align:center;color:var(--cinza2);font-size:13px;padding:24px;">Sem indicações ainda. Compartilhe o link acima pra começar a rede.</div>';
+    cont.innerHTML = '<div style="text-align:center;color:var(--cinza2);font-size:13px;padding:24px;">Sem indicações ainda nesta rede.</div>';
     return;
   }
   function nodeHtml(n, isRoot=false) {
-    const fs = filhosDe(n.id);
+    const fs = filhosDe(n.id).filter(c => tipoDe(c) !== 'contato');
     const inicial = (n.nome||'?')[0].toUpperCase();
-    const sub = filhosDe(n.id).length;
+    const sub = fs.length;
     const isLider = tipoDe(n) === 'lideranca';
     const klass = isRoot ? 'root' : (isLider ? 'lider' : '');
     const tag   = isLider ? 'liderança' : 'lead';
@@ -2609,7 +2673,7 @@ function renderArvore(lider) {
 
 function renderListaRede(lider) {
   const cont = document.getElementById('ld-lista');
-  const desc = descendentesDe(lider.id);
+  const desc = descendentesDe(lider.id).filter(d => tipoDe(d) !== 'contato');
   if (!desc.length) { cont.innerHTML = '<div style="text-align:center;color:var(--cinza2);font-size:13px;padding:24px;">Lista vazia.</div>'; return; }
   // Nível de cada um
   function nivel(id, lvl=0) {
@@ -2649,7 +2713,7 @@ function copiarLink() {
 function compartilharWA() {
   if (!_liderancaAtual) return;
   const url = document.getElementById('ld-link').value;
-  const msg = `Olá! Faço parte da rede da *Talita Oliveira · Bahia*. Cadastre-se aqui:\n\n${url}`;
+  const msg = `Olá! Fale com a equipe da *Talita Oliveira · Bahia* no WhatsApp:\n\n${url}`;
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
@@ -2877,8 +2941,10 @@ function renderPortal() {
   if (!id) { body.innerHTML = '<div style="text-align:center;color:var(--cinza);padding:60px;">Sua conta não está vinculada a uma liderança. Fale com a equipe.</div>'; return; }
   const me = _lidPorId.get(id);
   if (!me) { body.innerHTML = '<div style="text-align:center;color:var(--cinza);padding:60px;">Carregando seus dados…</div>'; return; }
-  const desc = descendentesDe(id);
-  const diretas = filhosDe(id).length;
+  const descAll = descendentesDe(id);
+  const desc = descAll.filter(d => tipoDe(d) !== 'contato');   // rede real (sem os pings de WhatsApp)
+  const contatos = descAll.length - desc.length;
+  const diretas = filhosDe(id).filter(d => tipoDe(d) !== 'contato').length;
   const leads = desc.filter(d => tipoDe(d)==='lead').length;
   const votos = desc.reduce((s,d)=>s+(d.votos_comprometidos||0),0) + (me.votos_comprometidos||0);
   const code = me.link_code || '';
@@ -2921,9 +2987,14 @@ function renderPortal() {
       <div class="stat-card verde"><div class="stat-num">${leads}</div><div class="stat-label">Cadastrados</div></div>
       <div class="stat-card amarelo"><div class="stat-num">${votos.toLocaleString('pt-BR')}</div><div class="stat-label">Votos comprometidos</div></div>
     </div>
+    ${contatos ? `<div style="margin-bottom:20px;background:rgba(37,211,102,0.10);border:1px solid rgba(37,211,102,0.35);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;">
+      <span style="font-size:20px;">📲</span>
+      <div style="flex:1;"><div style="font-size:13px;font-weight:700;color:var(--branco);">Contatos via WhatsApp</div><div style="font-size:11.5px;color:var(--cinza);">Pessoas que chamaram no zap pelo seu link/QR</div></div>
+      <span style="font-size:22px;font-weight:800;color:#128C4B;">${contatos}</span>
+    </div>` : ''}
     <div class="panel" style="margin-bottom:20px;"><div class="panel-header"><div class="panel-title">🔗 Seu link & QR Code</div></div>
       <div class="panel-body">
-        <div style="font-size:12px;color:var(--cinza);margin-bottom:16px;">Traga gente de 2 jeitos: mande o <b style="color:var(--branco)">link</b> (a pessoa se cadastra e entra na <b style="color:var(--branco)">sua</b> rede) ou mostre o <b style="color:var(--branco)">QR Code</b> (a pessoa aponta a câmera e cai direto no nosso WhatsApp de atendimento).</div>
+        <div style="font-size:12px;color:var(--cinza);margin-bottom:16px;">Traga gente de 2 jeitos: mande o <b style="color:var(--branco)">link</b> ou mostre o <b style="color:var(--branco)">QR Code</b> — os dois levam a pessoa direto pro nosso <b style="color:var(--branco)">WhatsApp de atendimento</b>.</div>
         <div style="display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;">
           <div style="text-align:center;">
             <div id="portal-qr" style="background:#fff;padding:10px;border:1px solid var(--borda);border-radius:14px;display:inline-block;line-height:0;min-width:150px;min-height:150px;"></div>
@@ -2970,7 +3041,7 @@ function gerarQRPortal(url){
   el.innerHTML = '';
   if (typeof QRCode === 'undefined') { el.innerHTML = '<div style="font-size:11px;color:#999;padding:20px;">QR indisponível</div>'; return; }
   try {
-    new QRCode(el, { text: QR_DESTINO_URL, width: 150, height: 150, colorDark: '#0d1326', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+    new QRCode(el, { text: url, width: 150, height: 150, colorDark: '#0d1326', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
   } catch(e){ console.error('QR portal:', e); }
 }
 function _qrDataUrl(containerId){
@@ -2990,7 +3061,7 @@ function ampliarQRPortal(){
   const cont = document.getElementById('modal-qr-big');
   if (cont && typeof QRCode !== 'undefined' && _portalQRUrl) {
     cont.innerHTML = '';
-    try { new QRCode(cont, { text: QR_DESTINO_URL, width: 280, height: 280, colorDark: '#0d1326', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
+    try { new QRCode(cont, { text: _portalQRUrl, width: 280, height: 280, colorDark: '#0d1326', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
   }
   document.getElementById('modal-qr').classList.add('show');
 }
@@ -3011,7 +3082,7 @@ function abrirCardsPortal(){
   if (grid) grid.innerHTML = '<div style="grid-column:1/-1;padding:30px;text-align:center;color:var(--cinza2);">Gerando seus cards…</div>';
   document.getElementById('modal-cards').classList.add('show');
   const tmp = document.createElement('div');
-  try { new QRCode(tmp, { text:QR_DESTINO_URL, width:620, height:620, colorDark:'#0d1326', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
+  try { new QRCode(tmp, { text:_portalQRUrl, width:620, height:620, colorDark:'#0d1326', colorLight:'#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e){}
   _cardQR = tmp.querySelector('canvas');
   const load = src => new Promise(r=>{ const im=new Image(); im.onload=()=>r(im); im.onerror=()=>r(null); im.src=src; });
   Promise.all([ load('assets/talita-logo-branco.png'), load('assets/talita-logo-azul.png'), load('assets/talita-foto.png'), load('assets/capa-talita.jpg'), (document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve() ]).then(arr=>{
@@ -3083,7 +3154,7 @@ function copiarLinkPortal() {
 }
 function compartilharWAPortal() {
   const i = document.getElementById('portal-link'); if(!i) return;
-  const msg = `Olá! Conheça a rede da *Talita Oliveira · Bahia*. Cadastre-se aqui:\n\n${i.value}`;
+  const msg = `Olá! Fale com a equipe da *Talita Oliveira · Bahia* no WhatsApp:\n\n${i.value}`;
   window.open('https://wa.me/?text='+encodeURIComponent(msg),'_blank');
 }
 async function salvarApoiadorPortal() {
@@ -3170,7 +3241,7 @@ function renderPaginaRede() {
   const totalLeads = _leads.length;
   let maxProfundidade = 0;
   function profundidade(id, lvl=0) {
-    const fs = filhosDe(id);
+    const fs = filhosDe(id).filter(c => tipoDe(c) !== 'contato');
     if (!fs.length) return lvl;
     return Math.max(...fs.map(c => profundidade(c.id, lvl+1)));
   }
@@ -3189,8 +3260,9 @@ function renderPaginaRede() {
   }
 
   grid.innerHTML = raizesFiltradas.map(r => {
-    const diretas = filhosDe(r.id).length;
-    const total   = descendentesDe(r.id).length;
+    const diretas = filhosDe(r.id).filter(d => tipoDe(d) !== 'contato').length;
+    const total   = descendentesDe(r.id).filter(d => tipoDe(d) !== 'contato').length;
+    const contatos = descendentesDe(r.id).filter(d => tipoDe(d) === 'contato').length;
     const votos   = descendentesDe(r.id).reduce((s,d) => s + (d.votos_comprometidos||0), 0) + (r.votos_comprometidos||0);
     const inicial = (r.nome||'?')[0].toUpperCase();
     return `
@@ -3207,6 +3279,7 @@ function renderPaginaRede() {
           <div class="rede-card-stat"><div class="rede-card-stat-num">${total}</div><div class="rede-card-stat-lbl">Total rede</div></div>
           <div class="rede-card-stat"><div class="rede-card-stat-num">${votos.toLocaleString('pt-BR')}</div><div class="rede-card-stat-lbl">Votos</div></div>
         </div>
+        ${contatos ? `<div style="margin-top:10px;padding-top:9px;border-top:1px solid var(--borda);font-size:11.5px;color:#128C4B;font-weight:700;text-align:center;">📲 ${contatos} contato${contatos>1?'s':''} via WhatsApp</div>` : ''}
       </div>`;
   }).join('');
 }
@@ -4335,8 +4408,11 @@ function reconstruirCaches() {
   _leads = [];
   for (const l of _liderancasData) {
     _lidPorId.set(l.id, l);
-    if (tipoDe(l) === 'lideranca') _lideres.push(l);
-    else _leads.push(l);
+    const t = tipoDe(l);
+    if (t === 'lideranca') _lideres.push(l);
+    else if (t === 'lead') _leads.push(l);
+    // contatos (t === 'contato') ficam fora dos caches de pessoas, mas seguem em
+    // _filhosPorParent abaixo pra serem contados por liderança (descendentesDe/filhosDe).
     if (l.parent_id) {
       const arr = _filhosPorParent.get(l.parent_id) || [];
       arr.push(l);
@@ -4652,7 +4728,7 @@ function copiarCrmPosLink(){
 function waCrmPosLink(){
   const i = document.getElementById('crm-pos-link'); if(!i) return;
   const nome = document.getElementById('crm-pos-nome').textContent;
-  const msg = `Olá, ${nome}! Esse é o seu link para indicar pessoas para a rede da *Talita Oliveira · Bahia*. Cada pessoa que você cadastrar entra na sua rede:\n\n${i.value}`;
+  const msg = `Olá, ${nome}! Esse é o link do atendimento da *Talita Oliveira · Bahia* pra você divulgar. Quem tocar nele já fala com a nossa equipe no WhatsApp:\n\n${i.value}`;
   window.open('https://wa.me/'+_waNum(_crmPosTel)+'?text='+encodeURIComponent(msg),'_blank');
 }
 function falarCrmPos(){ if(_crmPosTel) window.open('https://wa.me/'+_waNum(_crmPosTel),'_blank'); }
